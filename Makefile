@@ -19,13 +19,13 @@ endif
 
 ## Start dev environment (hot reload, port 3000)
 run:
-	$(COMPOSE_DEV) up --build -d
+	$(COMPOSE_DEV) up --build --renew-anon-volumes -d
 	@echo ""
 	@echo "Dev environment running → http://$(shell hostname -I | awk '{print $$1}'):3001"
 
 ## Start production environment (port 80)
 prod:
-	$(COMPOSE_PROD) up --build -d
+	$(COMPOSE_PROD) up --build --renew-anon-volumes -d
 	@echo ""
 	@echo "Production environment running → http://$(shell hostname -I | awk '{print $$1}')"
 
