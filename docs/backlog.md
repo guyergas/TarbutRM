@@ -64,72 +64,160 @@ Tasks grouped by phase. One task at a time. Check off only when committed and ap
 
 ## Phase 2 — Wallet
 
-- [ ] P2-01 Prisma: `WalletTransaction` model — `id`, `userId`, `type` (CREDIT/DEBIT), `amount`, `balanceBefore`, `balanceAfter`, `note?`, `orderId?`, `createdBy`, `createdAt`
-- [ ] P2-02 Prisma migration for `WalletTransaction`
-- [ ] P2-03 `walletService.credit(userId, amount, note, actorId)` — updates `User.balance` + inserts transaction (in `prisma.$transaction`)
-- [ ] P2-04 `walletService.debit(userId, amount, orderId, actorId)` — checks balance >= amount, updates + inserts (in `prisma.$transaction`), throws if insufficient
-- [ ] P2-05 `walletService.getBalance(userId)`
-- [ ] P2-06 `walletService.getHistory(userId, pagination)`
-- [ ] P2-07 Admin `/admin/users/[id]`: add credit wallet form (amount, note) — calls `walletService.credit`
-- [ ] P2-08 Admin `/admin/users/[id]`: show current balance
-- [ ] P2-09 User `/wallet`: balance display + paginated transaction history (type, amount, balanceBefore, balanceAfter, note, date)
-- [ ] P2-10 Unit: credit (balance updated, transaction recorded, balanceBefore/After correct)
-- [ ] P2-11 Unit: debit (success, insufficient balance rejection, balance unchanged on failure)
-- [ ] P2-12 Unit: concurrent debit safety (balance cannot go negative even under race condition)
+> **Status:** Partially done. Admin credit/debit form and `BudgetTransaction` model are live. User-facing wallet page is missing.
+
+> **No open decisions — proceed when ready.**
+
+- [x] P2-01 Prisma: `BudgetTransaction` model with `userId`, `amount`, `note?`, `createdBy`, `createdAt`
+- [x] P2-02 Prisma migration
+- [x] P2-03 Atomic credit/debit: `prisma.$transaction([budgetTransaction.create, user.update balance])` in admin action
+- [x] P2-04 Admin `/admin/user/[id]`: credit/debit form + transaction history table
+- [ ] P2-05 User `/wallet`: balance display + paginated transaction history (amount, note, date, performed by)
 
 ---
 
-## Phase 3 — Products
+## Phase 3 — Store & Inventory Management
 
-- [ ] P3-01 Prisma: `Product` model — `id`, `name`, `description?`, `price`, `stock`, `status` (ACTIVE/INACTIVE), `createdAt`, `updatedAt`, `createdBy`
-- [ ] P3-02 Prisma: `ProductStatusHistory` model — `id`, `productId`, `fromStatus`, `toStatus`, `changedBy`, `changedAt`, `note?`
-- [ ] P3-03 Prisma migration
-- [ ] P3-04 `productService.create(data, actorId)` — STAFF/ADMIN
-- [ ] P3-05 `productService.update(id, data, actorId)` — STAFF/ADMIN
-- [ ] P3-06 `productService.setStatus(id, newStatus, actorId, note?)` — appends to `ProductStatusHistory`
-- [ ] P3-07 `productService.listActive()` — USER-facing, ACTIVE only
-- [ ] P3-08 `productService.listAll(filters?)` — STAFF/ADMIN, all statuses
-- [ ] P3-09 Admin/Staff `/admin/products` — product list with status badge
-- [ ] P3-10 Admin/Staff `/admin/products/new` — create product form
-- [ ] P3-11 Admin/Staff `/admin/products/[id]` — edit form, toggle status button, status history table
-- [ ] P3-12 User `/products` — active product listing (name, description, price, stock)
-- [ ] P3-13 Unit: create, update, setStatus (history appended, changedBy set correctly)
-- [ ] P3-14 Unit: inactive products excluded from `listActive`
+> **All decisions resolved. Ready to implement.**
+>
+> **Structure:** Menu → Section → Item (3-level hierarchy)
+> - **Menu**: `archived` flag (soft-delete); position order. Visible = not archived. Default menu = first visible menu by position. `/` redirects to default.
+> - **Section**: belongs to one menu; `archived` flag; position order within its menu
+> - **Item**: belongs to exactly one section (and transitively one menu) via `sectionId` FK; `archived` flag; fields: name, description, price, inStock (boolean), position, image
+> - To reuse an item in another section: duplicate it — each copy is independent and can have its own price/position
+>
+> **Unified store view:** Single `/store/[menuId]` page for all roles (USER/STAFF/ADMIN). Top bar lists visible menus; side nav lists sections; grid shows items. Admin controls (edit/reorder/archive) appear inline on hover—no separate admin pages.
+>
+> **Role-based visibility:**
+> - **USER**: Browse only. Stock status shown via badge.
+> - **STAFF**: Stock toggle button on each item (in/out). No other controls.
+> - **ADMIN**: Stock toggle + Edit button on each item; edit/reorder/archive controls on menus (top nav) and sections (sidebar); "+ new section" / "+ new item" buttons visible.
+>
+> **Who manages:**
+> - ADMIN: full control — menus, sections, items (create/update/archive/duplicate), stock toggle, all via inline controls in store view
+> - STAFF: stock toggle only (`inStock`) on items — cannot modify menus, sections, or item details
+>
+> **Stock:** boolean (`inStock` true/false); every change is recorded in `ItemStockHistory` (append-only, never mutated). `changedBy` always passed explicitly from session.
+> **Items:** soft-delete via `archived` flag (never hard-deleted); archived items hidden from store
+> **Out-of-stock items:** shown in store but marked as "אזל מהמלאי" (not hidden)
+
+### Database
+- [ ] P3-01 Prisma: `Menu` model — `id`, `name`, `archived`, `position`, `createdAt`, `updatedAt`, `createdBy` (visible menus = not archived; archived menus moved to end)
+- [ ] P3-02 Prisma: `Section` model — `id`, `menuId`, `name`, `archived`, `position`, `createdAt`, `updatedAt`, `createdBy` (visible sections = not archived; archived moved to end)
+- [ ] P3-03 Prisma: `Item` model — `id`, `sectionId` (FK→Section), `name`, `description?`, `price`, `inStock`, `position`, `archived`, `image?`, `createdAt`, `updatedAt`, `createdBy`
+- [ ] P3-04 Prisma: `ItemStockHistory` model — `id`, `itemId` (FK→Item), `inStock` (new value after change), `changedBy` (FK→User), `changedAt`
+- [ ] P3-05 Prisma migration
+
+### Service layer
+- [ ] P3-06 `menuService.listVisible()` — returns non-archived menus ordered by position; resolves default (first by position)
+- [ ] P3-07 `menuService.getMenuWithSections(menuId)` — returns menu + non-archived sections + non-archived items per section (user-facing)
+- [ ] P3-08 `menuService.listAll()` — ADMIN, all menus (archived + visible)
+- [ ] P3-09 `menuService.create(data, actorId)` — ADMIN; creates new menu, not archived
+- [ ] P3-10 `menuService.update(id, data, actorId)` — ADMIN; updates name only, cannot edit archived menus
+- [ ] P3-11 `menuService.archive(id, actorId)` — ADMIN; sets `archived: true`, moves to end by position
+- [ ] P3-12 `menuService.reorder(orderedIds, actorId)` — ADMIN; updates position; archived menus stay at end
+- [ ] P3-13 `sectionService.create(menuId, data, actorId)` — ADMIN; creates new section in menu, not archived
+- [ ] P3-14 `sectionService.update(id, data, actorId)` — ADMIN; updates name only, cannot edit archived sections
+- [ ] P3-15 `sectionService.archive(id, actorId)` — ADMIN; sets `archived: true`, moves to end by position
+- [ ] P3-16 `sectionService.reorder(menuId, orderedIds, actorId)` — ADMIN; updates position within menu; archived stay at end
+- [ ] P3-17 `itemService.create(sectionId, data, actorId)` — ADMIN; appends to end of section; sets initial stock history record (inStock=true)
+- [ ] P3-18 `itemService.update(id, data, actorId)` — ADMIN; updates name/desc/price/image; cannot edit archived items
+- [ ] P3-19 `itemService.archive(id, actorId)` — ADMIN; sets `archived: true`, moves to end by position
+- [ ] P3-20 `itemService.setStock(id, inStock, actorId)` — ADMIN or STAFF; atomic: `prisma.$transaction([item.update(inStock), itemStockHistory.create({itemId, inStock, changedBy: actorId, changedAt: now})])`
+- [ ] P3-21 `itemService.duplicate(id, targetSectionId, actorId)` — ADMIN; creates copy in target section at end; rejects if source archived; sets initial stock history (inStock=true)
+- [ ] P3-22 `itemService.reorder(sectionId, orderedIds, actorId)` — ADMIN; updates position; archived items stay at end
+
+### Store page (unified for all roles)
+- [ ] P3-23 `/store/[menuId]` — single view for USER/STAFF/ADMIN:
+  - **All**: menu nav bar (visible menus); section sidebar; item grid with image/name/desc/price; "אזל מהמלאי" badge on OOS items
+  - **STAFF+ADMIN**: stock toggle button on each item (במלאי ↔ אזל מהמלאי)
+  - **ADMIN only**: edit icon button next to stock button; section sidebar shows edit/reorder/archive controls on hover; menu bar shows edit/reorder/archive controls on hover; "+ new section" button in sidebar header; "+ new item" button in section heading
+
+### Admin detail pages
+- [ ] P3-24 `/admin/items/[id]` — full item editor (inline modal or page):
+  - Display: name, description, price, image, current stock status, stock history table
+  - Actions: save edits, toggle stock, archive, duplicate to section
+  - Stock history: date, new status (in/out), changed by user name/role
+
+### Redirects & nav
+- [ ] P3-25 Store nav bar — visible menus as tabs in top nav; active menu highlighted
+- [ ] P3-26 `/` redirect — resolves first visible menu by position; redirects to `/store/[menuId]`
+
+### Seed data (for testing)
+When P3 schema is implemented, seed the following test data structure:
+
+**Menu 1: פאב (Pub)** — position 1
+- **Section: בירות (Beers)** — position 1
+  - **Item: גולדסטאר** — 5 NIS, in stock, with image (https://upload.wikimedia.org/wikipedia/he/thumb/a/a8/Goldstar_beer_bottle.jpg/220px-Goldstar_beer_bottle.jpg), position 1
+  - **Item: קורונה** — 10 NIS, in stock, no image, position 2
+- **Section: קוקטליים (Cocktails)** — position 2
+  - **Item: וויסקי סאוור** — 20 NIS, in stock, no image, position 1
+
+**Menu 2: פורים (Purim)** — position 2, empty (no sections)
+
+## Phase 4 — Basket
+
+> **Decisions required before starting:**
+> - [ ] **D4-01** Cart storage: client-side (localStorage, no DB) or server-side (DB, survives refresh)?
+> - [ ] **D4-02** Max quantity per item: unlimited, or capped at current stock?
+> - [ ] **D4-03** Cart behaviour when a product goes inactive mid-session: silently drop it, or show a warning?
+
+### Implementation (tasks depend on D4-01)
+- [ ] P4-01 Cart state: implement chosen storage strategy
+- [ ] P4-02 `/store` — "הוסף לסל" button per product; quantity selector
+- [ ] P4-03 Cart icon in TopBar showing item count badge
+- [ ] P4-04 `/cart` — cart summary page: items, quantities, line totals, grand total, "לתשלום" button
+- [ ] P4-05 Add / remove / clear cart actions
 
 ---
 
-## Phase 4 — Orders
+## Phase 5 — Purchase (Orders)
 
-- [ ] P4-01 Prisma: `Order` model — `id`, `userId`, `status` (NEW/IN_PROGRESS/COMPLETED), `total`, `createdAt`, `updatedAt`
-- [ ] P4-02 Prisma: `OrderItem` model — `id`, `orderId`, `productId`, `quantity`, `unitPrice`, `subtotal`
-- [ ] P4-03 Prisma: `OrderStatusHistory` model — `id`, `orderId`, `fromStatus`, `toStatus`, `changedBy`, `changedAt`, `note?`
-- [ ] P4-04 Prisma migration
-- [ ] P4-05 `orderService.createOrder(userId, items[], actorId)` — atomic: stock check → balance check → `prisma.$transaction([walletDebit, orderInsert, itemsInsert, historyInsert])`
-- [ ] P4-06 `orderService.advanceStatus(orderId, actorId)` — STAFF/ADMIN; enforces NEW→IN_PROGRESS→COMPLETED only; appends `OrderStatusHistory`
-- [ ] P4-07 `orderService.getOrder(orderId, actorId)` — USER sees own only; STAFF/ADMIN see all
-- [ ] P4-08 `orderService.listOrders(userId?, filters?)` — USER filtered by own; STAFF/ADMIN see all
-- [ ] P4-09 User `/products` — add to cart interaction
-- [ ] P4-10 User order placement flow → confirmation page
-- [ ] P4-11 User `/orders` — own order list (status badge, total, date)
-- [ ] P4-12 User `/orders/[id]` — order detail (items, totals, status history)
-- [ ] P4-13 Staff `/staff/queue` — live queue (NEW + IN_PROGRESS), sorted by createdAt
-- [ ] P4-14 Staff `/staff/orders/[id]` — order detail + advance status button
-- [ ] P4-15 Unit: createOrder success (balance deducted, order + items + history created atomically)
-- [ ] P4-16 Unit: createOrder insufficient balance (nothing created, balance unchanged)
-- [ ] P4-17 Unit: createOrder out of stock (rejected)
-- [ ] P4-18 Unit: advanceStatus valid transitions (NEW→IN_PROGRESS, IN_PROGRESS→COMPLETED)
-- [ ] P4-19 Unit: advanceStatus invalid (COMPLETED→anything rejected)
-- [ ] P4-20 E2E: full order lifecycle (place → staff advances → completed, balance reflects deduction)
+> **Decisions required before starting:**
+> - [ ] **D5-01** Insufficient balance at checkout: block with error, or allow partial?
+> - [ ] **D5-02** Order cancellation: can a USER cancel a NEW order, or is it final once placed?
+> - [ ] **D5-03** Stock decrement: at order placement (locks stock) or at COMPLETED (after staff fulfils)?
+
+### Database
+- [ ] P5-01 Prisma: `Order` model — `id`, `userId`, `status` (NEW/IN_PROGRESS/COMPLETED), `total`, `createdAt`, `updatedAt`
+- [ ] P5-02 Prisma: `OrderItem` model — `id`, `orderId`, `productId`, `quantity`, `unitPrice`, `subtotal`
+- [ ] P5-03 Prisma: `OrderStatusHistory` model — `id`, `orderId`, `fromStatus`, `toStatus`, `changedBy`, `changedAt`
+- [ ] P5-04 Prisma migration
+
+### Service layer
+- [ ] P5-05 `orderService.createOrder(userId, items[])` — atomic: stock check → balance check → `prisma.$transaction([walletDebit, orderInsert, itemsInsert, historyInsert])`
+- [ ] P5-06 `orderService.cancelOrder(orderId, actorId)` — USER on own NEW order only (per D5-02); refunds balance atomically
+- [ ] P5-07 `orderService.advanceStatus(orderId, actorId)` — STAFF/ADMIN; NEW→IN_PROGRESS→COMPLETED; appends `OrderStatusHistory`
+- [ ] P5-08 `orderService.getOrder(orderId, actorId)` — USER sees own only; STAFF/ADMIN see all
+- [ ] P5-09 `orderService.listOrders(userId?, filters?)` — USER filtered by own; STAFF/ADMIN see all
+
+### User-facing
+- [ ] P5-10 `/cart` — "לתשלום" triggers order placement Server Action; shows balance and total before confirming
+- [ ] P5-11 Order confirmation page — success state after placement, clears cart
+- [ ] P5-12 `/orders` — own order history (status badge, total, date)
+- [ ] P5-13 `/orders/[id]` — order detail (items, totals, status history)
+
+### Staff
+- [ ] P5-14 `/staff/queue` — NEW + IN_PROGRESS orders sorted by createdAt
+- [ ] P5-15 `/staff/orders/[id]` — order detail + advance status button
+
+### Tests
+- [ ] P5-16 Unit: createOrder success (balance deducted, order + items + history created atomically)
+- [ ] P5-17 Unit: createOrder insufficient balance (nothing created, balance unchanged)
+- [ ] P5-18 Unit: createOrder out of stock (rejected)
+- [ ] P5-19 Unit: advanceStatus valid transitions
+- [ ] P5-20 Unit: advanceStatus invalid (COMPLETED→anything rejected)
+- [ ] P5-21 E2E: full order lifecycle (place → staff advances → completed, balance reflects deduction)
 
 ---
 
-## Phase 5 — Hardening & Production Readiness
+## Phase 6 — Hardening & Production Readiness
 
-- [ ] P5-01 CI pipeline: lint + type-check + unit tests + E2E on PR and merge to `main`
-- [ ] P5-02 Expand seed script: admin + 2 staff + 5 users + 10 products + sample orders
-- [ ] P5-03 DB indexes: `userId` on `WalletTransaction`, `userId+status` on `Order`, `status` on `Product`
-- [ ] P5-04 Security audit: RBAC coverage gaps, input validation, Prisma injection safety
-- [ ] P5-05 Error boundary + user-facing error message polish across all forms
-- [ ] P5-06 Full E2E suite — all 7 critical flows from testing.md
-- [ ] P5-07 Production deploy checklist + runbook
-- [ ] P5-08 Verify `make store` / `make load` round-trip on staging
+- [ ] P6-01 CI pipeline: lint + type-check + unit tests + E2E on PR and merge to `main`
+- [ ] P6-02 Expand seed script: admin + 2 staff + 5 users + 10 products + sample orders
+- [ ] P6-03 DB indexes: `userId` on `BudgetTransaction`, `userId+status` on `Order`, `status` on `Product`
+- [ ] P6-04 Security audit: RBAC coverage gaps, input validation, Prisma injection safety
+- [ ] P6-05 Error boundary + user-facing error message polish across all forms
+- [ ] P6-06 Full E2E suite — all critical flows
+- [ ] P6-07 Production deploy checklist + runbook
+- [ ] P6-08 Verify `make store` / `make load` round-trip on staging

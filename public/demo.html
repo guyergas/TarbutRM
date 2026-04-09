@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TarbutRM – P3 Unified Store</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f9fafb; color: #111827; font-family: Arial, Helvetica, sans-serif; font-size: 14px; }
+
+    /* Demo role bar */
+    .demo-bar { background: #1e1b4b; color: #c7d2fe; padding: 10px 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; position: sticky; top: 0; z-index: 200; }
+    .demo-label { color: #818cf8; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 4px; }
+    .role-btn { padding: 5px 12px; border-radius: 6px; border: 1px solid #4338ca; background: transparent; color: #c7d2fe; cursor: pointer; font-size: 12px; font-family: Arial; }
+    .role-btn:hover { background: #312e81; }
+    .role-btn.active { background: #4338ca; color: #fff; border-color: #6366f1; }
+
+    /* TopBar */
+    .topbar { background: #fff; border-bottom: 1px solid #e5e7eb; position: sticky; top: 43px; z-index: 50; }
+    .topbar-inner { max-width: 900px; margin: 0 auto; padding: 0 16px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar-icons { display: flex; align-items: center; gap: 16px; }
+    .icon-btn { display: flex; align-items: center; background: none; border: none; cursor: pointer; padding: 4px; color: #374151; }
+
+    /* Menu nav bar */
+    .menu-nav-bar { background: #fff; border-bottom: 1px solid #e5e7eb; position: sticky; top: 99px; z-index: 49; }
+    .menu-nav-inner { max-width: 900px; margin: 0 auto; padding: 0 16px; display: flex; }
+    .menu-tab { padding: 14px 18px; font-size: 14px; font-weight: 500; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+    .menu-tab.active { color: #111827; border-bottom-color: #111827; font-weight: 600; }
+    .menu-header { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .admin-menu-controls { display: none; gap: 2px; }
+    .admin-menu-controls.visible { display: flex; }
+
+    /* Page wrapper */
+    .page-content { max-width: 900px; margin: 0 auto; padding: 28px 16px; }
+    .store-layout { display: flex; gap: 20px; align-items: flex-start; }
+
+    /* Section nav */
+    .section-nav { width: 200px; flex-shrink: 0; background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+    .section-nav-hdr { padding: 11px 14px; font-size: 11px; font-weight: 600; color: #9ca3af; letter-spacing: 0.4px; border-bottom: 1px solid #f3f4f6; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+    .sec-item { padding: 10px 14px; font-size: 14px; color: #374151; cursor: pointer; border-bottom: 1px solid #f9fafb; display: flex; align-items: center; }
+    .sec-item:last-child { border-bottom: none; }
+    .sec-item:hover { background: #f9fafb; }
+    .sec-item.active { background: #eff6ff; color: #1d4ed8; font-weight: 600; }
+    .sec-name { flex: 1; }
+    .sec-controls { display: none; gap: 2px; }
+    .sec-controls.visible { display: flex; }
+
+    /* Icon action buttons */
+    .act { width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #9ca3af; flex-shrink: 0; }
+    .act:hover { background: #f3f4f6; color: #374151; }
+    .act:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
+    .act.danger:hover { background: #fee2e2; color: #dc2626; }
+    .act.add:hover { background: #eff6ff; color: #4f46e5; }
+
+    /* Items area */
+    .items-area { flex: 1; min-width: 0; }
+    .items-area-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .section-heading { font-size: 16px; font-weight: 700; color: #111827; }
+
+    /* Item cards */
+    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
+    .item-card { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; position: relative; transition: opacity 0.2s; }
+    .item-card.oos { opacity: 0.72; }
+    .admin-stock-row { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f3f4f6; }
+    .admin-stock-row.visible { display: block; }
+    .item-img { height: 100px; display: flex; align-items: center; justify-content: center; font-size: 38px; }
+    .item-body { padding: 10px 12px 12px; }
+    .item-name { font-weight: 600; font-size: 13px; color: #111827; margin-bottom: 3px; line-height: 1.3; }
+    .item-desc { font-size: 12px; color: #9ca3af; margin-bottom: 8px; line-height: 1.35; min-height: 17px; }
+    .item-price { font-size: 15px; font-weight: 700; color: #111827; }
+    .item-price-cur { font-size: 12px; font-weight: 500; color: #6b7280; }
+
+    /* OOS badge */
+    .oos-badge { display: none; position: absolute; top: 8px; right: 8px; background: #fee2e2; color: #991b1b; font-size: 11px; font-weight: 700; padding: 3px 7px; border-radius: 10px; white-space: nowrap; }
+    .item-card.oos .oos-badge { display: block; }
+
+    /* Stock row (staff + admin) - same UI for both */
+    .staff-stock-row { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f3f4f6; }
+    .staff-stock-row.visible { display: flex; }
+    .admin-edit-btn { display: none; }
+    .admin-edit-btn.visible { display: flex; }
+    .stock-pill { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: Arial; width: 100%; text-align: center; }
+    .stock-in  { background: #dcfce7; color: #166534; }
+    .stock-out { background: #fee2e2; color: #991b1b; }
+
+    /* Shared styles */
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .badge-green { background: #dcfce7; color: #166534; }
+
+    .btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: Arial; line-height: 1; }
+    .btn-primary { background: #4f46e5; color: #fff; }
+    .btn-primary:hover { background: #4338ca; }
+    .btn-sm { padding: 5px 11px; font-size: 12px; }
+    .btn-add { display: none; }
+    .btn-add.visible { display: inline-block; }
+  </style>
+</head>
+<body>
+
+<!-- Demo role bar -->
+<div class="demo-bar">
+  <span class="demo-label">P3 Store</span>
+  <button class="role-btn active" onclick="setRole('user', this)">לקוח</button>
+  <button class="role-btn" onclick="setRole('staff', this)">צוות</button>
+  <button class="role-btn" onclick="setRole('admin', this)">מנהל</button>
+</div>
+
+<!-- TopBar -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <button class="icon-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#374151"><path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"/><path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"/></svg></button>
+    <div class="topbar-icons"><button class="icon-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#374151"><path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"/></svg></button><button class="icon-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#374151" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button></div>
+  </div>
+</div>
+
+<!-- Menu nav bar with admin controls -->
+<div class="menu-nav-bar">
+  <div class="menu-nav-inner">
+    <div class="menu-header">
+      <div class="menu-tab active" onclick="switchMenu('writing', this)">ציוד לימודי</div>
+      <div class="menu-tab" onclick="switchMenu('uniforms', this)">מדים</div>
+      <div class="admin-menu-controls">
+        <button class="act" title="ערוך"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="act" title="הזז מעלה" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+        <button class="act" title="הזז מטה"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button class="act danger" title="העבר לארכיון"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Page content -->
+<div class="page-content">
+  <div class="store-layout">
+    <!-- Section nav -->
+    <div class="section-nav">
+      <div class="section-nav-hdr">
+        <span>קטגוריות</span>
+        <button class="act add" title="קטגוריה חדשה" style="width:24px;height:24px;" onclick="addSection()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      </div>
+      <div class="sec-item active" onclick="switchSection('writing', this)">
+        <span class="sec-name">כתיבה</span>
+        <div class="sec-controls">
+          <button class="act" title="ערוך שם"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="act" title="הזז מעלה" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+          <button class="act" title="הזז מטה"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <button class="act danger" title="העבר לארכיון"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="sec-item" onclick="switchSection('paper', this)">
+        <span class="sec-name">ניירת</span>
+        <div class="sec-controls">
+          <button class="act" title="ערוך שם"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="act" title="הזז מעלה"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+          <button class="act" title="הזז מטה"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <button class="act danger" title="העבר לארכיון"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="sec-item" onclick="switchSection('bags', this)">
+        <span class="sec-name">תיקים</span>
+        <div class="sec-controls">
+          <button class="act" title="ערוך שם"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="act" title="הזז מעלה"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+          <button class="act" title="הזז מטה" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <button class="act danger" title="העבר לארכיון"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="sec-item" id="uniforms-shirts" style="display:none;" onclick="switchSection('shirts', this)">
+        <span class="sec-name">חולצות</span>
+        <div class="sec-controls">
+          <button class="act" title="ערוך שם"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="act" title="הזז מעלה"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+          <button class="act" title="הזז מטה" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <button class="act danger" title="העבר לארכיון"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items area -->
+    <div class="items-area">
+      <div class="items-area-hdr">
+        <div class="section-heading" id="section-title">כתיבה</div>
+        <button class="btn btn-primary btn-sm btn-add" onclick="addItem()">+ פריט חדש</button>
+      </div>
+
+      <!-- כתיבה section -->
+      <div class="items-grid" id="ig-writing">
+        <!-- עט כדורי שחור - in stock -->
+        <div class="item-card">
+          <div class="oos-badge">אזל מהמלאי</div>
+          <div class="item-img" style="background:#dbeafe;">✏️</div>
+          <div class="item-body">
+            <div class="item-name">עט כדורי שחור</div>
+            <div class="item-desc">דיו כדורי סטנדרטי</div>
+            <div class="item-price">4.90 <span class="item-price-cur">₪</span></div>
+            <div class="staff-stock-row" style="display:flex;gap:6px;align-items:center;">
+              <button class="stock-pill stock-in" onclick="toggleStockCard(this)" style="flex:1;">במלאי</button>
+              <button class="act admin-edit-btn" title="ערוך פריט" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- עט ג׳ל כחול - in stock -->
+        <div class="item-card">
+          <div class="oos-badge">אזל מהמלאי</div>
+          <div class="item-img" style="background:#dbeafe;">🖊️</div>
+          <div class="item-body">
+            <div class="item-name">עט ג׳ל כחול</div>
+            <div class="item-desc">ג׳ל חלק לכתיבה</div>
+            <div class="item-price">5.50 <span class="item-price-cur">₪</span></div>
+            <div class="staff-stock-row" style="display:flex;gap:6px;align-items:center;">
+              <button class="stock-pill stock-in" onclick="toggleStockCard(this)" style="flex:1;">במלאי</button>
+              <button class="act admin-edit-btn" title="ערוך פריט" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- עפרון 2B - out of stock -->
+        <div class="item-card oos">
+          <div class="oos-badge">אזל מהמלאי</div>
+          <div class="item-img" style="background:#fef9c3;">✏️</div>
+          <div class="item-body">
+            <div class="item-name">עפרון 2B</div>
+            <div class="item-desc">רך, לציור</div>
+            <div class="item-price">3.50 <span class="item-price-cur">₪</span></div>
+            <div class="staff-stock-row" style="display:flex;gap:6px;align-items:center;">
+              <button class="stock-pill stock-out" onclick="toggleStockCard(this)">אזל מהמלאי</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- מחק לבן - in stock -->
+        <div class="item-card">
+          <div class="oos-badge">אזל מהמלאי</div>
+          <div class="item-img" style="background:#f0fdf4;">🔲</div>
+          <div class="item-body">
+            <div class="item-name">מחק לבן</div>
+            <div class="item-desc">למחיקה נקייה</div>
+            <div class="item-price">5.50 <span class="item-price-cur">₪</span></div>
+            <div class="staff-stock-row" style="display:flex;gap:6px;align-items:center;">
+              <button class="stock-pill stock-in" onclick="toggleStockCard(this)" style="flex:1;">במלאי</button>
+              <button class="act admin-edit-btn" title="ערוך פריט" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- סרגל 30 ס״מ - out of stock -->
+        <div class="item-card oos">
+          <div class="oos-badge">אזל מהמלאי</div>
+          <div class="item-img" style="background:#f5f3ff;">📏</div>
+          <div class="item-body">
+            <div class="item-name">סרגל 30 ס״מ</div>
+            <div class="item-desc">פלסטיק שקוף</div>
+            <div class="item-price">8.00 <span class="item-price-cur">₪</span></div>
+            <div class="staff-stock-row" style="display:flex;gap:6px;align-items:center;">
+              <button class="stock-pill stock-out" onclick="toggleStockCard(this)">אזל מהמלאי</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ניירת section (hidden by default) -->
+      <div class="items-grid" id="ig-paper" style="display:none;">
+        <div class="item-card">
+          <div class="oos-badge">אזל מהמלאי</div>
+          <div class="item-img" style="background:#fef9c3;">📓</div>
+          <div class="item-body">
+            <div class="item-name">מחברת 80 דפים</div>
+            <div class="item-desc">A4, שורות</div>
+            <div class="item-price">12.00 <span class="item-price-cur">₪</span></div>
+            <div class="staff-stock-row" style="display:flex;gap:6px;align-items:center;">
+              <button class="stock-pill stock-in" onclick="toggleStockCard(this)" style="flex:1;">במלאי</button>
+              <button class="act admin-edit-btn" title="ערוך פריט" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- תיקים section (hidden by default) -->
+      <div class="items-grid" id="ig-bags" style="display:none;">
+        <div class="item-card">
+          <div class="oos-badge">אזל מהמלאי</div>
+          <div class="item-img" style="background:#fef2f2;">🎒</div>
+          <div class="item-body">
+            <div class="item-name">תיק גב 20 ל׳</div>
+            <div class="item-desc">בד עמיד, כחול</div>
+            <div class="item-price">89.00 <span class="item-price-cur">₪</span></div>
+            <div class="staff-stock-row" style="display:flex;gap:6px;align-items:center;">
+              <button class="stock-pill stock-in" onclick="toggleStockCard(this)" style="flex:1;">במלאי</button>
+              <button class="act admin-edit-btn" title="ערוך פריט" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- חולצות section (uniforms menu) (hidden by default) -->
+      <div class="items-grid" id="ig-shirts" style="display:none;">
+        <div class="item-card">
+          <div class="oos-badge">אזל מהמלאי</div>
+          <div class="item-img" style="background:#f0fdf4;">👕</div>
+          <div class="item-body">
+            <div class="item-name">חולצת בית ספר</div>
+            <div class="item-desc">כחול, מידות XS–XL</div>
+            <div class="item-price">45.00 <span class="item-price-cur">₪</span></div>
+            <div class="staff-stock-row" style="display:flex;gap:6px;align-items:center;">
+              <button class="stock-pill stock-in" onclick="toggleStockCard(this)" style="flex:1;">במלאי</button>
+              <button class="act admin-edit-btn" title="ערוך פריט" style="width:28px;height:28px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentRole = 'user';
+
+  // Set role and show/hide controls
+  function setRole(role, btn) {
+    currentRole = role;
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const isAdmin = role === 'admin';
+    const isStaff = role === 'staff';
+    const isUser = role === 'user';
+
+    // Menu/section admin controls
+    document.querySelectorAll('.admin-menu-controls').forEach(el => {
+      el.classList.toggle('visible', isAdmin);
+    });
+    document.querySelectorAll('.sec-controls').forEach(el => {
+      el.classList.toggle('visible', isAdmin);
+    });
+    document.querySelectorAll('.btn-add').forEach(el => {
+      el.classList.toggle('visible', isAdmin);
+    });
+
+    // Stock controls on items (both staff and admin see it)
+    const showStockRow = isStaff || isAdmin;
+    document.querySelectorAll('.staff-stock-row').forEach(el => {
+      el.classList.toggle('visible', showStockRow);
+    });
+
+    // Edit button (admin only)
+    document.querySelectorAll('.admin-edit-btn').forEach(el => {
+      el.classList.toggle('visible', isAdmin);
+    });
+  }
+
+  // Menu switching
+  function switchMenu(menu, tab) {
+    document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    if (menu === 'uniforms') {
+      // Hide main sections
+      ['writing','paper','bags'].forEach(s => document.getElementById('ig-'+s).style.display = 'none');
+      // Show uniforms shirt section
+      document.getElementById('ig-shirts').style.display = 'grid';
+      // Update section nav
+      document.querySelectorAll('.sec-item').forEach(s => s.style.display = 'none');
+      document.getElementById('uniforms-shirts').style.display = 'flex';
+      document.getElementById('uniforms-shirts').classList.add('active');
+      document.getElementById('section-title').textContent = 'חולצות';
+    } else {
+      // Show main sections
+      document.getElementById('ig-shirts').style.display = 'none';
+      document.getElementById('ig-writing').style.display = 'grid';
+      ['paper','bags'].forEach(s => document.getElementById('ig-'+s).style.display = 'none');
+      // Update section nav
+      document.querySelectorAll('.sec-item').forEach(s => s.style.display = 'flex');
+      document.getElementById('uniforms-shirts').style.display = 'none';
+      document.querySelectorAll('.sec-item:not(#uniforms-shirts)').forEach(s => s.classList.remove('active'));
+      document.querySelector('.sec-item:not(#uniforms-shirts)').classList.add('active');
+      document.getElementById('section-title').textContent = 'כתיבה';
+    }
+  }
+
+  // Section switching
+  function switchSection(section, el) {
+    document.querySelectorAll('.sec-item').forEach(s => s.classList.remove('active'));
+    el.closest('.sec-item').classList.add('active');
+
+    const secNames = { writing: 'כתיבה', paper: 'ניירת', bags: 'תיקים', shirts: 'חולצות' };
+    ['writing','paper','bags','shirts'].forEach(s => document.getElementById('ig-'+s).style.display = s===section ? 'grid' : 'none');
+    document.getElementById('section-title').textContent = secNames[section];
+  }
+
+  // Stock toggle (admin view)
+  function toggleAdminStock(btn) {
+    const isIn = btn.title.includes('במלאי');
+    btn.title = isIn ? 'אזל מהמלאי — לחץ לשינוי' : 'במלאי — לחץ לשינוי';
+    btn.innerHTML = isIn ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/></svg>';
+    btn.closest('.item-card').classList.toggle('oos', isIn);
+  }
+
+  // Stock toggle (staff + admin)
+  function toggleStockCard(btn) {
+    const isIn = btn.classList.contains('stock-in');
+    btn.classList.toggle('stock-in', !isIn);
+    btn.classList.toggle('stock-out', isIn);
+    btn.textContent = isIn ? 'אזל מהמלאי' : 'במלאי';
+    btn.closest('.item-card').classList.toggle('oos', isIn);
+  }
+
+  function addItem() {
+    alert('הוסף פריט חדש');
+  }
+
+  function addSection() {
+    alert('הוסף קטגוריה חדשה');
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    setRole('user', document.querySelector('.role-btn.active'));
+  });
+</script>
+
+</body>
+</html>

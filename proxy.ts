@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Auth.js session cookie names
 const SESSION_COOKIE =
   process.env.NODE_ENV === "production"
     ? "__Secure-authjs.session-token"
     : "authjs.session-token";
 
-const PUBLIC_PATHS = ["/login"];
-const PUBLIC_PREFIXES = ["/api/auth/", "/api/health"];
+const PUBLIC_PATHS = ["/login", "/register", "/reset-password", "/contactus"];
+const PUBLIC_PREFIXES = ["/api/auth/", "/api/health", "/api/register"];
 
 function isPublic(pathname: string): boolean {
   return (
@@ -18,7 +17,7 @@ function isPublic(pathname: string): boolean {
 }
 
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   if (isPublic(pathname)) return NextResponse.next();
 
@@ -30,8 +29,23 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Role-based checks are enforced in server components via auth()
-  // The proxy only handles the fast "is authenticated?" redirect
+  // If "no remember me" was chosen, re-set the session cookie without Expires
+  // so it becomes a session cookie that clears when the browser closes.
+  if (searchParams.get("_rm") === "0") {
+    const sessionValue = request.cookies.get(SESSION_COOKIE)!.value;
+    const cleanUrl = new URL(request.url);
+    cleanUrl.searchParams.delete("_rm");
+    const res = NextResponse.redirect(cleanUrl);
+    res.cookies.set(SESSION_COOKIE, sessionValue, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+      // No maxAge/expires → session cookie
+    });
+    return res;
+  }
+
   return NextResponse.next();
 }
 

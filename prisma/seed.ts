@@ -25,15 +25,18 @@ async function main() {
 
   const user = await prisma.user.create({
     data: {
-      name: "Admin",
+      firstName: "מנהל",
+      lastName: "ראשי",
       email,
       passwordHash,
       role: Role.ADMIN,
+      city: "רמות מנשה",
       active: true,
     },
   });
 
   console.log(`Created admin user: ${user.email} (id: ${user.id})`);
+  console.log("TODO: Add P3 test data seed when schema is implemented (see backlog.md)";
 }
 
 main()

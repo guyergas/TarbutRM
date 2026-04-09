@@ -14,17 +14,96 @@ enum Role {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  name         String
-  email        String    @unique
-  passwordHash String
-  role         Role      @default(USER)
-  balance      Decimal   @default(0) @db.Decimal(10, 2)
-  active       Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  createdBy    String? // userId of the ADMIN who created this account
-  sessions     Session[]
+  id                   String                @id @default(cuid())
+  firstName            String
+  lastName             String
+  email                String                @unique
+  passwordHash         String
+  role                 Role                  @default(USER)
+  balance              Decimal               @default(0) @db.Decimal(10, 2)
+  active               Boolean               @default(true)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  phone                String?
+  city                 String
+  street               String?
+  createdBy            String?
+  sessions             Session[]
+  menus                Menu[]                @relation("MenuCreatedBy")
+  sections             Section[]             @relation("SectionCreatedBy")
+  items                Item[]                @relation("ItemCreatedBy")
+  stockHistoryChanges  ItemStockHistory[]    @relation("StockChangedBy")
+}
+
+model BudgetTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Decimal  @db.Decimal(10, 2)
+  note      String?
+  createdBy String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Menu {
+  id        String    @id @default(cuid())
+  name      String
+  archived  Boolean   @default(false)
+  position  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  createdBy String
+  creator   User      @relation("MenuCreatedBy", fields: [createdBy], references: [id])
+  sections  Section[]
+}
+
+model Section {
+  id        String   @id @default(cuid())
+  menuId    String
+  menu      Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  name      String
+  archived  Boolean  @default(false)
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String
+  creator   User     @relation("SectionCreatedBy", fields: [createdBy], references: [id])
+  items     Item[]
+
+  @@index([menuId])
+}
+
+model Item {
+  id          String          @id @default(cuid())
+  sectionId   String
+  section     Section         @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  price       Decimal         @db.Decimal(10, 2)
+  inStock     Boolean         @default(true)
+  position    Int
+  archived    Boolean         @default(false)
+  image       String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  createdBy   String
+  creator     User            @relation("ItemCreatedBy", fields: [createdBy], references: [id])
+  stockHistory ItemStockHistory[]
+
+  @@index([sectionId])
+}
+
+model ItemStockHistory {
+  id        String   @id @default(cuid())
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  inStock   Boolean
+  changedBy String
+  changer   User     @relation("StockChangedBy", fields: [changedBy], references: [id])
+  changedAt DateTime @default(now())
+
+  @@index([itemId])
 }
 
 // Auth.js required tables (managed by Prisma adapter)

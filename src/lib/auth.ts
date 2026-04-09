@@ -1,6 +1,5 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@/generated/prisma/client";
@@ -17,10 +16,16 @@ declare module "next-auth" {
   }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    role: Role;
+  }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  adapter: PrismaAdapter(prisma as any) as any,
-  session: { strategy: "database" },
+  trustHost: true,
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 }, // 30 days
   providers: [
     Credentials({
       credentials: {
@@ -28,7 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const email = credentials?.email as string | undefined;
+        const email = (credentials?.email as string | undefined)?.trim().toLowerCase();
         const password = credentials?.password as string | undefined;
         if (!email || !password) return null;
 
@@ -38,14 +43,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) return null;
 
-        return { id: user.id, name: user.name, email: user.email, role: user.role };
+        return { id: user.id, name: `${user.firstName} ${user.lastName}`.trim(), email: user.email, role: user.role };
       },
     }),
   ],
   callbacks: {
-    session({ session, user }) {
-      session.user.id = user.id;
-      (session.user as { role: Role }).role = (user as { role: Role }).role;
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id as string;
+        token.role = user.role;
+      }
+      return token;
+    },
+    session({ session, token }) {
+      session.user.id = token.id;
+      session.user.role = token.role;
       return session;
     },
   },
