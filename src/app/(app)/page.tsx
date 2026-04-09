@@ -1,16 +1,16 @@
-import { PrismaClient } from "@prisma/client";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { menuService } from "@/modules/store";
 
 export const metadata = { title: "בית — TarbutRM" };
 
-const prisma = new PrismaClient();
-
 export default async function HomePage() {
+  const session = await auth();
+  if (!session) redirect("/login");
+
   // Find first visible menu by position
-  const defaultMenu = await prisma.menu.findFirst({
-    where: { archived: false },
-    orderBy: { position: "asc" },
-  });
+  const menus = await menuService.listVisible();
+  const defaultMenu = menus[0];
 
   if (defaultMenu) {
     redirect(`/store/${defaultMenu.id}`);

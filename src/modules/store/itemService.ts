@@ -1,6 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+let prisma: PrismaClient | null = null;
+
+function getPrisma() {
+  if (!prisma) {
+    prisma = new PrismaClient();
+  }
+  return prisma;
+}
 
 /**
  * P3-17: Create new item in section - ADMIN only
@@ -18,20 +25,20 @@ export async function create(
   actorId: string
 ) {
   // Verify section exists
-  const section = await prisma.section.findUnique({ where: { id: sectionId } });
+  const section = await getPrisma().section.findUnique({ where: { id: sectionId } });
   if (!section) {
     throw new Error(`Section ${sectionId} not found`);
   }
 
   // Get next position if not provided
-  const maxPosition = await prisma.item.aggregate({
+  const maxPosition = await getPrisma().item.aggregate({
     _max: { position: true },
     where: { sectionId },
   });
   const position = data.position ?? ((maxPosition._max.position ?? 0) + 1);
 
   // Create item and initial stock history atomically
-  return prisma.$transaction(async (tx) => {
+  return getPrisma().$transaction(async (tx) => {
     const item = await tx.item.create({
       data: {
         sectionId,
@@ -73,7 +80,7 @@ export async function update(
   },
   actorId: string
 ) {
-  const item = await prisma.item.findUnique({ where: { id } });
+  const item = await getPrisma().item.findUnique({ where: { id } });
   if (!item) {
     throw new Error(`Item ${id} not found`);
   }
@@ -81,7 +88,7 @@ export async function update(
     throw new Error(`Cannot update archived item ${id}`);
   }
 
-  return prisma.item.update({
+  return getPrisma().item.update({
     where: { id },
     data: {
       name: data.name ?? item.name,
@@ -97,19 +104,19 @@ export async function update(
  * P3-19: Archive item (sets archived: true, moves to end by position)
  */
 export async function archive(id: string, actorId: string) {
-  const item = await prisma.item.findUnique({ where: { id } });
+  const item = await getPrisma().item.findUnique({ where: { id } });
   if (!item) {
     throw new Error(`Item ${id} not found`);
   }
 
   // Get current max position for archived items in same section
-  const maxArchivedPosition = await prisma.item.aggregate({
+  const maxArchivedPosition = await getPrisma().item.aggregate({
     _max: { position: true },
     where: { sectionId: item.sectionId, archived: true },
   });
   const newPosition = (maxArchivedPosition._max.position ?? 0) + 1;
 
-  return prisma.item.update({
+  return getPrisma().item.update({
     where: { id },
     data: { archived: true, position: newPosition, updatedAt: new Date() },
   });
@@ -124,12 +131,12 @@ export async function setStock(
   inStock: boolean,
   actorId: string
 ) {
-  const item = await prisma.item.findUnique({ where: { id } });
+  const item = await getPrisma().item.findUnique({ where: { id } });
   if (!item) {
     throw new Error(`Item ${id} not found`);
   }
 
-  return prisma.$transaction(async (tx) => {
+  return getPrisma().$transaction(async (tx) => {
     // Update item stock
     const updated = await tx.item.update({
       where: { id },
@@ -159,7 +166,7 @@ export async function duplicate(
   targetSectionId: string,
   actorId: string
 ) {
-  const source = await prisma.item.findUnique({ where: { id } });
+  const source = await getPrisma().item.findUnique({ where: { id } });
   if (!source) {
     throw new Error(`Item ${id} not found`);
   }
@@ -168,7 +175,7 @@ export async function duplicate(
   }
 
   // Verify target section exists
-  const targetSection = await prisma.section.findUnique({
+  const targetSection = await getPrisma().section.findUnique({
     where: { id: targetSectionId },
   });
   if (!targetSection) {
@@ -176,14 +183,14 @@ export async function duplicate(
   }
 
   // Get next position in target section
-  const maxPosition = await prisma.item.aggregate({
+  const maxPosition = await getPrisma().item.aggregate({
     _max: { position: true },
     where: { sectionId: targetSectionId },
   });
   const position = (maxPosition._max.position ?? 0) + 1;
 
   // Create duplicate and initial stock history atomically
-  return prisma.$transaction(async (tx) => {
+  return getPrisma().$transaction(async (tx) => {
     const duplicate = await tx.item.create({
       data: {
         sectionId: targetSectionId,
@@ -221,7 +228,7 @@ export async function reorder(
   orderedIds: string[],
   actorId: string
 ) {
-  const items = await prisma.item.findMany({
+  const items = await getPrisma().item.findMany({
     where: { sectionId, id: { in: orderedIds } },
   });
 
@@ -235,11 +242,11 @@ export async function reorder(
   ];
 
   const updates = sorted.map((item, idx) =>
-    prisma.item.update({
+    getPrisma().item.update({
       where: { id: item.id },
       data: { position: idx, updatedAt: new Date() },
     })
   );
 
-  return prisma.$transaction(updates);
+  return getPrisma().$transaction(updates);
 }

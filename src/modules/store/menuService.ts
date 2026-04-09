@@ -1,12 +1,19 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+let prisma: PrismaClient | null = null;
+
+function getPrisma() {
+  if (!prisma) {
+    prisma = new PrismaClient();
+  }
+  return prisma;
+}
 
 /**
  * P3-06: List visible (non-archived) menus ordered by position
  */
 export async function listVisible() {
-  return prisma.menu.findMany({
+  return getPrisma().menu.findMany({
     where: { archived: false },
     orderBy: { position: "asc" },
     include: { sections: { where: { archived: false }, orderBy: { position: "asc" } } },

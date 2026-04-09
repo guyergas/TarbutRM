@@ -1,9 +1,11 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { PrismaClient } from "@prisma/client";
 import ItemEditor from "./ItemEditor";
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasource: { url: process.env.DATABASE_URL },
+});
 
 export default async function ItemDetailPage({ params }: { params: { id: string } }) {
   const session = await auth();
@@ -34,6 +36,8 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
     orderBy: [{ menu: { position: "asc" } }, { position: "asc" }],
     include: { menu: true },
   });
+
+  await prisma.$disconnect();
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px" }}>

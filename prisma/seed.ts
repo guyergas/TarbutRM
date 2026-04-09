@@ -15,30 +15,35 @@ async function main() {
     throw new Error("SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must be set");
   }
 
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) {
-    console.log(`Admin user ${email} already exists — skipping seed.`);
-    return;
+  // Get or create admin user
+  let user = await prisma.user.findUnique({ where: { email } });
+  if (!user) {
+    const passwordHash = await bcrypt.hash(password, 12);
+    user = await prisma.user.create({
+      data: {
+        firstName: "מנהל",
+        lastName: "ראשי",
+        email,
+        passwordHash,
+        role: Role.ADMIN,
+        city: "רמות מנשה",
+        active: true,
+      },
+    });
+    console.log(`Created admin user: ${user.email} (id: ${user.id})`);
+  } else {
+    console.log(`Admin user ${email} already exists.`);
   }
-
-  const passwordHash = await bcrypt.hash(password, 12);
-
-  const user = await prisma.user.create({
-    data: {
-      firstName: "מנהל",
-      lastName: "ראשי",
-      email,
-      passwordHash,
-      role: Role.ADMIN,
-      city: "רמות מנשה",
-      active: true,
-    },
-  });
-
-  console.log(`Created admin user: ${user.email} (id: ${user.id})`);
 
   // Phase 3: Create test store structure
   console.log("Seeding Phase 3 test data...");
+
+  // Check if store data already exists
+  const existingMenuCount = await prisma.menu.count();
+  if (existingMenuCount > 0) {
+    console.log("Store data already seeded, skipping...");
+    return;
+  }
 
   // Menu 1: פאב (Pub)
   const pubMenu = await prisma.menu.create({

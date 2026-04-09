@@ -1,9 +1,7 @@
 import { auth } from "@/lib/auth";
-import { PrismaClient } from "@prisma/client";
 import StoreView from "./StoreView";
 import { redirect } from "next/navigation";
-
-const prisma = new PrismaClient();
+import { menuService } from "@/modules/store";
 
 export default async function StorePage({ params }: { params: { menuId: string } }) {
   const session = await auth();
@@ -12,37 +10,14 @@ export default async function StorePage({ params }: { params: { menuId: string }
   }
 
   // Fetch menu with sections and items
-  const menu = await prisma.menu.findUnique({
-    where: { id: params.menuId },
-    include: {
-      sections: {
-        where: { archived: false },
-        orderBy: { position: "asc" },
-        include: {
-          items: {
-            where: { archived: false },
-            orderBy: { position: "asc" },
-            include: {
-              stockHistory: {
-                orderBy: { changedAt: "desc" },
-                take: 1,
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  const menu = await menuService.getMenuWithSections(params.menuId);
 
   if (!menu) {
     redirect("/");
   }
 
   // Fetch all visible menus for nav
-  const allMenus = await prisma.menu.findMany({
-    where: { archived: false },
-    orderBy: { position: "asc" },
-  });
+  const allMenus = await menuService.listVisible();
 
   return (
     <StoreView
