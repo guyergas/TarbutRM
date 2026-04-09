@@ -18,10 +18,6 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
       section: {
         include: { menu: true },
       },
-      stockHistory: {
-        orderBy: { changedAt: "desc" },
-        include: { changer: true },
-      },
     },
   });
 
@@ -29,49 +25,61 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
     redirect("/");
   }
 
-  // Fetch all sections for duplicate dropdown
-  const sections = await prisma.section.findMany({
-    where: { archived: false },
-    orderBy: [{ menu: { position: "asc" } }, { position: "asc" }],
-    include: { menu: true },
-  });
-
   // Serialize Decimal to string for client component
   const serializedItem = {
     ...item,
     price: item.price.toString(),
+    description: item.description || undefined,
+    image: item.image || undefined,
   };
 
-  const serializedStockHistory = item.stockHistory.map((h) => ({
-    ...h,
-    changedAt: h.changedAt.toISOString(),
-  }));
+  const serializedSection = {
+    ...item.section,
+    menu: {
+      id: item.section.menu.id,
+      name: item.section.menu.name,
+    },
+  };
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-        <a
-          href={`/store/${item.section.menuId}`}
-          style={{
-            color: "#3b82f6",
-            textDecoration: "none",
-            fontSize: 14,
-          }}
-        >
-          ← חזור
-        </a>
-        <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+        padding: "16px",
+      }}
+    >
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 8,
+          padding: 24,
+          maxWidth: 600,
+          width: "100%",
+          maxHeight: "90vh",
+          overflowY: "auto",
+        }}
+      >
+        <h1 style={{ margin: "0 0 24px 0", fontSize: 28, fontWeight: 700, color: "#1f2937" }}>
           עריכת מוצר
         </h1>
-      </div>
 
-      <ItemEditor
-        item={serializedItem}
-        section={item.section}
-        stockHistory={serializedStockHistory}
-        sections={sections}
-        userId={session.user.id}
-      />
+        <ItemEditor
+          item={serializedItem}
+          section={serializedSection}
+          userId={session.user.id}
+          onClose={() => {
+            if (typeof window !== 'undefined') {
+              window.history.back();
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }
