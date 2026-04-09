@@ -7,7 +7,7 @@ interface Item {
   id: string;
   name: string;
   description?: string;
-  price: number;
+  price: string | number;
   inStock: boolean;
   image?: string;
   archived: boolean;
@@ -23,7 +23,7 @@ interface Section {
 interface StockHistory {
   id: string;
   inStock: boolean;
-  changedAt: Date;
+  changedAt: string | Date;
   changer: { firstName: string; lastName: string; role: string };
 }
 
@@ -404,10 +404,10 @@ export default function ItemEditor({
                     </span>
                   </td>
                   <td style={{ padding: 8 }}>
-                    {new Date(record.changedAt).toLocaleDateString("he-IL")}
+                    {new Date(typeof record.changedAt === 'string' ? record.changedAt : record.changedAt.toISOString()).toLocaleDateString("he-IL")}
                     <br />
                     <span style={{ color: "#6b7280", fontSize: 12 }}>
-                      {new Date(record.changedAt).toLocaleTimeString("he-IL")}
+                      {new Date(typeof record.changedAt === 'string' ? record.changedAt : record.changedAt.toISOString()).toLocaleTimeString("he-IL")}
                     </span>
                   </td>
                 </tr>

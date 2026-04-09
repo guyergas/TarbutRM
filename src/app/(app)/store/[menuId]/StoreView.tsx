@@ -8,7 +8,7 @@ interface Item {
   id: string;
   name: string;
   description?: string;
-  price: number;
+  price: string | number;
   inStock: boolean;
   position: number;
   archived: boolean;

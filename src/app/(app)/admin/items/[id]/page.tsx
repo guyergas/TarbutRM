@@ -36,6 +36,17 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
     include: { menu: true },
   });
 
+  // Serialize Decimal to string for client component
+  const serializedItem = {
+    ...item,
+    price: item.price.toString(),
+  };
+
+  const serializedStockHistory = item.stockHistory.map((h) => ({
+    ...h,
+    changedAt: h.changedAt.toISOString(),
+  }));
+
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
@@ -55,9 +66,9 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
       </div>
 
       <ItemEditor
-        item={item}
+        item={serializedItem}
         section={item.section}
-        stockHistory={item.stockHistory}
+        stockHistory={serializedStockHistory}
         sections={sections}
         userId={session.user.id}
       />

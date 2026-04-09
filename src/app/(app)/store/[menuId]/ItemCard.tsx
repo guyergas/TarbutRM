@@ -8,7 +8,7 @@ interface ItemCardProps {
     id: string;
     name: string;
     description?: string;
-    price: number;
+    price: string | number;
     inStock: boolean;
     image?: string;
   };
