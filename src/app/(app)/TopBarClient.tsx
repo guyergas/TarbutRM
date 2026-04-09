@@ -41,12 +41,14 @@ const subLinkStyle: React.CSSProperties = {
   ...linkStyle,
   paddingRight: 24,
   fontSize: 14,
+  textAlign: "right",
 };
 
 const subSubLinkStyle: React.CSSProperties = {
   ...linkStyle,
   paddingRight: 40,
   fontSize: 13,
+  textAlign: "right",
 };
 
 export default function TopBarClient({ role, menus }: TopBarClientProps) {
