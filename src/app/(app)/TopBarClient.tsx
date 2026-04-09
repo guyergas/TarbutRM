@@ -49,23 +49,24 @@ const collapsibleStyle: React.CSSProperties = {
   border: "none",
   cursor: "pointer",
   padding: "10px 8px",
+  paddingLeft: 8,
 };
 
 const subCollapsibleStyle: React.CSSProperties = {
   ...collapsibleStyle,
-  paddingLeft: 32,
+  paddingLeft: 40,
   fontSize: 14,
 };
 
 const subLinkStyle: React.CSSProperties = {
   ...linkStyle,
-  paddingLeft: 32,
+  paddingLeft: 40,
   fontSize: 14,
 };
 
 const subSubLinkStyle: React.CSSProperties = {
   ...linkStyle,
-  paddingLeft: 56,
+  paddingLeft: 64,
   fontSize: 13,
 };
 
