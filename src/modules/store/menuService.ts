@@ -1,26 +1,14 @@
 import { getPrismaInstance } from "@/lib/prisma";
 
 /**
- * P3-06: List visible (non-archived) menus with sections (no items) - for TopBar nav
- */
-export async function listVisibleWithSections() {
-  const prisma = getPrismaInstance();
-  return prisma.menu.findMany({
-    where: { archived: false },
-    orderBy: { position: "asc" },
-    include: { sections: { where: { archived: false }, orderBy: { position: "asc" } } },
-  });
-}
-
-/**
- * P3-06b: List visible (non-archived) menus - LIGHTWEIGHT for store tabs only
+ * P3-06: List visible (non-archived) menus ordered by position
  */
 export async function listVisible() {
   const prisma = getPrismaInstance();
   return prisma.menu.findMany({
     where: { archived: false },
     orderBy: { position: "asc" },
-    select: { id: true, name: true, archived: true, position: true },
+    include: { sections: { where: { archived: false }, orderBy: { position: "asc" } } },
   });
 }
 
@@ -47,13 +35,18 @@ export async function getMenuWithSections(menuId: string) {
 }
 
 /**
- * P3-08: List all menus (archived + visible) - ADMIN only, LIGHTWEIGHT for nav only
+ * P3-08: List all menus (archived + visible) - ADMIN only
  */
 export async function listAll() {
   const prisma = getPrismaInstance();
   return prisma.menu.findMany({
     orderBy: [{ archived: "asc" }, { position: "asc" }],
-    select: { id: true, name: true, archived: true, position: true },
+    include: {
+      sections: {
+        orderBy: { position: "asc" },
+        include: { items: { orderBy: { position: "asc" } } },
+      },
+    },
   });
 }
 

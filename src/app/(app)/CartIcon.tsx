@@ -1,23 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import CartModal from "./CartModal";
-
-interface CartItem {
-  cartItemId: string;
-  itemId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  cost: number;
-  archived: boolean;
-}
-
-interface CartData {
-  items: CartItem[];
-  totalCost: number;
-  itemCount: number;
-}
 
 interface CartIconProps {
   initialCount: number;
@@ -26,32 +10,6 @@ interface CartIconProps {
 export default function CartIcon({ initialCount }: CartIconProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [itemCount, setItemCount] = useState(initialCount);
-  const [cartData, setCartData] = useState<CartData | null>(null);
-
-  // Preload cart data on mount so it's ready when user opens modal
-  useEffect(() => {
-    const loadCart = async () => {
-      try {
-        const response = await fetch("/api/cart", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setCartData({
-            items: data.items,
-            totalCost: data.totalCost,
-            itemCount: data.items.length,
-          });
-          setItemCount(data.items.length);
-        }
-      } catch (error) {
-        console.error("Failed to preload cart:", error);
-      }
-    };
-
-    loadCart();
-  }, []);
 
   return (
     <>
@@ -113,7 +71,6 @@ export default function CartIcon({ initialCount }: CartIconProps) {
         <CartModal
           onClose={() => setIsOpen(false)}
           onItemCountChange={setItemCount}
-          initialData={cartData}
         />
       )}
     </>

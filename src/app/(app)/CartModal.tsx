@@ -16,37 +16,24 @@ interface CartItem {
   quantity: number;
   cost: number;
   archived: boolean;
-  description?: string;
-  image?: string;
 }
 
 interface CartModalProps {
   onClose: () => void;
   onItemCountChange: (count: number) => void;
-  initialData?: {
-    items: CartItem[];
-    totalCost: number;
-    itemCount: number;
-  } | null;
 }
 
 export default function CartModal({
   onClose,
   onItemCountChange,
-  initialData,
 }: CartModalProps) {
-  const [items, setItems] = useState<CartItem[]>(initialData?.items || []);
-  const [totalCost, setTotalCost] = useState(initialData?.totalCost || 0);
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [totalCost, setTotalCost] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
 
-  // Load cart on mount only if initialData not provided
+  // Load cart on mount
   useEffect(() => {
-    if (initialData) {
-      onItemCountChange(initialData.items.length);
-      return;
-    }
-
     const loadCart = async () => {
       try {
         const response = await fetch("/api/cart", {
@@ -65,7 +52,7 @@ export default function CartModal({
     };
 
     loadCart();
-  }, [initialData, onItemCountChange]);
+  }, [onItemCountChange]);
 
   const handleRemoveItem = async (itemId: string) => {
     setIsLoading(true);
