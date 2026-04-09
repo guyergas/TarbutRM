@@ -46,11 +46,41 @@ export default function ItemEditor({
   const [description, setDescription] = useState(item.description || "");
   const [price, setPrice] = useState(item.price.toString());
   const [image, setImage] = useState(item.image || "");
+  const [imagePreview, setImagePreview] = useState<string>(item.image || "");
   const [inStock, setInStock] = useState(item.inStock);
   const [duplicateTargetId, setDuplicateTargetId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setError("בחר קובץ תמונה בלבד");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError("גודל התמונה גדול מ-5MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      setImage(result);
+      setImagePreview(result);
+      setError(null);
+    };
+    reader.onerror = () => {
+      setError("שגיאה בטעינת התמונה");
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSave = async () => {
     setLoading(true);
@@ -185,20 +215,24 @@ export default function ItemEditor({
 
         <div style={{ marginBottom: 24 }}>
           <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
-            כתובת תמונה (URL)
+            תמונה
           </label>
           <input
-            type="text"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
             style={{
               width: "100%",
               padding: "8px 12px",
               border: "1px solid #d1d5db",
               borderRadius: 6,
               fontSize: 14,
+              cursor: "pointer",
             }}
           />
+          <p style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>
+            תמונה JPG, PNG עד 5MB
+          </p>
         </div>
 
         {/* Messages */}
@@ -332,13 +366,13 @@ export default function ItemEditor({
       {/* Right: Stock History & Preview */}
       <div>
         {/* Image Preview */}
-        {image && (
+        {imagePreview && (
           <div style={{ marginBottom: 24 }}>
             <h3 style={{ fontWeight: 600, marginBottom: 8, fontSize: 14 }}>
               תצוגה מקדימה
             </h3>
             <img
-              src={image}
+              src={imagePreview}
               alt={name}
               style={{
                 width: "100%",
