@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ItemEditor from "./ItemEditor";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/lib/prisma";
 
 const prisma = new PrismaClient({
   datasource: { url: process.env.DATABASE_URL },
