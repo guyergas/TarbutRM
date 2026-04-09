@@ -1,17 +1,15 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ItemEditor from "./ItemEditor";
-import { PrismaClient } from "@/lib/prisma";
-
-const prisma = new PrismaClient({
-  datasource: { url: process.env.DATABASE_URL },
-});
+import { getPrismaInstance } from "@/lib/prisma";
 
 export default async function ItemDetailPage({ params }: { params: { id: string } }) {
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
     redirect("/login");
   }
+
+  const prisma = getPrismaInstance();
 
   const item = await prisma.item.findUnique({
     where: { id: params.id },
@@ -36,8 +34,6 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
     orderBy: [{ menu: { position: "asc" } }, { position: "asc" }],
     include: { menu: true },
   });
-
-  await prisma.$disconnect();
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px" }}>

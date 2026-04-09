@@ -1,13 +1,4 @@
-import { PrismaClient } from "@/lib/prisma";
-
-let prisma: PrismaClient | null = null;
-
-function getPrisma() {
-  if (!prisma) {
-    prisma = new PrismaClient();
-  }
-  return prisma;
-}
+import { getPrismaInstance } from "@/lib/prisma";
 
 /**
  * P3-13: Create new section in menu - ADMIN only
@@ -17,20 +8,21 @@ export async function create(
   data: { name: string; position?: number },
   actorId: string
 ) {
+  const prisma = getPrismaInstance();
   // Verify menu exists
-  const menu = await getPrisma().menu.findUnique({ where: { id: menuId } });
+  const menu = await prisma.menu.findUnique({ where: { id: menuId } });
   if (!menu) {
     throw new Error(`Menu ${menuId} not found`);
   }
 
   // Get next position if not provided
-  const maxPosition = await getPrisma().section.aggregate({
+  const maxPosition = await prisma.section.aggregate({
     _max: { position: true },
     where: { menuId },
   });
   const position = data.position ?? ((maxPosition._max.position ?? 0) + 1);
 
-  return getPrisma().section.create({
+  return prisma.section.create({
     data: {
       menuId,
       name: data.name,
@@ -49,7 +41,8 @@ export async function update(
   data: { name: string },
   actorId: string
 ) {
-  const section = await getPrisma().section.findUnique({ where: { id } });
+  const prisma = getPrismaInstance();
+  const section = await prisma.section.findUnique({ where: { id } });
   if (!section) {
     throw new Error(`Section ${id} not found`);
   }
@@ -57,7 +50,7 @@ export async function update(
     throw new Error(`Cannot update archived section ${id}`);
   }
 
-  return getPrisma().section.update({
+  return prisma.section.update({
     where: { id },
     data: { name: data.name, updatedAt: new Date() },
   });
@@ -67,19 +60,20 @@ export async function update(
  * P3-15: Archive section (sets archived: true, moves to end by position)
  */
 export async function archive(id: string, actorId: string) {
-  const section = await getPrisma().section.findUnique({ where: { id } });
+  const prisma = getPrismaInstance();
+  const section = await prisma.section.findUnique({ where: { id } });
   if (!section) {
     throw new Error(`Section ${id} not found`);
   }
 
   // Get current max position for archived sections in same menu
-  const maxArchivedPosition = await getPrisma().section.aggregate({
+  const maxArchivedPosition = await prisma.section.aggregate({
     _max: { position: true },
     where: { menuId: section.menuId, archived: true },
   });
   const newPosition = (maxArchivedPosition._max.position ?? 0) + 1;
 
-  return getPrisma().section.update({
+  return prisma.section.update({
     where: { id },
     data: { archived: true, position: newPosition, updatedAt: new Date() },
   });
@@ -94,7 +88,8 @@ export async function reorder(
   orderedIds: string[],
   actorId: string
 ) {
-  const sections = await getPrisma().section.findMany({
+  const prisma = getPrismaInstance();
+  const sections = await prisma.section.findMany({
     where: { menuId, id: { in: orderedIds } },
   });
 
@@ -108,11 +103,11 @@ export async function reorder(
   ];
 
   const updates = sorted.map((section, idx) =>
-    getPrisma().section.update({
+    prisma.section.update({
       where: { id: section.id },
       data: { position: idx, updatedAt: new Date() },
     })
   );
 
-  return getPrisma().$transaction(updates);
+  return prisma.$transaction(updates);
 }

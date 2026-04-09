@@ -1,19 +1,11 @@
-import { PrismaClient } from "@/lib/prisma";
-
-let prisma: PrismaClient | null = null;
-
-function getPrisma() {
-  if (!prisma) {
-    prisma = new PrismaClient();
-  }
-  return prisma;
-}
+import { getPrismaInstance } from "@/lib/prisma";
 
 /**
  * P3-06: List visible (non-archived) menus ordered by position
  */
 export async function listVisible() {
-  return getPrisma().menu.findMany({
+  const prisma = getPrismaInstance();
+  return prisma.menu.findMany({
     where: { archived: false },
     orderBy: { position: "asc" },
     include: { sections: { where: { archived: false }, orderBy: { position: "asc" } } },
@@ -24,6 +16,7 @@ export async function listVisible() {
  * P3-07: Get menu with non-archived sections and items (user-facing)
  */
 export async function getMenuWithSections(menuId: string) {
+  const prisma = getPrismaInstance();
   return prisma.menu.findUnique({
     where: { id: menuId },
     include: {
@@ -45,6 +38,7 @@ export async function getMenuWithSections(menuId: string) {
  * P3-08: List all menus (archived + visible) - ADMIN only
  */
 export async function listAll() {
+  const prisma = getPrismaInstance();
   return prisma.menu.findMany({
     orderBy: [{ archived: "asc" }, { position: "asc" }],
     include: { sections: { orderBy: { position: "asc" } } },
@@ -58,6 +52,7 @@ export async function create(
   data: { name: string; position?: number },
   actorId: string
 ) {
+  const prisma = getPrismaInstance();
   // Get next position if not provided
   const maxPosition = await prisma.menu.aggregate({
     _max: { position: true },
@@ -82,6 +77,7 @@ export async function update(
   data: { name: string },
   actorId: string
 ) {
+  const prisma = getPrismaInstance();
   const menu = await prisma.menu.findUnique({ where: { id } });
   if (!menu) {
     throw new Error(`Menu ${id} not found`);
@@ -100,6 +96,7 @@ export async function update(
  * P3-11: Archive menu (sets archived: true, moves to end by position)
  */
 export async function archive(id: string, actorId: string) {
+  const prisma = getPrismaInstance();
   const menu = await prisma.menu.findUnique({ where: { id } });
   if (!menu) {
     throw new Error(`Menu ${id} not found`);
@@ -123,6 +120,7 @@ export async function archive(id: string, actorId: string) {
  * Archived menus stay at end
  */
 export async function reorder(orderedIds: string[], actorId: string) {
+  const prisma = getPrismaInstance();
   const menus = await prisma.menu.findMany({
     where: { id: { in: orderedIds } },
   });
