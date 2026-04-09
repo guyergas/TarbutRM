@@ -14,11 +14,16 @@ export default async function ProfilePage() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    throw new Error("User not authenticated");
+    throw new Error(`User not authenticated. Session: ${JSON.stringify(session?.user || null)}`);
+  }
+
+  const userId = session.user.id;
+  if (!userId || typeof userId !== "string" || userId.length === 0) {
+    throw new Error(`Invalid user ID: ${userId}`);
   }
 
   const user = await prisma.user.findUniqueOrThrow({
-    where: { id: session.user.id },
+    where: { id: userId },
     select: { firstName: true, lastName: true, email: true, role: true, city: true, street: true, phone: true, balance: true, createdAt: true },
   });
 

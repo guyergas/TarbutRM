@@ -48,19 +48,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
+    jwt({ token, user, account }) {
       // On sign in, user object is present
       if (user) {
         token.id = user.id as string;
-        token.role = user.role;
+        token.role = (user as any).role;
       }
-      // On subsequent calls, preserve the id from the token
+      // Preserve id and role from previous token if not set
+      if (!token.id && token.sub) {
+        token.id = token.sub;
+      }
       return token;
     },
     session({ session, token }) {
-      // Always ensure id and role are set from token
-      session.user.id = token.id as string;
-      session.user.role = token.role as typeof session.user.role;
+      // Ensure id is always a valid string
+      const id = token.id ? String(token.id) : "";
+      const role = token.role ? String(token.role) : "USER";
+
+      if (!id) {
+        console.warn("[Auth] Session has no token.id. Token:", { id: token.id, sub: token.sub });
+      }
+
+      session.user.id = id;
+      session.user.role = role as any;
       return session;
     },
   },
