@@ -18,6 +18,10 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
       section: {
         include: { menu: true },
       },
+      stockHistory: {
+        orderBy: { changedAt: "desc" },
+        include: { changer: true },
+      },
     },
   });
 
@@ -41,10 +45,16 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
     },
   };
 
+  const serializedStockHistory = item.stockHistory.map((h) => ({
+    ...h,
+    changedAt: h.changedAt.toISOString(),
+  }));
+
   return (
     <ItemEditorModal
       item={serializedItem}
       section={serializedSection}
+      stockHistory={serializedStockHistory}
       userId={session.user.id}
     />
   );

@@ -3,6 +3,13 @@
 import { useRouter } from "next/navigation";
 import ItemEditor from "./ItemEditor";
 
+interface StockHistory {
+  id: string;
+  inStock: boolean;
+  changedAt: string;
+  changer: { firstName: string; lastName: string; role: string };
+}
+
 interface ItemEditorModalProps {
   item: {
     id: string;
@@ -19,12 +26,14 @@ interface ItemEditorModalProps {
     menuId: string;
     menu: { id: string; name: string };
   };
+  stockHistory: StockHistory[];
   userId: string;
 }
 
 export default function ItemEditorModal({
   item,
   section,
+  stockHistory,
   userId,
 }: ItemEditorModalProps) {
   const router = useRouter();
@@ -64,6 +73,7 @@ export default function ItemEditorModal({
         <ItemEditor
           item={item}
           section={section}
+          stockHistory={stockHistory}
           userId={userId}
           onClose={handleClose}
         />

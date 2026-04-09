@@ -20,9 +20,17 @@ interface Section {
   menu: { id: string; name: string };
 }
 
+interface StockHistory {
+  id: string;
+  inStock: boolean;
+  changedAt: string | Date;
+  changer: { firstName: string; lastName: string; role: string };
+}
+
 interface ItemEditorProps {
   item: Item;
   section: Section;
+  stockHistory: StockHistory[];
   userId: string;
   onClose?: () => void;
 }
@@ -30,6 +38,7 @@ interface ItemEditorProps {
 export default function ItemEditor({
   item,
   section,
+  stockHistory,
   userId,
   onClose,
 }: ItemEditorProps) {
@@ -416,6 +425,71 @@ export default function ItemEditor({
               תמונה JPG, PNG עד 5MB
             </p>
           </div>
+
+          {/* Stock History */}
+          {stockHistory.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ fontWeight: 600, marginBottom: 12, fontSize: 14 }}>
+                היסטוריית מלאי
+              </h3>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  fontSize: 13,
+                }}
+              >
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
+                    <th style={{ padding: 8, textAlign: "right", fontWeight: 600 }}>
+                      סטטוס
+                    </th>
+                    <th style={{ padding: 8, textAlign: "right", fontWeight: 600 }}>
+                      בידי
+                    </th>
+                    <th style={{ padding: 8, textAlign: "right", fontWeight: 600 }}>
+                      תאריך
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stockHistory.map((record) => (
+                    <tr
+                      key={record.id}
+                      style={{ borderBottom: "1px solid #f3f4f6" }}
+                    >
+                      <td style={{ padding: 8 }}>
+                        <span
+                          style={{
+                            padding: "2px 6px",
+                            borderRadius: 3,
+                            background: record.inStock ? "#ecfdf5" : "#fef2f2",
+                            color: record.inStock ? "#047857" : "#991b1b",
+                          }}
+                        >
+                          {record.inStock ? "במלאי" : "אזל"}
+                        </span>
+                      </td>
+                      <td style={{ padding: 8 }}>
+                        {record.changer.firstName} {record.changer.lastName}
+                        <br />
+                        <span style={{ color: "#6b7280", fontSize: 12 }}>
+                          ({record.changer.role})
+                        </span>
+                      </td>
+                      <td style={{ padding: 8 }}>
+                        {new Date(typeof record.changedAt === 'string' ? record.changedAt : record.changedAt.toISOString()).toLocaleDateString("he-IL")}
+                        <br />
+                        <span style={{ color: "#6b7280", fontSize: 12 }}>
+                          {new Date(typeof record.changedAt === 'string' ? record.changedAt : record.changedAt.toISOString()).toLocaleTimeString("he-IL")}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           {/* Messages */}
           {error && (
