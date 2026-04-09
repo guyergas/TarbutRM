@@ -54,11 +54,11 @@ export default async function AdminUserPage({
       <div className="flex items-center gap-4">
         <Link
           href="/admin/users"
-          className="text-sm text-indigo-400 hover:text-indigo-300"
+          className="text-sm text-indigo-600 hover:text-indigo-500"
         >
           ← חזרה לרשימה
         </Link>
-        <h1 className="text-2xl font-bold">{user.firstName} {user.lastName}</h1>
+        <h1 className="text-2xl">{user.firstName} {user.lastName}</h1>
         <span
           style={{
             padding: "2px 10px",

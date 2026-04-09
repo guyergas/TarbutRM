@@ -19,7 +19,7 @@ export default async function HomePage() {
   // No visible menus - show placeholder
   return (
     <div style={{ textAlign: "center", padding: "64px 16px" }}>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>
+      <h1 style={{ fontSize: 24, marginBottom: 16 }}>
         אין חנויות זמינות
       </h1>
       <p style={{ color: "#6b7280", fontSize: 16 }}>

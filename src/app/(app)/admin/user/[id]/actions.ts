@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { Role } from "@/generated/prisma";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 
@@ -29,7 +28,7 @@ export async function updateUserAction(
   const phone = fmtPhone(formData.get("phone") as string);
   const city = (formData.get("city") as string).trim();
   const street = (formData.get("street") as string).trim() || null;
-  const role = formData.get("role") as Role;
+  const role = formData.get("role") as "USER" | "STAFF" | "ADMIN";
   const active = formData.get("active") === "true";
 
   if (!firstName || !lastName || !email || !city) return { ok: false, message: "שם פרטי, שם משפחה, אימייל ועיר הם שדות חובה" };

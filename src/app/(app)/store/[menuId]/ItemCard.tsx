@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { QuantitySelector } from "./QuantitySelector";
+import { AddToCartButton } from "./AddToCartButton";
 
 interface ItemCardProps {
   item: {
@@ -18,19 +20,7 @@ interface ItemCardProps {
 
 export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [inStock, setInStock] = useState(item.inStock);
-  const [loading, setLoading] = useState(false);
-
-  const handleStockToggle = async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      // TODO: Call setStock action
-      setInStock(!inStock);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [quantity, setQuantity] = useState(1);
 
   return (
     <div
@@ -58,6 +48,8 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
           justifyContent: "center",
           overflow: "hidden",
           margin: "0 auto",
+          position: "relative",
+          zIndex: 0,
         }}
       >
         {item.image ? (
@@ -78,7 +70,7 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
       </div>
 
       {/* Stock badge */}
-      {!inStock && (
+      {!item.inStock && (
         <div
           style={{
             position: "absolute",
@@ -90,6 +82,7 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
             borderRadius: 4,
             fontSize: 12,
             fontWeight: 500,
+            zIndex: 10,
           }}
         >
           אזל מהמלאי
@@ -113,6 +106,7 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
             display: "flex",
             alignItems: "center",
             gap: 4,
+            zIndex: 10,
           }}
         >
           ✎
@@ -151,32 +145,21 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
             fontSize: 16,
             fontWeight: 700,
             color: "#1f2937",
-            marginBottom: 8,
+            marginBottom: "12px",
           }}
         >
           {item.price} ₪
         </div>
 
-        {/* Stock toggle button (STAFF + ADMIN) */}
-        {(userRole === "STAFF" || userRole === "ADMIN") && (
-          <button
-            onClick={handleStockToggle}
-            disabled={loading}
-            style={{
-              width: "100%",
-              padding: "8px",
-              borderRadius: 4,
-              border: "none",
-              background: inStock ? "#ecfdf5" : "#fef2f2",
-              color: inStock ? "#047857" : "#991b1b",
-              fontWeight: 500,
-              fontSize: 12,
-              cursor: loading ? "not-allowed" : "pointer",
-              opacity: loading ? 0.6 : 1,
-            }}
-          >
-            {inStock ? "במלאי" : "אזל מהמלאי"}
-          </button>
+        {/* Quantity selector and add to cart button - only show if in stock */}
+        {item.inStock && (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <QuantitySelector
+              initialQuantity={1}
+              onQuantityChange={setQuantity}
+            />
+            <AddToCartButton itemId={item.id} quantity={quantity} />
+          </div>
         )}
       </div>
     </div>

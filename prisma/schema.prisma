@@ -33,6 +33,7 @@ model User {
   sections             Section[]             @relation("SectionCreatedBy")
   items                Item[]                @relation("ItemCreatedBy")
   stockHistoryChanges  ItemStockHistory[]    @relation("StockChangedBy")
+  cartItems            CartItem[]            @relation("CartItems")
 }
 
 model BudgetTransaction {
@@ -90,6 +91,7 @@ model Item {
   createdBy   String
   creator     User            @relation("ItemCreatedBy", fields: [createdBy], references: [id])
   stockHistory ItemStockHistory[]
+  cartItems    CartItem[]      @relation("CartItems")
 
   @@index([sectionId])
 }
@@ -104,6 +106,20 @@ model ItemStockHistory {
   changedAt DateTime @default(now())
 
   @@index([itemId])
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("CartItems", fields: [userId], references: [id], onDelete: Cascade)
+  itemId    String
+  item      Item     @relation("CartItems", fields: [itemId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, itemId])
+  @@index([userId])
 }
 
 // Auth.js required tables (managed by Prisma adapter)

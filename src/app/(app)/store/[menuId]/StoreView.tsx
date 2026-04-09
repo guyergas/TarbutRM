@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import ItemCard from "./ItemCard";
+import MenuControls from "./MenuControls";
+import SectionControls from "./SectionControls";
+import CreateMenuButton from "./CreateMenuButton";
+import CreateSectionButton from "./CreateSectionButton";
+import CreateItemButton from "./CreateItemButton";
 
 interface Item {
   id: string;
@@ -85,31 +90,60 @@ export default function StoreView({
             padding: "0 16px",
             display: "flex",
             gap: 8,
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          {allMenus.map((menu) => (
-            <Link
-              key={menu.id}
-              href={`/store/${menu.id}`}
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              alignItems: "center",
+              flex: 1,
+              overflow: "auto",
+            }}
+          >
+            {allMenus.map((menu) => (
+              <Link
+                key={menu.id}
+                href={`/store/${menu.id}`}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 6,
+                  textDecoration: "none",
+                  fontSize: 14,
+                  fontWeight: menu.id === currentMenu.id ? 600 : 500,
+                  color: menu.id === currentMenu.id ? "#1f2937" : "#6b7280",
+                  background:
+                    menu.id === currentMenu.id ? "#fff" : "transparent",
+                  border:
+                    menu.id === currentMenu.id
+                      ? "1px solid #e5e7eb"
+                      : "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {menu.name}
+              </Link>
+            ))}
+          </div>
+          {userRole === "ADMIN" && (
+            <div
               style={{
-                padding: "8px 16px",
-                borderRadius: 6,
-                textDecoration: "none",
-                fontSize: 14,
-                fontWeight: menu.id === currentMenu.id ? 600 : 500,
-                color: menu.id === currentMenu.id ? "#1f2937" : "#6b7280",
-                background:
-                  menu.id === currentMenu.id ? "#fff" : "transparent",
-                border:
-                  menu.id === currentMenu.id
-                    ? "1px solid #e5e7eb"
-                    : "none",
-                whiteSpace: "nowrap",
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
+                paddingLeft: 8,
+                borderLeft: "1px solid #d1d5db",
               }}
             >
-              {menu.name}
-            </Link>
-          ))}
+              <MenuControls
+                menu={currentMenu}
+                allMenus={allMenus}
+              />
+              <CreateMenuButton />
+            </div>
+          )}
         </div>
       </div>
 
@@ -123,8 +157,33 @@ export default function StoreView({
             overflowY: "auto",
             background: "#f9fafb",
             padding: "16px 0",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
+          {userRole === "ADMIN" && selectedSection && (
+            <div
+              style={{
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
+                paddingRight: 16,
+                paddingLeft: 8,
+                paddingBottom: 12,
+                borderBottom: "1px solid #e5e7eb",
+                marginBottom: 12,
+                justifyContent: "flex-end",
+              }}
+            >
+              <SectionControls
+                section={selectedSection}
+                sections={currentMenu.sections}
+                menuId={currentMenu.id}
+              />
+              <CreateSectionButton menuId={currentMenu.id} />
+            </div>
+          )}
+
           {currentMenu.sections.length === 0 ? (
             <div style={{ padding: "16px", color: "#6b7280", fontSize: 14 }}>
               אין קטגוריות
@@ -213,7 +272,33 @@ export default function StoreView({
                       userId={userId}
                     />
                   ))}
+                  {userRole === "ADMIN" && (
+                    <CreateItemButton
+                      sectionId={selectedSection.id}
+                      section={{
+                        ...selectedSection,
+                        menu: {
+                          id: currentMenu.id,
+                          name: currentMenu.name,
+                        },
+                      }}
+                      userId={userId}
+                    />
+                  )}
                 </div>
+              )}
+              {selectedSection.items.length === 0 && userRole === "ADMIN" && (
+                <CreateItemButton
+                  sectionId={selectedSection.id}
+                  section={{
+                    ...selectedSection,
+                    menu: {
+                      id: currentMenu.id,
+                      name: currentMenu.name,
+                    },
+                  }}
+                  userId={userId}
+                />
               )}
             </>
           )}

@@ -30,7 +30,7 @@ export default async function AdminUsersPage() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <h1 className="text-2xl font-bold">ניהול משתמשים</h1>
+          <h1 className="text-2xl">ניהול משתמשים</h1>
           <RegisterModal
             triggerLabel="+ חדש"
             triggerClassName="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 border-none cursor-pointer"

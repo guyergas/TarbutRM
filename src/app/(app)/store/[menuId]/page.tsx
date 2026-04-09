@@ -18,8 +18,11 @@ export default async function StorePage({ params }: { params: Promise<{ menuId: 
     redirect("/");
   }
 
-  // Fetch all visible menus for nav
-  const allMenus = await menuService.listVisible();
+  // Fetch menus for nav (all for admin, visible only for users)
+  const allMenus =
+    session.user.role === "ADMIN"
+      ? await menuService.listAll()
+      : await menuService.listVisible();
 
   // Serialize Decimal to string for client component
   const serializedMenu = {
@@ -29,17 +32,21 @@ export default async function StorePage({ params }: { params: Promise<{ menuId: 
       items: section.items.map((item) => ({
         ...item,
         price: item.price.toString(),
+        description: item.description ?? undefined,
+        image: item.image ?? undefined,
       })),
     })),
   };
 
-  const serializedMenus = allMenus.map((m) => ({
+  const serializedMenus = allMenus.map((m: any) => ({
     ...m,
-    sections: m.sections?.map((s) => ({
+    sections: m.sections?.map((s: any) => ({
       ...s,
-      items: s.items?.map((i) => ({
+      items: (s.items || [])?.map((i: any) => ({
         ...i,
         price: i.price?.toString() || "0",
+        description: i.description ?? undefined,
+        image: i.image ?? undefined,
       })) || [],
     })) || [],
   }));

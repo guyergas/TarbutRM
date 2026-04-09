@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { updateItemAction } from "./actions";
+import { updateItemAction, toggleStockAction } from "./actions";
+import { createItem } from "@/app/(app)/store/[menuId]/itemActions";
 
 interface Item {
   id: string;
@@ -33,6 +34,7 @@ interface ItemEditorProps {
   stockHistory: StockHistory[];
   userId: string;
   onClose?: () => void;
+  isNew?: boolean;
 }
 
 export default function ItemEditor({
@@ -41,13 +43,16 @@ export default function ItemEditor({
   stockHistory,
   userId,
   onClose,
+  isNew = false,
 }: ItemEditorProps) {
   const [name, setName] = useState(item.name);
   const [description, setDescription] = useState(item.description || "");
   const [price, setPrice] = useState(item.price.toString());
   const [image, setImage] = useState(item.image || "");
   const [imagePreview, setImagePreview] = useState<string>(item.image || "");
+  const [inStock, setInStock] = useState(item.inStock);
   const [loading, setLoading] = useState(false);
+  const [stockLoading, setStockLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
@@ -55,6 +60,8 @@ export default function ItemEditor({
   const [cropX, setCropX] = useState(0);
   const [cropY, setCropY] = useState(0);
   const [cropSize, setCropSize] = useState(200);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef({ x: 0, y: 0, cropX: 0, cropY: 0 });
   const cropperContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -113,7 +120,7 @@ export default function ItemEditor({
       const imageAspect = imageW / imageH;
       const containerAspect = containerW / containerH;
 
-      // Calculate how image is scaled with objectFit: cover
+      // Calculate how image is scaled with objectFit: contain
       let scale: number;
       let offsetX: number;
       let offsetY: number;
@@ -174,24 +181,44 @@ export default function ItemEditor({
     setCropY(0);
   };
 
+  const handleStockToggle = async () => {
+    if (stockLoading || isNew) return;
+    setStockLoading(true);
+    setError(null);
+    try {
+      await toggleStockAction(item.id, !inStock);
+      setInStock(!inStock);
+      setSuccess(inStock ? "המוצר סומן כאזל" : "המוצר סומן כזמין");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "שגיאה בעדכון המלאי");
+    } finally {
+      setStockLoading(false);
+    }
+  };
+
   const handleSave = async () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
     try {
-      await updateItemAction(item.id, {
-        name,
-        description,
-        price: parseFloat(price),
-        image,
-      });
-      setSuccess("המוצר עודכן בהצלחה");
+      if (isNew) {
+        await createItem(section.id, name, parseFloat(price), description, image);
+        setSuccess("המוצר נוצר בהצלחה");
+      } else {
+        await updateItemAction(item.id, {
+          name,
+          description,
+          price: parseFloat(price),
+          image,
+        });
+        setSuccess("המוצר עודכן בהצלחה");
+      }
       // Close popup after successful save
       setTimeout(() => {
         if (onClose) onClose();
       }, 1000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "שגיאה בעדכון המוצר");
+      setError(err instanceof Error ? err.message : (isNew ? "שגיאה ביצירת המוצר" : "שגיאה בעדכון המוצר"));
     } finally {
       setLoading(false);
     }
@@ -244,14 +271,6 @@ export default function ItemEditor({
                 aspectRatio: "1",
                 background: "#f3f4f6",
               }}
-              onMouseMove={(e) => {
-                if (e.buttons !== 1) return;
-                const rect = e.currentTarget.getBoundingClientRect();
-                const newX = e.clientX - rect.left - cropSize / 2;
-                const newY = e.clientY - rect.top - cropSize / 2;
-                setCropX(Math.max(0, Math.min(newX, rect.width - cropSize)));
-                setCropY(Math.max(0, Math.min(newY, rect.height - cropSize)));
-              }}
             >
               <img
                 src={uploadedImage}
@@ -260,7 +279,7 @@ export default function ItemEditor({
                   position: "absolute",
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover",
+                  objectFit: "contain",
                 }}
               />
 
@@ -275,25 +294,37 @@ export default function ItemEditor({
                   border: "3px solid #3b82f6",
                   cursor: "move",
                   background: "rgba(59, 130, 246, 0.1)",
+                  userSelect: "none",
                 }}
-                onMouseDown={(e) => {
-                  const startX = e.clientX - cropX;
-                  const startY = e.clientY - cropY;
-                  const handleMouseMove = (moveE: MouseEvent) => {
-                    const newX = moveE.clientX - startX;
-                    const newY = moveE.clientY - startY;
-                    const rect = e.currentTarget.parentElement?.getBoundingClientRect();
-                    if (rect) {
-                      setCropX(Math.max(0, Math.min(newX, rect.width - cropSize)));
-                      setCropY(Math.max(0, Math.min(newY, rect.height - cropSize)));
-                    }
+                onPointerDown={(e) => {
+                  dragStartRef.current = {
+                    x: e.clientX,
+                    y: e.clientY,
+                    cropX: cropX,
+                    cropY: cropY,
                   };
-                  const handleMouseUp = () => {
-                    document.removeEventListener("mousemove", handleMouseMove);
-                    document.removeEventListener("mouseup", handleMouseUp);
-                  };
-                  document.addEventListener("mousemove", handleMouseMove);
-                  document.addEventListener("mouseup", handleMouseUp);
+                  setIsDragging(true);
+                  (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+                }}
+                onPointerMove={(e) => {
+                  if (!isDragging) return;
+
+                  const container = cropperContainerRef.current;
+                  if (!container) return;
+
+                  const containerRect = container.getBoundingClientRect();
+                  const deltaX = e.clientX - dragStartRef.current.x;
+                  const deltaY = e.clientY - dragStartRef.current.y;
+
+                  const newX = dragStartRef.current.cropX + deltaX;
+                  const newY = dragStartRef.current.cropY + deltaY;
+
+                  setCropX(Math.max(0, Math.min(newX, containerRect.width - cropSize)));
+                  setCropY(Math.max(0, Math.min(newY, containerRect.height - cropSize)));
+                }}
+                onPointerUp={(e) => {
+                  setIsDragging(false);
+                  (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
                 }}
               />
             </div>
@@ -461,8 +492,35 @@ export default function ItemEditor({
             </div>
           )}
 
+          {/* Stock Toggle */}
+          {!isNew && (
+            <div style={{ marginBottom: 24 }}>
+              <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+                מלאי
+              </label>
+              <button
+                onClick={handleStockToggle}
+                disabled={stockLoading}
+                style={{
+                  width: "100%",
+                  padding: "10px 16px",
+                  borderRadius: 6,
+                  border: "none",
+                  background: inStock ? "#ecfdf5" : "#fef2f2",
+                  color: inStock ? "#047857" : "#991b1b",
+                  fontWeight: 500,
+                  fontSize: 14,
+                  cursor: stockLoading ? "not-allowed" : "pointer",
+                  opacity: stockLoading ? 0.6 : 1,
+                }}
+              >
+                {stockLoading ? "עדכון..." : (inStock ? "✓ במלאי" : "✗ אזל מהמלאי")}
+              </button>
+            </div>
+          )}
+
           {/* Stock History */}
-          {stockHistory.length > 0 && (
+          {!isNew && stockHistory.length > 0 && (
             <div style={{ marginBottom: 24 }}>
               <h3 style={{ fontWeight: 600, marginBottom: 12, fontSize: 14 }}>
                 היסטוריית מלאי
@@ -573,7 +631,7 @@ export default function ItemEditor({
                 opacity: loading ? 0.6 : 1,
               }}
             >
-              {loading ? "שומר..." : "שמור שינויים"}
+              {loading ? (isNew ? "יוצר..." : "שומר...") : (isNew ? "צור מוצר" : "שמור שינויים")}
             </button>
             {onClose && (
               <button

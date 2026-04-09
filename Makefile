@@ -15,24 +15,38 @@ else
   DB_NAME     := tarbutrm_dev
 endif
 
-.PHONY: run prod stop store load migrate seed logs shell
+.PHONY: run prod stop store load migrate seed logs shell _run-dev _run-prod
 
-## Start dev environment (hot reload, port 3000)
-run:
+## Internal: Run dev environment (called by systemd service)
+_run-dev:
 	$(COMPOSE_DEV) up --build --renew-anon-volumes -d
-	@echo ""
-	@echo "Dev environment running → http://$(shell hostname -I | awk '{print $$1}'):3001"
 
-## Start production environment (port 80)
-prod:
+## Internal: Run prod environment (called by systemd service)
+_run-prod:
 	$(COMPOSE_PROD) up --build --renew-anon-volumes -d
+
+## Internal: Stop all containers (called by systemd service)
+_stop:
+	$(COMPOSE) down
+
+## Start dev environment (runs as service, accessible even if shell disconnects)
+run:
+	sudo systemctl start tarbutrm-dev
 	@echo ""
-	@echo "Production environment running → http://$(shell hostname -I | awk '{print $$1}')"
+	@echo "Dev environment starting → http://$(shell hostname -I | awk '{print $$1}'):3001"
+	@echo "View logs: sudo systemctl status tarbutrm-dev"
+
+## Start production environment (runs as service, port 80)
+prod:
+	sudo systemctl start tarbutrm-prod
+	@echo ""
+	@echo "Production environment starting → http://$(shell hostname -I | awk '{print $$1}')"
+	@echo "View logs: sudo systemctl status tarbutrm-prod"
 
 ## Stop all running containers
 stop:
-	$(COMPOSE) down
-	@echo "All containers stopped."
+	sudo systemctl stop tarbutrm-dev tarbutrm-prod
+	@echo "All services stopped."
 
 ## Dump DB to backups/backup_TIMESTAMP.sql (also symlinked as latest.sql).
 ## Defaults to dev DB. Use ENV=prod for production: make store ENV=prod

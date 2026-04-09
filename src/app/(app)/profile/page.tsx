@@ -22,7 +22,7 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-md mx-auto space-y-6">
       <div className="rounded-xl bg-white px-8 py-8 shadow-sm space-y-5">
-        <h1 className="text-2xl font-bold">הפרופיל שלי</h1>
+        <h1 className="text-2xl">הפרופיל שלי</h1>
 
         <dl className="space-y-3 text-sm">
           <Row label="שם" value={`${user.firstName} ${user.lastName}`} />

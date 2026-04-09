@@ -41,7 +41,12 @@ export async function listAll() {
   const prisma = getPrismaInstance();
   return prisma.menu.findMany({
     orderBy: [{ archived: "asc" }, { position: "asc" }],
-    include: { sections: { orderBy: { position: "asc" } } },
+    include: {
+      sections: {
+        orderBy: { position: "asc" },
+        include: { items: { orderBy: { position: "asc" } } },
+      },
+    },
   });
 }
 
@@ -93,7 +98,7 @@ export async function update(
 }
 
 /**
- * P3-11: Archive menu (sets archived: true, moves to end by position)
+ * P3-11: Archive menu (sets archived: true, moves to beginning by position)
  */
 export async function archive(id: string, actorId: string) {
   const prisma = getPrismaInstance();
@@ -102,17 +107,31 @@ export async function archive(id: string, actorId: string) {
     throw new Error(`Menu ${id} not found`);
   }
 
-  // Get current max position for archived menus
-  const maxArchivedPosition = await prisma.menu.aggregate({
-    _max: { position: true },
-    where: { archived: true },
-  });
-  const newPosition = (maxArchivedPosition._max.position ?? 0) + 1;
+  if (menu.archived) {
+    // Unarchive: move to end of non-archived menus
+    const maxPosition = await prisma.menu.aggregate({
+      _max: { position: true },
+      where: { archived: false },
+    });
+    const newPosition = (maxPosition._max.position ?? 0) + 1;
 
-  return prisma.menu.update({
-    where: { id },
-    data: { archived: true, position: newPosition, updatedAt: new Date() },
-  });
+    return prisma.menu.update({
+      where: { id },
+      data: { archived: false, position: newPosition, updatedAt: new Date() },
+    });
+  } else {
+    // Archive: move to beginning
+    const minArchivedPosition = await prisma.menu.aggregate({
+      _min: { position: true },
+      where: { archived: true },
+    });
+    const newPosition = (minArchivedPosition._min.position ?? 0) - 1;
+
+    return prisma.menu.update({
+      where: { id },
+      data: { archived: true, position: newPosition, updatedAt: new Date() },
+    });
+  }
 }
 
 /**
