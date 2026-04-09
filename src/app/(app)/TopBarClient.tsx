@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import LogoutMenuButton from "./LogoutMenuButton";
 
 type Role = "USER" | "STAFF" | "ADMIN";
 
@@ -347,6 +348,11 @@ export default function TopBarClient({ role, menus, balance, cartIcon }: TopBarC
             <Link href="/contactus" onClick={close} style={linkStyle}>
               צור קשר
             </Link>
+
+            {/* 4. Logout */}
+            <div style={{ borderTop: "1px solid #e5e7eb", marginTop: 16, paddingTop: 16 }}>
+              <LogoutMenuButton />
+            </div>
           </nav>
         </div>
       )}
