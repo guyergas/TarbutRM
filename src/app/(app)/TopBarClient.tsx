@@ -290,7 +290,7 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
                             {menu.sections.map((section) => (
                               <Link
                                 key={section.id}
-                                href={`/store/${menu.id}`}
+                                href={`/store/${menu.id}?section=${section.id}`}
                                 onClick={close}
                                 style={subSubLinkStyle}
                               >

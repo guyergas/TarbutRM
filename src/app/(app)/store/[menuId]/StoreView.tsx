@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import ItemCard from "./ItemCard";
 
 interface Item {
@@ -45,9 +46,19 @@ export default function StoreView({
   userRole,
   userId,
 }: StoreViewProps) {
+  const searchParams = useSearchParams();
+  const sectionParam = searchParams.get("section");
+
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(
-    currentMenu.sections[0]?.id ?? null
+    sectionParam ?? currentMenu.sections[0]?.id ?? null
   );
+
+  // Update selected section if section param changes
+  useEffect(() => {
+    if (sectionParam) {
+      setSelectedSectionId(sectionParam);
+    }
+  }, [sectionParam]);
 
   const selectedSection = currentMenu.sections.find(
     (s) => s.id === selectedSectionId
