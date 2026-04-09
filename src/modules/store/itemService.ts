@@ -16,6 +16,11 @@ export async function create(
   actorId: string
 ) {
   const prisma = getPrismaInstance();
+
+  if (!actorId || typeof actorId !== "string" || actorId.trim() === "") {
+    throw new Error("Invalid actor ID: user not properly authenticated");
+  }
+
   // Verify section exists
   const section = await prisma.section.findUnique({ where: { id: sectionId } });
   if (!section) {
@@ -126,6 +131,11 @@ export async function setStock(
   actorId: string
 ) {
   const prisma = getPrismaInstance();
+
+  if (!actorId || typeof actorId !== "string" || actorId.trim() === "") {
+    throw new Error("Invalid actor ID: user not properly authenticated");
+  }
+
   const item = await prisma.item.findUnique({ where: { id } });
   if (!item) {
     throw new Error(`Item ${id} not found`);
@@ -162,6 +172,11 @@ export async function duplicate(
   actorId: string
 ) {
   const prisma = getPrismaInstance();
+
+  if (!actorId || typeof actorId !== "string" || actorId.trim() === "") {
+    throw new Error("Invalid actor ID: user not properly authenticated");
+  }
+
   const source = await prisma.item.findUnique({ where: { id } });
   if (!source) {
     throw new Error(`Item ${id} not found`);

@@ -9,6 +9,11 @@ export async function create(
   actorId: string
 ) {
   const prisma = getPrismaInstance();
+
+  if (!actorId || typeof actorId !== "string" || actorId.trim() === "") {
+    throw new Error("Invalid actor ID: user not properly authenticated");
+  }
+
   // Verify menu exists
   const menu = await prisma.menu.findUnique({ where: { id: menuId } });
   if (!menu) {

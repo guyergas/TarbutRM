@@ -58,6 +58,11 @@ export async function create(
   actorId: string
 ) {
   const prisma = getPrismaInstance();
+
+  if (!actorId || typeof actorId !== "string" || actorId.trim() === "") {
+    throw new Error("Invalid actor ID: user not properly authenticated");
+  }
+
   // Get next position if not provided
   const maxPosition = await prisma.menu.aggregate({
     _max: { position: true },
