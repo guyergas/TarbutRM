@@ -35,20 +35,38 @@ const linkStyle: React.CSSProperties = {
   fontSize: 15,
   fontWeight: 500,
   display: "block",
+  textAlign: "right",
+};
+
+const collapsibleStyle: React.CSSProperties = {
+  ...linkStyle,
+  display: "flex",
+  justifyContent: "flex-start",
+  alignItems: "center",
+  gap: 8,
+  width: "100%",
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  padding: "10px 8px",
+};
+
+const subCollapsibleStyle: React.CSSProperties = {
+  ...collapsibleStyle,
+  paddingLeft: 32,
+  fontSize: 14,
 };
 
 const subLinkStyle: React.CSSProperties = {
   ...linkStyle,
-  paddingRight: 24,
+  paddingLeft: 32,
   fontSize: 14,
-  textAlign: "right",
 };
 
 const subSubLinkStyle: React.CSSProperties = {
   ...linkStyle,
-  paddingRight: 40,
+  paddingLeft: 56,
   fontSize: 13,
-  textAlign: "right",
 };
 
 export default function TopBarClient({ role, menus }: TopBarClientProps) {
@@ -238,22 +256,12 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
                 <button
                   type="button"
                   onClick={() => setAdminOpen((v) => !v)}
-                  style={{
-                    ...linkStyle,
-                    width: "100%",
-                    textAlign: "right",
-                    display: "flex",
-                    flexDirection: "row-reverse",
-                    gap: 8,
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
+                  style={collapsibleStyle}
                 >
                   <span style={{ fontSize: 11, color: "#9ca3af" }}>
                     {adminOpen ? "▲" : "▼"}
                   </span>
-                  <span>ניהול</span>
+                  <span style={{ flex: 1, textAlign: "right" }}>ניהול</span>
                 </button>
 
                 {adminOpen && (
@@ -272,22 +280,12 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
                 <button
                   type="button"
                   onClick={() => setStoreOpen((v) => !v)}
-                  style={{
-                    ...linkStyle,
-                    width: "100%",
-                    textAlign: "right",
-                    display: "flex",
-                    flexDirection: "row-reverse",
-                    gap: 8,
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
+                  style={collapsibleStyle}
                 >
                   <span style={{ fontSize: 11, color: "#9ca3af" }}>
                     {storeOpen ? "▲" : "▼"}
                   </span>
-                  <span>חנות</span>
+                  <span style={{ flex: 1, textAlign: "right" }}>חנות</span>
                 </button>
 
                 {storeOpen && (
@@ -297,22 +295,14 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
                         <button
                           type="button"
                           onClick={() => toggleMenuExpanded(menu.id)}
-                          style={{
-                            ...subLinkStyle,
-                            width: "100%",
-                            textAlign: "right",
-                            display: "flex",
-                            flexDirection: "row-reverse",
-                            gap: 8,
-                            background: "none",
-                            border: "none",
-                            cursor: "pointer",
-                          }}
+                          style={subCollapsibleStyle}
                         >
                           <span style={{ fontSize: 11, color: "#9ca3af" }}>
                             {expandedMenus[menu.id] ? "▲" : "▼"}
                           </span>
-                          <span>{menu.name}</span>
+                          <span style={{ flex: 1, textAlign: "right" }}>
+                            {menu.name}
+                          </span>
                         </button>
 
                         {expandedMenus[menu.id] && menu.sections.length > 0 && (
