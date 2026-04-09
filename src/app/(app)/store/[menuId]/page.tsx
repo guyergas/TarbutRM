@@ -18,7 +18,7 @@ export default async function StorePage({ params }: { params: Promise<{ menuId: 
     redirect("/");
   }
 
-  // Fetch menus for nav (all for admin, visible only for users)
+  // Fetch menus for nav (all for admin, visible only for users) - lightweight, no nested data
   const allMenus =
     session.user.role === "ADMIN"
       ? await menuService.listAll()
@@ -38,18 +38,8 @@ export default async function StorePage({ params }: { params: Promise<{ menuId: 
     })),
   };
 
-  const serializedMenus = allMenus.map((m: any) => ({
-    ...m,
-    sections: m.sections?.map((s: any) => ({
-      ...s,
-      items: (s.items || [])?.map((i: any) => ({
-        ...i,
-        price: i.price?.toString() || "0",
-        description: i.description ?? undefined,
-        image: i.image ?? undefined,
-      })) || [],
-    })) || [],
-  }));
+  // Navigation menus are already lightweight, no serialization needed
+  const serializedMenus = allMenus as any;
 
   return (
     <StoreView

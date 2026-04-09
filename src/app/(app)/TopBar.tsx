@@ -10,7 +10,7 @@ type Role = "USER" | "STAFF" | "ADMIN";
 
 export default async function TopBar({ role }: { role?: Role }) {
   const session = await auth();
-  const menus = await menuService.listVisible();
+  const menus = await menuService.listVisibleWithSections();
 
   let balance: string | null = null;
   let cartItemCount = 0;

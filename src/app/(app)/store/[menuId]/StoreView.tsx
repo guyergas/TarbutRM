@@ -38,9 +38,16 @@ interface Menu {
   sections: Section[];
 }
 
+interface NavMenu {
+  id: string;
+  name: string;
+  archived: boolean;
+  position: number;
+}
+
 interface StoreViewProps {
   currentMenu: Menu;
-  allMenus: Menu[];
+  allMenus: NavMenu[];
   userRole: "USER" | "STAFF" | "ADMIN";
   userId: string;
 }
@@ -139,7 +146,7 @@ export default function StoreView({
             >
               <MenuControls
                 menu={currentMenu}
-                allMenus={allMenus}
+                allMenus={allMenus as any}
               />
               <CreateMenuButton />
             </div>
