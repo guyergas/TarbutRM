@@ -1,17 +1,30 @@
-import { auth } from "@/lib/auth";
+import { PrismaClient } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 export const metadata = { title: "בית — TarbutRM" };
 
-export default async function HomePage() {
-  const session = await auth();
-  const name = session?.user?.name ?? "";
+const prisma = new PrismaClient();
 
+export default async function HomePage() {
+  // Find first visible menu by position
+  const defaultMenu = await prisma.menu.findFirst({
+    where: { archived: false },
+    orderBy: { position: "asc" },
+  });
+
+  if (defaultMenu) {
+    redirect(`/store/${defaultMenu.id}`);
+  }
+
+  // No visible menus - show placeholder
   return (
-    <div className="space-y-6">
-      <div className="rounded-xl bg-white px-8 py-10 shadow-sm text-center space-y-2">
-        <h1 className="text-2xl font-bold">שלום, {name}</h1>
-        <p className="text-sm text-gray-500">ברוך הבא לחנות TarbutRM</p>
-      </div>
+    <div style={{ textAlign: "center", padding: "64px 16px" }}>
+      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>
+        אין חנויות זמינות
+      </h1>
+      <p style={{ color: "#6b7280", fontSize: 16 }}>
+        נא לחזור מאוחר יותר
+      </p>
     </div>
   );
 }
