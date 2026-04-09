@@ -50,13 +50,14 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
       {/* Image */}
       <div
         style={{
-          width: "100%",
-          height: 160,
+          width: 200,
+          height: 200,
           background: "#f3f4f6",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           overflow: "hidden",
+          margin: "0 auto",
         }}
       >
         {item.image ? (
@@ -66,7 +67,7 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
             style={{
               width: "100%",
               height: "100%",
-              objectFit: "cover",
+              objectFit: "contain",
             }}
           />
         ) : (

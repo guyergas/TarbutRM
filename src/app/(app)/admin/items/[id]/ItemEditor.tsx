@@ -186,6 +186,10 @@ export default function ItemEditor({
         image,
       });
       setSuccess("המוצר עודכן בהצלחה");
+      // Close popup after successful save
+      setTimeout(() => {
+        if (onClose) onClose();
+      }, 1000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "שגיאה בעדכון המוצר");
     } finally {
@@ -425,6 +429,37 @@ export default function ItemEditor({
               תמונה JPG, PNG עד 5MB
             </p>
           </div>
+
+          {/* Image Preview */}
+          {imagePreview && (
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ fontWeight: 600, marginBottom: 8, fontSize: 14 }}>
+                תצוגה מקדימה
+              </h3>
+              <div
+                style={{
+                  width: 200,
+                  height: 200,
+                  borderRadius: 6,
+                  overflow: "hidden",
+                  background: "#f3f4f6",
+                }}
+              >
+                <img
+                  src={imagePreview}
+                  alt={name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Stock History */}
           {stockHistory.length > 0 && (
