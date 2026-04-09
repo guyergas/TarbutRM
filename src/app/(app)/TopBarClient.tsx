@@ -250,10 +250,10 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
                     cursor: "pointer",
                   }}
                 >
-                  <span>חנות</span>
                   <span style={{ fontSize: 11, color: "#9ca3af" }}>
                     {storeOpen ? "▲" : "▼"}
                   </span>
+                  <span>חנות</span>
                 </button>
 
                 {storeOpen && (
@@ -326,10 +326,10 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
                     cursor: "pointer",
                   }}
                 >
-                  <span>ניהול</span>
                   <span style={{ fontSize: 11, color: "#9ca3af" }}>
                     {adminOpen ? "▲" : "▼"}
                   </span>
+                  <span>ניהול</span>
                 </button>
 
                 {adminOpen && (
