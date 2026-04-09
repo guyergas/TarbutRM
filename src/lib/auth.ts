@@ -48,29 +48,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token, user, account }) {
-      // On sign in, user object is present
+    jwt({ token, user }) {
+      // On sign in, user object is present - this is where we capture the user info
       if (user) {
-        token.id = user.id as string;
-        token.role = (user as any).role;
-      }
-      // Preserve id and role from previous token if not set
-      if (!token.id && token.sub) {
-        token.id = token.sub;
+        const userId = (user as any).id || user.id;
+        if (userId) {
+          token.id = String(userId);
+          token.role = (user as any).role;
+          console.log("[JWT] User signed in. Set token.id:", token.id);
+        } else {
+          console.error("[JWT] User object has no id:", user);
+        }
+      } else {
+        // On refresh, preserve existing values
+        if (token.id) {
+          console.log("[JWT] Token refresh. Preserving token.id:", token.id);
+        }
       }
       return token;
     },
     session({ session, token }) {
-      // Ensure id is always a valid string
-      const id = token.id ? String(token.id) : "";
-      const role = token.role ? String(token.role) : "USER";
+      // Map token properties to session
+      session.user.id = String(token.id || "");
+      session.user.role = String(token.role || "USER") as any;
 
-      if (!id) {
-        console.warn("[Auth] Session has no token.id. Token:", { id: token.id, sub: token.sub });
-      }
+      console.log("[Session] Callback. session.user.id:", session.user.id, "token.id:", token.id);
 
-      session.user.id = id;
-      session.user.role = role as any;
       return session;
     },
   },
