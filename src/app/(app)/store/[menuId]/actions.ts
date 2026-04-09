@@ -5,7 +5,7 @@ import { itemService } from "@/modules/store";
 
 export async function setStockAction(itemId: string, inStock: boolean) {
   const session = await auth();
-  if (!session?.user) {
+  if (!session?.user || !session.user.id) {
     throw new Error("Unauthorized");
   }
 

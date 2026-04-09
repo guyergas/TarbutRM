@@ -79,7 +79,7 @@ export async function addTransactionAction(
   formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
-  if (!session || session.user.role !== "ADMIN")
+  if (!session || session.user.role !== "ADMIN" || !session.user.id)
     return { ok: false, message: "אין הרשאה" };
 
   const rawAmount = parseFloat(formData.get("amount") as string);
@@ -94,7 +94,7 @@ export async function addTransactionAction(
   try {
     await prisma.$transaction([
       prisma.budgetTransaction.create({
-        data: { userId, amount, note, createdBy: session.user.id! },
+        data: { userId, amount, note, createdBy: session.user.id },
       }),
       prisma.user.update({
         where: { id: userId },

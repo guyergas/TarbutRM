@@ -13,7 +13,7 @@ export async function updateItemAction(
   }
 ) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
+  if (!session?.user || session.user.role !== "ADMIN" || !session.user.id) {
     throw new Error("Unauthorized");
   }
 
@@ -22,7 +22,7 @@ export async function updateItemAction(
 
 export async function toggleStockAction(id: string, inStock: boolean) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
+  if (!session?.user || session.user.role !== "ADMIN" || !session.user.id) {
     throw new Error("Unauthorized");
   }
 
@@ -31,7 +31,7 @@ export async function toggleStockAction(id: string, inStock: boolean) {
 
 export async function archiveItemAction(id: string) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
+  if (!session?.user || session.user.role !== "ADMIN" || !session.user.id) {
     throw new Error("Unauthorized");
   }
 
@@ -43,7 +43,7 @@ export async function duplicateItemAction(
   targetSectionId: string
 ) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
+  if (!session?.user || session.user.role !== "ADMIN" || !session.user.id) {
     throw new Error("Unauthorized");
   }
 
