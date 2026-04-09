@@ -492,33 +492,6 @@ export default function ItemEditor({
             </div>
           )}
 
-          {/* Stock Toggle */}
-          {!isNew && (
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
-                מלאי
-              </label>
-              <button
-                onClick={handleStockToggle}
-                disabled={stockLoading}
-                style={{
-                  width: "100%",
-                  padding: "10px 16px",
-                  borderRadius: 6,
-                  border: "none",
-                  background: inStock ? "#ecfdf5" : "#fef2f2",
-                  color: inStock ? "#047857" : "#991b1b",
-                  fontWeight: 500,
-                  fontSize: 14,
-                  cursor: stockLoading ? "not-allowed" : "pointer",
-                  opacity: stockLoading ? 0.6 : 1,
-                }}
-              >
-                {stockLoading ? "עדכון..." : (inStock ? "✓ במלאי" : "✗ אזל מהמלאי")}
-              </button>
-            </div>
-          )}
-
           {/* Stock History */}
           {!isNew && stockHistory.length > 0 && (
             <div style={{ marginBottom: 24 }}>
@@ -633,6 +606,26 @@ export default function ItemEditor({
             >
               {loading ? (isNew ? "יוצר..." : "שומר...") : (isNew ? "צור מוצר" : "שמור שינויים")}
             </button>
+            {!isNew && (
+              <button
+                onClick={handleStockToggle}
+                disabled={stockLoading}
+                style={{
+                  flex: 1,
+                  padding: "10px 16px",
+                  background: inStock ? "#ecfdf5" : "#fef2f2",
+                  color: inStock ? "#047857" : "#991b1b",
+                  border: "1px solid " + (inStock ? "#d1fae5" : "#fee2e2"),
+                  borderRadius: 6,
+                  fontWeight: 500,
+                  fontSize: 14,
+                  cursor: stockLoading ? "not-allowed" : "pointer",
+                  opacity: stockLoading ? 0.6 : 1,
+                }}
+              >
+                {stockLoading ? "עדכון..." : (inStock ? "✓ במלאי" : "✗ אזל")}
+              </button>
+            )}
             {onClose && (
               <button
                 onClick={onClose}
