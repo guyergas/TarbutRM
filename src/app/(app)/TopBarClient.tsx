@@ -232,7 +232,41 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
 
           {/* Nav items */}
           <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {/* 1. Store (collapsible with menus) */}
+            {/* 1. Admin (admin only) */}
+            {role === "ADMIN" && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setAdminOpen((v) => !v)}
+                  style={{
+                    ...linkStyle,
+                    width: "100%",
+                    textAlign: "right",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  <span style={{ fontSize: 11, color: "#9ca3af" }}>
+                    {adminOpen ? "▲" : "▼"}
+                  </span>
+                  <span>ניהול</span>
+                </button>
+
+                {adminOpen && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <Link href="/admin/users" onClick={close} style={subLinkStyle}>
+                      משתמשים
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 2. Store (collapsible with menus) */}
             {menus.length > 0 && (
               <div>
                 <button
@@ -303,40 +337,6 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
                         )}
                       </div>
                     ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 2. Admin (admin only) */}
-            {role === "ADMIN" && (
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setAdminOpen((v) => !v)}
-                  style={{
-                    ...linkStyle,
-                    width: "100%",
-                    textAlign: "right",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  <span style={{ fontSize: 11, color: "#9ca3af" }}>
-                    {adminOpen ? "▲" : "▼"}
-                  </span>
-                  <span>ניהול</span>
-                </button>
-
-                {adminOpen && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <Link href="/admin/users" onClick={close} style={subLinkStyle}>
-                      משתמשים
-                    </Link>
                   </div>
                 )}
               </div>
