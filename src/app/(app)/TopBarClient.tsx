@@ -324,7 +324,7 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
                     cursor: "pointer",
                   }}
                 >
-                  <span>אדמין</span>
+                  <span>ניהול</span>
                   <span style={{ fontSize: 11, color: "#9ca3af" }}>
                     {adminOpen ? "▲" : "▼"}
                   </span>
