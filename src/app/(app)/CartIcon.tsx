@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CartModal from "./CartModal";
 
 interface CartIconProps {
@@ -10,6 +10,16 @@ interface CartIconProps {
 export default function CartIcon({ initialCount }: CartIconProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [itemCount, setItemCount] = useState(initialCount);
+
+  useEffect(() => {
+    const handleCartItemAdded = (event: Event) => {
+      const customEvent = event as CustomEvent<{ quantity: number }>;
+      setItemCount((prev) => prev + customEvent.detail.quantity);
+    };
+
+    window.addEventListener("cartItemAdded", handleCartItemAdded);
+    return () => window.removeEventListener("cartItemAdded", handleCartItemAdded);
+  }, []);
 
   return (
     <>

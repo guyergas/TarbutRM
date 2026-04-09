@@ -23,6 +23,8 @@ export function AddToCartButton({
       await addToCartAction(itemId, quantity);
       setIsAdded(true);
       onSuccess?.();
+      // Dispatch custom event to notify cart icon
+      window.dispatchEvent(new CustomEvent("cartItemAdded", { detail: { quantity } }));
       // Reset "added" state after 2 seconds
       setTimeout(() => setIsAdded(false), 2000);
     } catch (error) {
