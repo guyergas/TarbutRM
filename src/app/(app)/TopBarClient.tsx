@@ -335,9 +335,6 @@ export default function TopBarClient({ role, menus }: TopBarClientProps) {
                     <Link href="/admin/users" onClick={close} style={subLinkStyle}>
                       משתמשים
                     </Link>
-                    <Link href="/admin/store" onClick={close} style={subLinkStyle}>
-                      חנות
-                    </Link>
                   </div>
                 )}
               </div>
