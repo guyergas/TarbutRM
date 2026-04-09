@@ -140,27 +140,31 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
               onQuantityChange={setQuantity}
             />
             <AddToCartButton itemId={item.id} quantity={quantity} />
-            {userRole === "ADMIN" && (
-              <Link
-                href={`/admin/items/${item.id}`}
-                style={{
-                  width: "28px",
-                  height: "28px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "#e5e7eb",
-                  border: "1px solid #d1d5db",
-                  borderRadius: "4px",
-                  textDecoration: "none",
-                  color: "#374151",
-                  fontSize: "14px",
-                }}
-                title="Edit item"
-              >
-                ✎
-              </Link>
-            )}
+          </div>
+        )}
+
+        {/* Edit button - show for ADMIN regardless of stock */}
+        {userRole === "ADMIN" && (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: item.inStock ? 0 : "8px" }}>
+            <Link
+              href={`/admin/items/${item.id}`}
+              style={{
+                width: "28px",
+                height: "28px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "#e5e7eb",
+                border: "1px solid #d1d5db",
+                borderRadius: "4px",
+                textDecoration: "none",
+                color: "#374151",
+                fontSize: "14px",
+              }}
+              title="Edit item"
+            >
+              ✎
+            </Link>
           </div>
         )}
       </div>
