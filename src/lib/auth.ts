@@ -49,15 +49,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     jwt({ token, user }) {
+      // On sign in, user object is present
       if (user) {
         token.id = user.id as string;
         token.role = user.role;
       }
+      // On subsequent calls, preserve the id from the token
       return token;
     },
     session({ session, token }) {
-      session.user.id = token.id || "";
-      session.user.role = token.role || "USER";
+      // Always ensure id and role are set from token
+      session.user.id = token.id as string;
+      session.user.role = token.role as typeof session.user.role;
       return session;
     },
   },

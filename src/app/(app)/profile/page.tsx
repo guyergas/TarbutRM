@@ -12,8 +12,13 @@ const ROLE_LABEL: Record<string, string> = {
 
 export default async function ProfilePage() {
   const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
   const user = await prisma.user.findUniqueOrThrow({
-    where: { id: session!.user.id },
+    where: { id: session.user.id },
     select: { firstName: true, lastName: true, email: true, role: true, city: true, street: true, phone: true, balance: true, createdAt: true },
   });
 
