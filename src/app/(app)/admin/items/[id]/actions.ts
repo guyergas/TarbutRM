@@ -22,8 +22,8 @@ export async function updateItemAction(
 
 export async function toggleStockAction(id: string, inStock: boolean) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN" || !session.user.id) {
-    throw new Error("Unauthorized");
+  if (!session?.user?.id || session.user.role !== "ADMIN") {
+    throw new Error("Unauthorized: missing session or admin role");
   }
 
   return itemService.setStock(id, inStock, session.user.id);
