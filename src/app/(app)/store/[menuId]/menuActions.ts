@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 export async function createMenu(name: string) {
   const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
+  if (!session || session.user.role !== "ADMIN" || !session.user.id) {
     throw new Error("Unauthorized");
   }
 
@@ -18,7 +18,7 @@ export async function createMenu(name: string) {
 
 export async function updateMenuName(menuId: string, name: string) {
   const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
+  if (!session || session.user.role !== "ADMIN" || !session.user.id) {
     throw new Error("Unauthorized");
   }
 
@@ -29,7 +29,7 @@ export async function updateMenuName(menuId: string, name: string) {
 
 export async function reorderMenus(orderedIds: string[]) {
   const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
+  if (!session || session.user.role !== "ADMIN" || !session.user.id) {
     throw new Error("Unauthorized");
   }
 
@@ -41,7 +41,7 @@ export async function reorderMenus(orderedIds: string[]) {
 
 export async function toggleArchiveMenu(menuId: string) {
   const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
+  if (!session || session.user.role !== "ADMIN" || !session.user.id) {
     throw new Error("Unauthorized");
   }
 

@@ -12,7 +12,7 @@ export async function createItem(
   image: string = ""
 ) {
   const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
+  if (!session || session.user.role !== "ADMIN" || !session.user.id) {
     throw new Error("Unauthorized");
   }
 
