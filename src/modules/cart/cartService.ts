@@ -153,6 +153,8 @@ export async function getCartSummary(userId: string) {
       quantity: ci.quantity,
       cost,
       archived: ci.item.archived,
+      description: ci.item.description || undefined,
+      image: ci.item.image || undefined,
     };
   });
 

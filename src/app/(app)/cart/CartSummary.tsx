@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ItemModal from "../ItemModal";
 import {
   removeFromCartAction,
   updateQuantityAction,
@@ -15,6 +16,8 @@ interface CartItem {
   quantity: number;
   cost: string | number;
   archived: boolean;
+  description?: string;
+  image?: string;
 }
 
 interface CartData {
@@ -30,6 +33,7 @@ interface CartSummaryProps {
 export default function CartSummary({ cartData }: CartSummaryProps) {
   const [items, setItems] = useState(cartData.items);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
 
   const handleRemoveItem = async (itemId: string) => {
     setIsLoading(true);
@@ -200,7 +204,21 @@ export default function CartSummary({ cartData }: CartSummaryProps) {
                     color: "#1f2937",
                   }}
                 >
-                  {item.name}
+                  <button
+                    onClick={() => setSelectedItem(item)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#3b82f6",
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      padding: 0,
+                      fontWeight: "600",
+                      fontSize: "inherit",
+                    }}
+                  >
+                    {item.name}
+                  </button>
                 </td>
                 <td
                   style={{
@@ -391,6 +409,20 @@ export default function CartSummary({ cartData }: CartSummaryProps) {
           לתשלום
         </button>
       </div>
+
+      {/* Item Modal */}
+      {selectedItem && (
+        <ItemModal
+          item={{
+            id: selectedItem.itemId,
+            name: selectedItem.name,
+            price: selectedItem.price,
+            description: selectedItem.description,
+            image: selectedItem.image,
+          }}
+          onClose={() => setSelectedItem(null)}
+        />
+      )}
     </div>
   );
 }

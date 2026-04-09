@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { QuantitySelector } from "./QuantitySelector";
 import { AddToCartButton } from "./AddToCartButton";
+import ItemModal from "../../ItemModal";
 
 interface ItemCardProps {
   item: {
@@ -21,6 +22,7 @@ interface ItemCardProps {
 export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div
@@ -39,6 +41,7 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
     >
       {/* Image */}
       <div
+        onClick={() => setShowModal(true)}
         style={{
           width: 200,
           height: 200,
@@ -50,6 +53,7 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
           margin: "0 auto",
           position: "relative",
           zIndex: 0,
+          cursor: "pointer",
         }}
       >
         {item.image ? (
@@ -89,29 +93,6 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
         </div>
       )}
 
-      {/* Admin edit button */}
-      {isHovered && userRole === "ADMIN" && (
-        <Link
-          href={`/admin/items/${item.id}`}
-          style={{
-            position: "absolute",
-            top: 8,
-            left: 8,
-            background: "#3b82f6",
-            color: "#fff",
-            padding: "6px 8px",
-            borderRadius: 4,
-            fontSize: 12,
-            textDecoration: "none",
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            zIndex: 10,
-          }}
-        >
-          ✎
-        </Link>
-      )}
 
       {/* Content */}
       <div style={{ padding: "12px" }}>
@@ -159,9 +140,35 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
               onQuantityChange={setQuantity}
             />
             <AddToCartButton itemId={item.id} quantity={quantity} />
+            {userRole === "ADMIN" && (
+              <Link
+                href={`/admin/items/${item.id}`}
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#e5e7eb",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "4px",
+                  textDecoration: "none",
+                  color: "#374151",
+                  fontSize: "14px",
+                }}
+                title="Edit item"
+              >
+                ✎
+              </Link>
+            )}
           </div>
         )}
       </div>
+
+      {/* Item Modal */}
+      {showModal && (
+        <ItemModal item={item} onClose={() => setShowModal(false)} />
+      )}
     </div>
   );
 }
