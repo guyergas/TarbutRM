@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ItemModal from "./ItemModal";
 import { cartService } from "@/modules/cart";
 import {
   removeFromCartAction,
@@ -29,6 +30,7 @@ export default function CartModal({
   const [items, setItems] = useState<CartItem[]>([]);
   const [totalCost, setTotalCost] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
 
   // Load cart on mount
   useEffect(() => {
@@ -180,9 +182,23 @@ export default function CartModal({
                   }}
                 >
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: "600", marginBottom: "4px" }}>
+                    <button
+                      onClick={() => setSelectedItem(item)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#3b82f6",
+                        cursor: "pointer",
+                        textDecoration: "underline",
+                        padding: 0,
+                        fontWeight: "600",
+                        marginBottom: "4px",
+                        display: "block",
+                        fontSize: "inherit",
+                      }}
+                    >
                       {item.name}
-                    </div>
+                    </button>
                     <div
                       style={{
                         display: "flex",
@@ -268,26 +284,39 @@ export default function CartModal({
               <span>סה"כ:</span>
               <span>{totalCost.toFixed(2)} ₪</span>
             </div>
-            <a
-              href="/cart"
+            <button
               style={{
                 display: "block",
+                width: "100%",
                 padding: "10px",
-                background: "#3b82f6",
+                background: "#059669",
                 color: "#fff",
                 border: "none",
                 borderRadius: "6px",
                 textAlign: "center",
-                textDecoration: "none",
                 fontWeight: "600",
                 cursor: "pointer",
               }}
             >
-              לעמוד הסל המלא
-            </a>
+              לתשלום
+            </button>
           </div>
         )}
       </div>
+
+      {/* Item Modal */}
+      {selectedItem && (
+        <ItemModal
+          item={{
+            id: selectedItem.itemId,
+            name: selectedItem.name,
+            price: selectedItem.price,
+            description: selectedItem.description,
+            image: selectedItem.image,
+          }}
+          onClose={() => setSelectedItem(null)}
+        />
+      )}
     </>
   );
 }
