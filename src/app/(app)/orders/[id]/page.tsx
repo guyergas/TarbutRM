@@ -83,7 +83,7 @@ export default async function OrderDetailPage({
           </Link>
         </div>
       ) : (
-        <OrdersTableClient orders={serializedOrders} initialOpenOrderId={id} allowStatusAdvance={true} />
+        <OrdersTableClient orders={serializedOrders} initialOpenOrderId={id} allowStatusAdvance={true} isUserView={true} />
       )}
     </div>
   );

@@ -37,6 +37,8 @@ export default function StaffQueueClient({ orders }: { orders: SerializedOrder[]
       orders={orders}
       initialOpenOrderId={undefined}
       showCustomerName={true}
+      allowStatusAdvance={true}
+      isUserView={false}
     />
   );
 }
