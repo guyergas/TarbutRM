@@ -1,10 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { QuantitySelector } from "./QuantitySelector";
 import { AddToCartButton } from "./AddToCartButton";
-import ItemModal from "../../ItemModal";
+import UnifiedItemModal from "./UnifiedItemModal";
+
+interface StockHistory {
+  id: string;
+  inStock: boolean;
+  changedAt: string;
+  changer: { firstName: string; lastName: string; role: string };
+}
 
 interface ItemCardProps {
   item: {
@@ -19,10 +25,27 @@ interface ItemCardProps {
   userId: string;
 }
 
-export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
+export default function ItemCard({ item: initialItem, userRole, userId }: ItemCardProps) {
+  const [item, setItem] = useState(initialItem);
   const [isHovered, setIsHovered] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  const [stockHistory, setStockHistory] = useState<StockHistory[]>([]);
+
+  const handleItemUpdated = async () => {
+    try {
+      const { fetchItem } = await import("./itemModalActions");
+      const updatedItem = await fetchItem(item.id);
+      if (updatedItem) {
+        setItem({
+          ...updatedItem,
+          price: updatedItem.price.toString(),
+        });
+      }
+    } catch (err) {
+      console.error("Failed to refresh item:", err);
+    }
+  };
 
   return (
     <div
@@ -41,7 +64,19 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
     >
       {/* Image */}
       <div
-        onClick={() => setShowModal(true)}
+        onClick={async () => {
+          setShowModal(true);
+          // Fetch stock history if user is staff or admin
+          if (userRole === "STAFF" || userRole === "ADMIN") {
+            try {
+              const { getStockHistory } = await import("./itemModalActions");
+              const history = await getStockHistory(item.id);
+              setStockHistory(history || []);
+            } catch (err) {
+              console.error("Failed to fetch stock history:", err);
+            }
+          }
+        }}
         style={{
           width: 200,
           height: 200,
@@ -142,36 +177,17 @@ export default function ItemCard({ item, userRole, userId }: ItemCardProps) {
             <AddToCartButton itemId={item.id} quantity={quantity} />
           </div>
         )}
-
-        {/* Edit button - show for ADMIN regardless of stock */}
-        {userRole === "ADMIN" && (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: item.inStock ? 0 : "8px" }}>
-            <Link
-              href={`/admin/items/${item.id}`}
-              style={{
-                width: "28px",
-                height: "28px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#e5e7eb",
-                border: "1px solid #d1d5db",
-                borderRadius: "4px",
-                textDecoration: "none",
-                color: "#374151",
-                fontSize: "14px",
-              }}
-              title="Edit item"
-            >
-              ✎
-            </Link>
-          </div>
-        )}
       </div>
 
       {/* Item Modal */}
       {showModal && (
-        <ItemModal item={item} onClose={() => setShowModal(false)} />
+        <UnifiedItemModal
+          item={item}
+          userRole={userRole}
+          onClose={() => setShowModal(false)}
+          onItemUpdated={handleItemUpdated}
+          stockHistory={stockHistory}
+        />
       )}
     </div>
   );

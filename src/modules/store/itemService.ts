@@ -262,3 +262,35 @@ export async function reorder(
 
   return prisma.$transaction(updates);
 }
+
+/**
+ * Get stock history for an item
+ */
+export async function getStockHistory(itemId: string) {
+  const prisma = getPrismaInstance();
+
+  return prisma.itemStockHistory.findMany({
+    where: { itemId },
+    include: {
+      changer: {
+        select: {
+          firstName: true,
+          lastName: true,
+          role: true,
+        },
+      },
+    },
+    orderBy: { changedAt: "desc" },
+  });
+}
+
+/**
+ * Get a single item by ID
+ */
+export async function getById(id: string) {
+  const prisma = getPrismaInstance();
+
+  return prisma.item.findUnique({
+    where: { id },
+  });
+}
