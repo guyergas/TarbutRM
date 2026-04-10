@@ -75,7 +75,8 @@ export default function StoreView({
       <div
         style={{
           background: "var(--bg-secondary)",
-          borderBottom: "1px solid var(--border-color)",
+          borderTop: "2px solid var(--border-color)",
+          borderBottom: "2px solid var(--border-color)",
           padding: "12px 0",
           overflowX: "auto",
           position: "sticky",
