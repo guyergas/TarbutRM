@@ -120,8 +120,7 @@ export default function MenuControls({
         title="הזז לשמאל"
         style={{
           padding: "4px 8px",
-          background:
-            canMoveLeft && !isLoading ? "var(--bg-secondary)" : "var(--bg-primary)",
+          background: "var(--bg-secondary)",
           border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor:
@@ -129,8 +128,8 @@ export default function MenuControls({
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveLeft && !isLoading ? "var(--text-primary)" : "var(--border-color)",
-          opacity: isLoading ? 0.6 : 1,
+          color: canMoveLeft && !isLoading ? "var(--text-primary)" : "var(--text-secondary)",
+          opacity: canMoveLeft && !isLoading ? 1 : 0.5,
         }}
       >
         →
@@ -142,8 +141,7 @@ export default function MenuControls({
         title="הזז לימין"
         style={{
           padding: "4px 8px",
-          background:
-            canMoveRight && !isLoading ? "var(--bg-secondary)" : "var(--bg-primary)",
+          background: "var(--bg-secondary)",
           border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor:
@@ -151,8 +149,8 @@ export default function MenuControls({
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveRight && !isLoading ? "var(--text-primary)" : "var(--border-color)",
-          opacity: isLoading ? 0.6 : 1,
+          color: canMoveRight && !isLoading ? "var(--text-primary)" : "var(--text-secondary)",
+          opacity: canMoveRight && !isLoading ? 1 : 0.5,
         }}
       >
         ←

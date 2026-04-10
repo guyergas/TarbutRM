@@ -111,7 +111,7 @@ export default function SectionControls({
         title="הזז למעלה"
         style={{
           padding: "4px 8px",
-          background: canMoveUp && !isLoading ? "var(--bg-secondary)" : "var(--bg-primary)",
+          background: "var(--bg-secondary)",
           border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor:
@@ -119,8 +119,8 @@ export default function SectionControls({
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveUp && !isLoading ? "var(--text-primary)" : "var(--border-color)",
-          opacity: isLoading ? 0.6 : 1,
+          color: canMoveUp && !isLoading ? "var(--text-primary)" : "var(--text-secondary)",
+          opacity: canMoveUp && !isLoading ? 1 : 0.5,
         }}
       >
         ↑
@@ -132,8 +132,7 @@ export default function SectionControls({
         title="הזז למטה"
         style={{
           padding: "4px 8px",
-          background:
-            canMoveDown && !isLoading ? "var(--bg-secondary)" : "var(--bg-primary)",
+          background: "var(--bg-secondary)",
           border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor:
@@ -141,8 +140,8 @@ export default function SectionControls({
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveDown && !isLoading ? "var(--text-primary)" : "var(--border-color)",
-          opacity: isLoading ? 0.6 : 1,
+          color: canMoveDown && !isLoading ? "var(--text-primary)" : "var(--text-secondary)",
+          opacity: canMoveDown && !isLoading ? 1 : 0.5,
         }}
       >
         ↓
