@@ -58,11 +58,9 @@ export default function OrdersTableClient({
               <th style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>
                 מס׳ הזמנה
               </th>
-              {showCustomerName && (
-                <th style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>
-                  שם הלקוח
-                </th>
-              )}
+              <th style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>
+                שם הלקוח
+              </th>
               <th style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>
                 תאריך
               </th>
@@ -102,11 +100,9 @@ export default function OrdersTableClient({
                   <td style={{ padding: "12px", color: "#4f46e5", fontWeight: 600 }}>
                     {order.orderNumber}
                   </td>
-                  {showCustomerName && (
-                    <td style={{ padding: "12px", color: "#374151" }}>
-                      {order.customerName}
-                    </td>
-                  )}
+                  <td style={{ padding: "12px", color: "#374151" }}>
+                    {order.customerName || "Unknown"}
+                  </td>
                   <td style={{ padding: "12px", color: "#374151" }}>
                     {order.createdAt} {order.createdAtFull}
                   </td>
