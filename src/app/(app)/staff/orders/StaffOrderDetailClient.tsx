@@ -348,29 +348,9 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
 
           {/* Status Advancement Buttons */}
           <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
-            {order.status === "NEW" && (
+            {(order.status === "NEW" || order.status === "IN_PROGRESS") && (
               <button
-                onClick={() => handleAdvanceStatus("IN_PROGRESS")}
-                disabled={advancingToStatus !== null}
-                style={{
-                  background: "#4f46e5",
-                  color: "#fff",
-                  border: "none",
-                  padding: "10px 16px",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  cursor: advancingToStatus !== null ? "not-allowed" : "pointer",
-                  opacity: advancingToStatus !== null ? 0.6 : 1,
-                  fontSize: 14,
-                }}
-              >
-                {advancingToStatus !== null ? "מעדכן..." : "העבר לטיפול"}
-              </button>
-            )}
-
-            {order.status === "IN_PROGRESS" && (
-              <button
-                onClick={() => handleAdvanceStatus("COMPLETED")}
+                onClick={() => handleAdvanceStatus()}
                 disabled={advancingToStatus !== null}
                 style={{
                   background: "#4f46e5",
