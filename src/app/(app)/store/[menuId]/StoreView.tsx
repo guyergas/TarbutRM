@@ -74,8 +74,8 @@ export default function StoreView({
       {/* Menu Navigation Bar */}
       <div
         style={{
-          background: "#f3f4f6",
-          borderBottom: "1px solid #e5e7eb",
+          background: "var(--bg-secondary)",
+          borderBottom: "1px solid var(--border-color)",
           padding: "12px 0",
           overflowX: "auto",
           position: "sticky",
@@ -113,12 +113,12 @@ export default function StoreView({
                   textDecoration: "none",
                   fontSize: 14,
                   fontWeight: menu.id === currentMenu.id ? 600 : 500,
-                  color: menu.id === currentMenu.id ? "#1f2937" : "#6b7280",
+                  color: menu.id === currentMenu.id ? "var(--text-primary)" : "var(--text-secondary)",
                   background:
-                    menu.id === currentMenu.id ? "#fff" : "transparent",
+                    menu.id === currentMenu.id ? "var(--bg-card)" : "transparent",
                   border:
                     menu.id === currentMenu.id
-                      ? "1px solid #e5e7eb"
+                      ? "1px solid var(--border-color)"
                       : "none",
                   whiteSpace: "nowrap",
                 }}
@@ -134,7 +134,7 @@ export default function StoreView({
                 gap: 2,
                 alignItems: "center",
                 paddingLeft: 8,
-                borderLeft: "1px solid #d1d5db",
+                borderLeft: "1px solid var(--border-color)",
               }}
             >
               <MenuControls
@@ -154,9 +154,9 @@ export default function StoreView({
           style={{
             width: "125px",
             flexShrink: 0,
-            borderRight: "1px solid #e5e7eb",
+            borderRight: "1px solid var(--border-color)",
             overflowY: "auto",
-            background: "#f9fafb",
+            background: "var(--bg-primary)",
             padding: "16px 0",
             display: "flex",
             flexDirection: "column",
@@ -171,7 +171,7 @@ export default function StoreView({
                 paddingRight: 4,
                 paddingLeft: 4,
                 paddingBottom: 12,
-                borderBottom: "1px solid #e5e7eb",
+                borderBottom: "1px solid var(--border-color)",
                 marginBottom: 12,
                 justifyContent: "flex-end",
                 overflow: "hidden",
@@ -188,7 +188,7 @@ export default function StoreView({
           )}
 
           {currentMenu.sections.length === 0 ? (
-            <div style={{ padding: "16px", color: "#6b7280", fontSize: 14 }}>
+            <div style={{ padding: "16px", color: "var(--text-secondary)", fontSize: 14 }}>
               אין קטגוריות
             </div>
           ) : (
@@ -202,12 +202,12 @@ export default function StoreView({
                     border: "none",
                     background:
                       section.id === selectedSectionId
-                        ? "#dbeafe"
+                        ? "var(--accent-light)"
                         : "transparent",
                     color:
                       section.id === selectedSectionId
-                        ? "#1e40af"
-                        : "#6b7280",
+                        ? "var(--accent-dark)"
+                        : "var(--text-secondary)",
                     textAlign: "right",
                     cursor: "pointer",
                     fontSize: 12,
@@ -215,7 +215,7 @@ export default function StoreView({
                       section.id === selectedSectionId ? 600 : 500,
                     borderLeft:
                       section.id === selectedSectionId
-                        ? "3px solid #1e40af"
+                        ? "3px solid var(--accent-dark)"
                         : "none",
                     paddingLeft:
                       section.id === selectedSectionId ? 5 : 8,
@@ -242,7 +242,7 @@ export default function StoreView({
           }}
         >
           {!selectedSection ? (
-            <div style={{ color: "#6b7280", fontSize: 14 }}>
+            <div style={{ color: "var(--text-secondary)", fontSize: 14 }}>
               בחר קטגוריה
             </div>
           ) : (
@@ -252,14 +252,14 @@ export default function StoreView({
                   fontSize: 20,
                   fontWeight: 700,
                   marginBottom: 16,
-                  color: "#1f2937",
+                  color: "var(--text-primary)",
                 }}
               >
                 {selectedSection.name}
               </h2>
 
               {selectedSection.items.length === 0 ? (
-                <div style={{ color: "#6b7280", fontSize: 14 }}>
+                <div style={{ color: "var(--text-secondary)", fontSize: 14 }}>
                   אין מוצרים בקטגוריה זו
                 </div>
               ) : (
