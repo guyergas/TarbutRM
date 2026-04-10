@@ -78,7 +78,6 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [storeOpen, setStoreOpen] = useState(false);
-  const [personalAreaOpen, setPersonalAreaOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
 
   function close() {
@@ -328,58 +327,45 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
             )}
 
             {/* 3. Personal Area (collapsible) */}
-            <div>
-              <button
-                type="button"
-                onClick={() => setPersonalAreaOpen((v) => !v)}
-                style={collapsibleStyle}
-              >
-                <span style={{ fontSize: 11, color: "#9ca3af" }}>
-                  {personalAreaOpen ? "▲" : "▼"}
-                </span>
-                <span style={{ flex: 1, textAlign: "right" }}>
-                  האזור האישי
-                  {openOrdersCount > 0 && (
-                    <span style={{
-                      marginRight: 8,
-                      background: "#ef4444",
-                      color: "#fff",
-                      borderRadius: "50%",
-                      width: 18,
-                      height: 18,
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 11,
-                      fontWeight: 700,
-                    }}>
-                      {openOrdersCount}
-                    </span>
-                  )}
-                </span>
-              </button>
+            {/* 3. Profile */}
+            <Link href="/profile" onClick={close} style={linkStyle}>
+              הפרופיל שלי
+            </Link>
 
-              {personalAreaOpen && (
-                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  <Link href="/profile" onClick={close} style={subLinkStyle}>
-                    הפרופיל שלי
-                  </Link>
-                  <Link href="/wallet" onClick={close} style={subLinkStyle}>
-                    הארנק שלי
-                  </Link>
-                  <Link href="/orders" onClick={close} style={subLinkStyle}>
-                    ההזמנות שלי
-                  </Link>
-                </div>
-              )}
-            </div>
+            {/* 4. Wallet */}
+            <Link href="/wallet" onClick={close} style={linkStyle}>
+              הארנק שלי
+            </Link>
 
-            {/* 4. Contact us */}
+            {/* 5. Orders */}
+            <Link href="/orders" onClick={close} style={linkStyle}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                <span>ההזמנות שלי</span>
+                {openOrdersCount > 0 && (
+                  <span style={{
+                    background: "#ef4444",
+                    color: "#fff",
+                    borderRadius: "50%",
+                    width: 18,
+                    height: 18,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 11,
+                    fontWeight: 700,
+                  }}>
+                    {openOrdersCount}
+                  </span>
+                )}
+              </div>
+            </Link>
+
+            {/* 6. Contact us */}
             <Link href="/contactus" onClick={close} style={linkStyle}>
               צור קשר
             </Link>
 
-            {/* 5. Logout */}
+            {/* 7. Logout */}
             <div style={{ borderTop: "1px solid #e5e7eb", marginTop: 16, paddingTop: 16 }}>
               <LogoutMenuButton />
             </div>
