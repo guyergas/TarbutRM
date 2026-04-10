@@ -537,7 +537,7 @@ export default function OrdersTableClient({
                           onClick={() => handleAdvanceStatus(selectedOrder.id)}
                           disabled={advancingOrderId !== null}
                           style={{
-                            background: "#4f46e5",
+                            background: "#059669",
                             color: "#fff",
                             border: "none",
                             padding: "10px 16px",
