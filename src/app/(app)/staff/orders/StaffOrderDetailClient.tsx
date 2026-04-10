@@ -39,12 +39,12 @@ const statusBadgeColors: Record<string, { bg: string; text: string; label: strin
 
 export default function StaffOrderDetailClient({ order: initialOrder }: { order: SerializedOrder }) {
   const [order, setOrder] = useState<SerializedOrder>(initialOrder);
-  const [isAdvancing, setIsAdvancing] = useState(false);
+  const [advancingToStatus, setAdvancingToStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleAdvanceStatus = async () => {
-    setIsAdvancing(true);
+  const handleAdvanceStatus = async (targetStatus?: string) => {
+    setAdvancingToStatus(targetStatus || null);
     setError(null);
     setSuccessMessage(null);
 
@@ -97,16 +97,8 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
       setError(result.error || "Failed to advance status");
     }
 
-    setIsAdvancing(false);
+    setAdvancingToStatus(null);
   };
-
-  const canAdvance = order.status !== "COMPLETED";
-  const nextStatusLabel =
-    order.status === "NEW"
-      ? statusBadgeColors.IN_PROGRESS?.label
-      : order.status === "IN_PROGRESS"
-        ? statusBadgeColors.COMPLETED?.label
-        : null;
 
   return (
     <div
@@ -354,12 +346,12 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
             </div>
           )}
 
-          {/* Advance Status Button */}
-          {canAdvance && (
-            <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+          {/* Status Advancement Buttons */}
+          <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+            {order.status === "NEW" && (
               <button
-                onClick={handleAdvanceStatus}
-                disabled={isAdvancing}
+                onClick={() => handleAdvanceStatus("IN_PROGRESS")}
+                disabled={advancingToStatus !== null}
                 style={{
                   background: "#4f46e5",
                   color: "#fff",
@@ -367,15 +359,41 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
                   padding: "10px 16px",
                   borderRadius: "6px",
                   fontWeight: 600,
-                  cursor: isAdvancing ? "not-allowed" : "pointer",
-                  opacity: isAdvancing ? 0.6 : 1,
+                  cursor: advancingToStatus !== null ? "not-allowed" : "pointer",
+                  opacity: advancingToStatus !== null ? 0.6 : 1,
                   fontSize: 14,
                 }}
               >
-                {isAdvancing ? "מעדכן..." : `קדם ל${nextStatusLabel}`}
+                {advancingToStatus !== null ? "מעדכן..." : "העבר לטיפול"}
               </button>
-            </div>
-          )}
+            )}
+
+            {order.status === "IN_PROGRESS" && (
+              <button
+                onClick={() => handleAdvanceStatus("COMPLETED")}
+                disabled={advancingToStatus !== null}
+                style={{
+                  background: "#4f46e5",
+                  color: "#fff",
+                  border: "none",
+                  padding: "10px 16px",
+                  borderRadius: "6px",
+                  fontWeight: 600,
+                  cursor: advancingToStatus !== null ? "not-allowed" : "pointer",
+                  opacity: advancingToStatus !== null ? 0.6 : 1,
+                  fontSize: 14,
+                }}
+              >
+                {advancingToStatus !== null ? "מעדכן..." : "העבר לטופל"}
+              </button>
+            )}
+
+            {order.status === "COMPLETED" && (
+              <span style={{ fontSize: 14, color: "#9ca3af", fontWeight: 600 }}>
+                ✓ הזמנה הושלמה
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
