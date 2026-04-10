@@ -177,10 +177,12 @@ When P3 schema is implemented, seed the following test data structure:
 
 ## Phase 5 — Purchase (Orders)
 
-> **Decisions required before starting:**
-> - [ ] **D5-01** Insufficient balance at checkout: block with error, or allow partial?
-> - [ ] **D5-02** Order cancellation: can a USER cancel a NEW order, or is it final once placed?
-> - [ ] **D5-03** Stock decrement: at order placement (locks stock) or at COMPLETED (after staff fulfils)?
+> **Status:** User-side complete (P5-10 to P5-13) ✓
+
+> **Decisions confirmed:**
+> - [x] **D5-01** Insufficient balance at checkout: **Block with error**
+> - [x] **D5-02** Order cancellation: **Orders are final (no user cancellation)**
+> - [x] **D5-03** Stock decrement: **Stock managed by STAFF/ADMIN only, not auto-decremented**
 
 ### Database
 - [ ] P5-01 Prisma: `Order` model — `id`, `userId`, `status` (NEW/IN_PROGRESS/COMPLETED), `total`, `createdAt`, `updatedAt`
@@ -195,11 +197,11 @@ When P3 schema is implemented, seed the following test data structure:
 - [ ] P5-08 `orderService.getOrder(orderId, actorId)` — USER sees own only; STAFF/ADMIN see all
 - [ ] P5-09 `orderService.listOrders(userId?, filters?)` — USER filtered by own; STAFF/ADMIN see all
 
-### User-facing
-- [ ] P5-10 `/cart` — "לתשלום" triggers order placement Server Action; shows balance and total before confirming
-- [ ] P5-11 Order confirmation page — success state after placement, clears cart
-- [ ] P5-12 `/orders` — own order history (status badge, total, date)
-- [ ] P5-13 `/orders/[id]` — order detail (items, totals, status history)
+### User-facing ✓
+- [x] P5-10 CartModal — "לתשלום" triggers checkout with confirmation dialog; shows balance, total, items count
+- [x] P5-11 Order confirmation — redirects to `/orders/[id]` after successful placement; clears cart
+- [x] P5-12 `/orders` — user order history (status badge, total, date); clickable rows
+- [x] P5-13 `/orders/[id]` — order detail (items, totals, status history timeline)
 
 ### Staff
 - [ ] P5-14 `/staff/queue` — NEW + IN_PROGRESS orders sorted by createdAt
