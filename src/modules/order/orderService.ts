@@ -294,3 +294,104 @@ export async function advanceStatus(orderId: string, actorId: string) {
 
   return updatedOrder;
 }
+
+/**
+ * Cancel an order (USER on own NEW order only)
+ * Atomically refunds balance
+ */
+export async function cancelOrder(orderId: string, actorId: string) {
+  const prisma = getPrismaInstance();
+
+  // Fetch the order
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      user: {
+        select: { id: true },
+      },
+    },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  // Only allow users to cancel their own orders
+  if (order.userId !== actorId) {
+    throw new Error("Unauthorized: can only cancel your own orders");
+  }
+
+  // Only allow canceling NEW orders
+  if (order.status !== "NEW") {
+    throw new Error(`Cannot cancel order with status ${order.status}`);
+  }
+
+  // Atomic transaction: refund + mark as cancelled
+  const canceledOrder = await prisma.$transaction(async (tx) => {
+    // Create refund budget transaction
+    await tx.budgetTransaction.create({
+      data: {
+        userId: order.userId,
+        amount: Number(order.total),
+        note: `Order ${order.orderNumber} cancelled`,
+        createdBy: actorId,
+      },
+    });
+
+    // Update user balance (add refund)
+    await tx.user.update({
+      where: { id: order.userId },
+      data: { balance: { increment: Number(order.total) } },
+    });
+
+    // Create status history for cancellation
+    // Note: We'll add a CANCELLED status or mark as COMPLETED with a note
+    // For now, using IN_PROGRESS as an intermediate state to show cancellation
+    const updatedOrder = await tx.order.update({
+      where: { id: orderId },
+      data: { status: "COMPLETED" }, // Mark as completed (cancelled)
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        items: {
+          include: {
+            item: true,
+          },
+        },
+        statusHistory: {
+          include: {
+            changer: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                role: true,
+              },
+            },
+          },
+          orderBy: { changedAt: "asc" },
+        },
+      },
+    });
+
+    // Create status history entry for cancellation
+    await tx.orderStatusHistory.create({
+      data: {
+        orderId,
+        fromStatus: "NEW",
+        toStatus: "COMPLETED", // Indicate cancellation via history note
+        changedBy: actorId,
+      },
+    });
+
+    return updatedOrder;
+  });
+
+  return canceledOrder;
+}
