@@ -204,8 +204,8 @@ When P3 schema is implemented, seed the following test data structure:
 - [x] P5-13 `/orders/[id]` — order detail (items, totals, status history timeline)
 
 ### Staff
-- [ ] P5-14 `/staff/queue` — NEW + IN_PROGRESS orders sorted by createdAt
-- [ ] P5-15 `/staff/orders/[id]` — order detail + advance status button
+- [x] P5-14 `/staff/queue` — NEW + IN_PROGRESS orders sorted by createdAt (table with status badge, item count, total)
+- [x] P5-15 `/staff/orders/[id]` — order detail page with "Advance Status" button for STAFF/ADMIN
 
 ### Tests
 - [ ] P5-16 Unit: createOrder success (balance deducted, order + items + history created atomically)
