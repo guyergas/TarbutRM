@@ -118,7 +118,6 @@ export default function StoreView({
                   background:
                     menu.id === currentMenu.id ? "var(--accent-light)" : "transparent",
                   border: "none",
-                  borderRight: index < allMenus.length - 1 ? "1px solid var(--border-color)" : "none",
                   whiteSpace: "nowrap",
                   display: "flex",
                   alignItems: "center",
