@@ -16,7 +16,7 @@ interface CartItem {
 interface CartIconProps {
   initialCount: number;
   userRole: "USER" | "STAFF" | "ADMIN";
-  userBalance?: string;
+  userBalance?: string | null;
 }
 
 export default function CartIcon({ initialCount, userRole, userBalance }: CartIconProps) {

@@ -44,7 +44,7 @@ interface CartModalProps {
   initialItems: CartItem[];
   initialTotalCost: number;
   userRole: "USER" | "STAFF" | "ADMIN";
-  userBalance?: string;
+  userBalance?: string | null;
   onClose: () => void;
   onItemCountChange: (count: number) => void;
   onCartUpdate: (items: CartItem[], totalCost: number) => void;
