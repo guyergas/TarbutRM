@@ -78,6 +78,8 @@ Tasks grouped by phase. One task at a time. Check off only when committed and ap
 
 ## Phase 3 — Store & Inventory Management
 
+> **Status:** Complete ✓
+
 > **All decisions resolved. Ready to implement.**
 >
 > **Structure:** Menu → Section → Item (3-level hierarchy)
@@ -102,48 +104,48 @@ Tasks grouped by phase. One task at a time. Check off only when committed and ap
 > **Out-of-stock items:** shown in store but marked as "אזל מהמלאי" (not hidden)
 
 ### Database
-- [ ] P3-01 Prisma: `Menu` model — `id`, `name`, `archived`, `position`, `createdAt`, `updatedAt`, `createdBy` (visible menus = not archived; archived menus moved to end)
-- [ ] P3-02 Prisma: `Section` model — `id`, `menuId`, `name`, `archived`, `position`, `createdAt`, `updatedAt`, `createdBy` (visible sections = not archived; archived moved to end)
-- [ ] P3-03 Prisma: `Item` model — `id`, `sectionId` (FK→Section), `name`, `description?`, `price`, `inStock`, `position`, `archived`, `image?`, `createdAt`, `updatedAt`, `createdBy`
-- [ ] P3-04 Prisma: `ItemStockHistory` model — `id`, `itemId` (FK→Item), `inStock` (new value after change), `changedBy` (FK→User), `changedAt`
-- [ ] P3-05 Prisma migration
+- [x] P3-01 Prisma: `Menu` model — `id`, `name`, `archived`, `position`, `createdAt`, `updatedAt`, `createdBy` (visible menus = not archived; archived menus moved to end)
+- [x] P3-02 Prisma: `Section` model — `id`, `menuId`, `name`, `archived`, `position`, `createdAt`, `updatedAt`, `createdBy` (visible sections = not archived; archived moved to end)
+- [x] P3-03 Prisma: `Item` model — `id`, `sectionId` (FK→Section), `name`, `description?`, `price`, `inStock`, `position`, `archived`, `image?`, `createdAt`, `updatedAt`, `createdBy`
+- [x] P3-04 Prisma: `ItemStockHistory` model — `id`, `itemId` (FK→Item), `inStock` (new value after change), `changedBy` (FK→User), `changedAt`
+- [x] P3-05 Prisma migration
 
 ### Service layer
-- [ ] P3-06 `menuService.listVisible()` — returns non-archived menus ordered by position; resolves default (first by position)
-- [ ] P3-07 `menuService.getMenuWithSections(menuId)` — returns menu + non-archived sections + non-archived items per section (user-facing)
-- [ ] P3-08 `menuService.listAll()` — ADMIN, all menus (archived + visible)
-- [ ] P3-09 `menuService.create(data, actorId)` — ADMIN; creates new menu, not archived
-- [ ] P3-10 `menuService.update(id, data, actorId)` — ADMIN; updates name only, cannot edit archived menus
-- [ ] P3-11 `menuService.archive(id, actorId)` — ADMIN; sets `archived: true`, moves to end by position
-- [ ] P3-12 `menuService.reorder(orderedIds, actorId)` — ADMIN; updates position; archived menus stay at end
-- [ ] P3-13 `sectionService.create(menuId, data, actorId)` — ADMIN; creates new section in menu, not archived
-- [ ] P3-14 `sectionService.update(id, data, actorId)` — ADMIN; updates name only, cannot edit archived sections
-- [ ] P3-15 `sectionService.archive(id, actorId)` — ADMIN; sets `archived: true`, moves to end by position
-- [ ] P3-16 `sectionService.reorder(menuId, orderedIds, actorId)` — ADMIN; updates position within menu; archived stay at end
-- [ ] P3-17 `itemService.create(sectionId, data, actorId)` — ADMIN; appends to end of section; sets initial stock history record (inStock=true)
-- [ ] P3-18 `itemService.update(id, data, actorId)` — ADMIN; updates name/desc/price/image; cannot edit archived items
-- [ ] P3-19 `itemService.archive(id, actorId)` — ADMIN; sets `archived: true`, moves to end by position
-- [ ] P3-20 `itemService.setStock(id, inStock, actorId)` — ADMIN or STAFF; atomic: `prisma.$transaction([item.update(inStock), itemStockHistory.create({itemId, inStock, changedBy: actorId, changedAt: now})])`
-- [ ] P3-21 `itemService.duplicate(id, targetSectionId, actorId)` — ADMIN; creates copy in target section at end; rejects if source archived; sets initial stock history (inStock=true)
-- [ ] P3-22 `itemService.reorder(sectionId, orderedIds, actorId)` — ADMIN; updates position; archived items stay at end
+- [x] P3-06 `menuService.listVisible()` — returns non-archived menus ordered by position; resolves default (first by position)
+- [x] P3-07 `menuService.getMenuWithSections(menuId)` — returns menu + non-archived sections + non-archived items per section (user-facing)
+- [x] P3-08 `menuService.listAll()` — ADMIN, all menus (archived + visible)
+- [x] P3-09 `menuService.create(data, actorId)` — ADMIN; creates new menu, not archived
+- [x] P3-10 `menuService.update(id, data, actorId)` — ADMIN; updates name only, cannot edit archived menus
+- [x] P3-11 `menuService.archive(id, actorId)` — ADMIN; sets `archived: true`, moves to end by position
+- [x] P3-12 `menuService.reorder(orderedIds, actorId)` — ADMIN; updates position; archived menus stay at end
+- [x] P3-13 `sectionService.create(menuId, data, actorId)` — ADMIN; creates new section in menu, not archived
+- [x] P3-14 `sectionService.update(id, data, actorId)` — ADMIN; updates name only, cannot edit archived sections
+- [x] P3-15 `sectionService.archive(id, actorId)` — ADMIN; sets `archived: true`, moves to end by position
+- [x] P3-16 `sectionService.reorder(menuId, orderedIds, actorId)` — ADMIN; updates position within menu; archived stay at end
+- [x] P3-17 `itemService.create(sectionId, data, actorId)` — ADMIN; appends to end of section; sets initial stock history record (inStock=true)
+- [x] P3-18 `itemService.update(id, data, actorId)` — ADMIN; updates name/desc/price/image; cannot edit archived items
+- [x] P3-19 `itemService.archive(id, actorId)` — ADMIN; sets `archived: true`, moves to end by position
+- [x] P3-20 `itemService.setStock(id, inStock, actorId)` — ADMIN or STAFF; atomic: `prisma.$transaction([item.update(inStock), itemStockHistory.create({itemId, inStock, changedBy: actorId, changedAt: now})])`
+- [x] P3-21 `itemService.duplicate(id, targetSectionId, actorId)` — ADMIN; creates copy in target section at end; rejects if source archived; sets initial stock history (inStock=true)
+- [x] P3-22 `itemService.reorder(sectionId, orderedIds, actorId)` — ADMIN; updates position; archived items stay at end
 
 ### Store page (unified for all roles)
-- [ ] P3-23 `/store/[menuId]` — single view for USER/STAFF/ADMIN:
+- [x] P3-23 `/store/[menuId]` — single view for USER/STAFF/ADMIN:
   - **All**: menu nav bar (visible menus); section sidebar; item grid with image/name/desc/price; "אזל מהמלאי" badge on OOS items
   - **STAFF+ADMIN**: stock toggle button on each item (במלאי ↔ אזל מהמלאי)
   - **ADMIN only**: edit icon button next to stock button; section sidebar shows edit/reorder/archive controls on hover; menu bar shows edit/reorder/archive controls on hover; "+ new section" button in sidebar header; "+ new item" button in section heading
 
 ### Admin detail pages
-- [ ] P3-24 `/admin/items/[id]` — full item editor (inline modal or page):
+- [x] P3-24 `/admin/items/[id]` — full item editor (inline modal or page):
   - Display: name, description, price, image, current stock status, stock history table
   - Actions: save edits, toggle stock, archive, duplicate to section
   - Stock history: date, new status (in/out), changed by user name/role
 
 ### Redirects & nav
-- [ ] P3-25 Store nav bar — visible menus as tabs in top nav; active menu highlighted
-- [ ] P3-26 `/` redirect — resolves first visible menu by position; redirects to `/store/[menuId]`
+- [x] P3-25 Store nav bar — visible menus as tabs in top nav; active menu highlighted
+- [x] P3-26 `/` redirect — resolves first visible menu by position; redirects to `/store/[menuId]`
 
-### Seed data (for testing)
+### Seed data (for testing) ✓
 When P3 schema is implemented, seed the following test data structure:
 
 **Menu 1: פאב (Pub)** — position 1
@@ -157,17 +159,19 @@ When P3 schema is implemented, seed the following test data structure:
 
 ## Phase 4 — Basket
 
-> **Decisions required before starting:**
-> - [ ] **D4-01** Cart storage: client-side (localStorage, no DB) or server-side (DB, survives refresh)?
-> - [ ] **D4-02** Max quantity per item: unlimited, or capped at current stock?
-> - [ ] **D4-03** Cart behaviour when a product goes inactive mid-session: silently drop it, or show a warning?
+> **Status:** Complete ✓
 
-### Implementation (tasks depend on D4-01)
-- [ ] P4-01 Cart state: implement chosen storage strategy
-- [ ] P4-02 `/store` — "הוסף לסל" button per product; quantity selector
-- [ ] P4-03 Cart icon in TopBar showing item count badge
-- [ ] P4-04 `/cart` — cart summary page: items, quantities, line totals, grand total, "לתשלום" button
-- [ ] P4-05 Add / remove / clear cart actions
+> **Decisions resolved:**
+> - [x] **D4-01** Cart storage: **Server-side (DB, survives refresh)**
+> - [x] **D4-02** Max quantity per item: **Unlimited**
+> - [x] **D4-03** Cart behaviour when a product goes inactive mid-session: **Show warning (grayed out with reduced opacity)**
+
+### Implementation ✓
+- [x] P4-01 Cart state: implement chosen storage strategy
+- [x] P4-02 `/store` — "הוסף לסל" button per product; quantity selector
+- [x] P4-03 Cart icon in TopBar showing item count badge
+- [x] P4-04 Cart modal (drawer) — cart summary: items, quantities, line totals, grand total, "לתשלום" button
+- [x] P4-05 Add / remove / clear cart actions
 
 ---
 

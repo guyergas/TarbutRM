@@ -16,9 +16,10 @@ interface CartItem {
 interface CartIconProps {
   initialCount: number;
   userRole: "USER" | "STAFF" | "ADMIN";
+  userBalance?: string;
 }
 
-export default function CartIcon({ initialCount, userRole }: CartIconProps) {
+export default function CartIcon({ initialCount, userRole, userBalance }: CartIconProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [itemCount, setItemCount] = useState(initialCount);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -124,6 +125,7 @@ export default function CartIcon({ initialCount, userRole }: CartIconProps) {
           initialItems={cartItems}
           initialTotalCost={totalCost}
           userRole={userRole}
+          userBalance={userBalance}
           onClose={() => setIsOpen(false)}
           onItemCountChange={setItemCount}
           onCartUpdate={handleCartUpdate}

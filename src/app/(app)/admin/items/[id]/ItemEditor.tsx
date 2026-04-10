@@ -49,7 +49,6 @@ export default function ItemEditor({
   const [description, setDescription] = useState(item.description || "");
   const [price, setPrice] = useState(item.price.toString());
   const [image, setImage] = useState(item.image || "");
-  const [imagePreview, setImagePreview] = useState<string>(item.image || "");
   const [inStock, setInStock] = useState(item.inStock);
   const [loading, setLoading] = useState(false);
   const [stockLoading, setStockLoading] = useState(false);
@@ -59,7 +58,8 @@ export default function ItemEditor({
   const [uploadedImage, setUploadedImage] = useState<string>("");
   const [cropX, setCropX] = useState(0);
   const [cropY, setCropY] = useState(0);
-  const [cropSize, setCropSize] = useState(200);
+  const [cropSize, setCropSize] = useState(400);
+  const [maxCropSize, setMaxCropSize] = useState(400);
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef({ x: 0, y: 0, cropX: 0, cropY: 0 });
   const cropperContainerRef = useRef<HTMLDivElement>(null);
@@ -144,14 +144,22 @@ export default function ItemEditor({
       const imageY = (cropY - offsetY) / scale;
       const imageCropSize = cropSize / scale;
 
-      // If crop area is bigger than 200, scale to 200. Otherwise keep crop size.
-      const finalSize = Math.min(cropSize, 200);
+      // Calculate max size: don't upscale, max 400px, and limited by actual image size
+      const maxSafeSize = Math.min(imageW, imageH, 400);
+      setMaxCropSize(maxSafeSize);
+
+      // Use the actual crop size in image coordinates, capped at max safe size
+      const finalSize = Math.min(imageCropSize, maxSafeSize);
 
       const canvas = document.createElement("canvas");
       canvas.width = finalSize;
       canvas.height = finalSize;
       const ctx = canvas.getContext("2d");
       if (ctx) {
+        // Enable high-quality rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+
         // Draw the selected crop area from the actual image, scaled to finalSize
         ctx.drawImage(
           img,
@@ -164,9 +172,9 @@ export default function ItemEditor({
           finalSize,
           finalSize
         );
-        const croppedImage = canvas.toDataURL("image/jpeg", 0.9);
+        // Try WebP first (better quality), fallback to PNG
+        const croppedImage = canvas.toDataURL("image/webp") || canvas.toDataURL("image/png");
         setImage(croppedImage);
-        setImagePreview(croppedImage);
         setShowCropper(false);
         setUploadedImage("");
       }
@@ -280,6 +288,7 @@ export default function ItemEditor({
                   width: "100%",
                   height: "100%",
                   objectFit: "contain",
+                  imageRendering: "crisp-edges",
                 }}
               />
 
@@ -332,13 +341,13 @@ export default function ItemEditor({
             {/* Size Control */}
             <div style={{ marginBottom: 24 }}>
               <label style={{ display: "block", marginBottom: 8, fontSize: 14, fontWeight: 500 }}>
-                גודל החתיכה: {cropSize}px
+                גודל החתיכה: {Math.min(cropSize, maxCropSize)}px (מקסימום: {maxCropSize}px)
               </label>
               <input
                 type="range"
                 min="50"
-                max="400"
-                value={cropSize}
+                max={maxCropSize}
+                value={Math.min(cropSize, maxCropSize)}
                 onChange={(e) => setCropSize(parseInt(e.target.value))}
                 style={{ width: "100%" }}
               />
@@ -461,36 +470,6 @@ export default function ItemEditor({
             </p>
           </div>
 
-          {/* Image Preview */}
-          {imagePreview && (
-            <div style={{ marginBottom: 24 }}>
-              <h3 style={{ fontWeight: 600, marginBottom: 8, fontSize: 14 }}>
-                תצוגה מקדימה
-              </h3>
-              <div
-                style={{
-                  width: 200,
-                  height: 200,
-                  borderRadius: 6,
-                  overflow: "hidden",
-                  background: "#f3f4f6",
-                }}
-              >
-                <img
-                  src={imagePreview}
-                  alt={name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              </div>
-            </div>
-          )}
 
           {/* Stock History */}
           {!isNew && stockHistory.length > 0 && (

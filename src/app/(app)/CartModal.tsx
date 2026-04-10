@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import UnifiedItemModal from "./store/[menuId]/UnifiedItemModal";
 import { cartService } from "@/modules/cart";
 import {
   removeFromCartAction,
   updateQuantityAction,
+  clearCartAction,
 } from "./store/[menuId]/cartActions";
+import { createOrderAction } from "./store/[menuId]/orderActions";
 
 interface CartItem {
   cartItemId: string;
@@ -41,6 +44,7 @@ interface CartModalProps {
   initialItems: CartItem[];
   initialTotalCost: number;
   userRole: "USER" | "STAFF" | "ADMIN";
+  userBalance?: string;
   onClose: () => void;
   onItemCountChange: (count: number) => void;
   onCartUpdate: (items: CartItem[], totalCost: number) => void;
@@ -50,16 +54,20 @@ export default function CartModal({
   initialItems,
   initialTotalCost,
   userRole,
+  userBalance,
   onClose,
   onItemCountChange,
   onCartUpdate,
 }: CartModalProps) {
+  const router = useRouter();
   const [items, setItems] = useState<CartItem[]>(initialItems);
   const [totalCost, setTotalCost] = useState(initialTotalCost);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
   const [selectedItemFull, setSelectedItemFull] = useState<FullItemData | null>(null);
   const [stockHistory, setStockHistory] = useState<StockHistory[]>([]);
+  const [showCheckoutConfirm, setShowCheckoutConfirm] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const handleRemoveItem = async (itemId: string) => {
     setIsLoading(true);
@@ -125,6 +133,36 @@ export default function CartModal({
     }
   };
 
+  const handleCheckout = async () => {
+    setCheckoutError(null);
+    setIsLoading(true);
+    try {
+      const itemsForOrder = items.map((item) => ({
+        itemId: item.itemId,
+        quantity: item.quantity,
+      }));
+
+      const order = await createOrderAction(itemsForOrder);
+
+      // Clear cart
+      await clearCartAction();
+
+      // Redirect to order confirmation page
+      router.push(`/orders/${order.id}`);
+
+      // Reset UI
+      setShowCheckoutConfirm(false);
+      onClose();
+    } catch (error) {
+      console.error("Checkout failed:", error);
+      setCheckoutError(
+        error instanceof Error ? error.message : "Checkout failed. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       {/* Overlay */}
@@ -144,9 +182,9 @@ export default function CartModal({
           position: "fixed",
           top: 0,
           left: 0,
-          bottom: 0,
+          maxHeight: "70vh",
           width: "100%",
-          maxWidth: "480px",
+          maxWidth: "300px",
           background: "#fff",
           boxShadow: "2px 0 12px rgba(0,0,0,0.15)",
           zIndex: 101,
@@ -167,7 +205,7 @@ export default function CartModal({
             flexShrink: 0,
           }}
         >
-          <span style={{ fontWeight: 700, fontSize: 18 }}>סל קניות</span>
+          <span style={{ fontWeight: 700, fontSize: 18, color: "#000" }}>סל קניות</span>
           <button
             type="button"
             onClick={onClose}
@@ -385,6 +423,8 @@ export default function CartModal({
               <span>{totalCost.toFixed(2)} ₪</span>
             </div>
             <button
+              onClick={() => setShowCheckoutConfirm(true)}
+              disabled={isLoading}
               style={{
                 display: "block",
                 width: "100%",
@@ -395,10 +435,11 @@ export default function CartModal({
                 borderRadius: "6px",
                 textAlign: "center",
                 fontWeight: "600",
-                cursor: "pointer",
+                cursor: isLoading ? "not-allowed" : "pointer",
+                opacity: isLoading ? 0.5 : 1,
               }}
             >
-              לתשלום
+              {isLoading ? "מעבד..." : "לתשלום"}
             </button>
           </div>
         )}
@@ -415,6 +456,125 @@ export default function CartModal({
           }}
           stockHistory={stockHistory}
         />
+      )}
+
+      {/* Checkout Confirmation Dialog */}
+      {showCheckoutConfirm && (
+        <>
+          <div
+            onClick={() => !isLoading && setShowCheckoutConfirm(false)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.3)",
+              zIndex: 102,
+            }}
+          />
+          <div
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              background: "#fff",
+              borderRadius: "8px",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+              zIndex: 103,
+              padding: "24px",
+              maxWidth: "400px",
+              width: "90%",
+              direction: "rtl",
+            }}
+          >
+            <h2 style={{ margin: "0 0 16px 0", fontSize: "20px", fontWeight: "700" }}>
+              אישור הזמנה
+            </h2>
+
+            {checkoutError && (
+              <div
+                style={{
+                  background: "#fee2e2",
+                  color: "#991b1b",
+                  padding: "12px",
+                  borderRadius: "6px",
+                  marginBottom: "16px",
+                  fontSize: "14px",
+                }}
+              >
+                {checkoutError}
+              </div>
+            )}
+
+            <div style={{ marginBottom: "16px", fontSize: "14px", color: "#374151" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                <span>יתרה נוכחית:</span>
+                <span style={{ fontWeight: "600" }}>₪{userBalance || "0"}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                <span>סה"כ הזמנה:</span>
+                <span style={{ fontWeight: "600" }}>₪{totalCost.toFixed(2)}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>פריטים:</span>
+                <span>{items.length}</span>
+              </div>
+            </div>
+
+            {userBalance &&
+              Number(userBalance) - totalCost < 5 &&
+              Number(userBalance) >= totalCost && (
+                <div
+                  style={{
+                    background: "#fef3c7",
+                    color: "#92400e",
+                    padding: "12px",
+                    borderRadius: "6px",
+                    marginBottom: "16px",
+                    fontSize: "13px",
+                  }}
+                >
+                  התראה: היתרה שלך לאחר הרכישה תהיה נמוכה
+                </div>
+              )}
+
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button
+                onClick={() => !isLoading && setShowCheckoutConfirm(false)}
+                disabled={isLoading}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  background: "#e5e7eb",
+                  color: "#374151",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontWeight: "600",
+                  cursor: isLoading ? "not-allowed" : "pointer",
+                  opacity: isLoading ? 0.5 : 1,
+                }}
+              >
+                ביטול
+              </button>
+              <button
+                onClick={handleCheckout}
+                disabled={isLoading}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  background: "#059669",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontWeight: "600",
+                  cursor: isLoading ? "not-allowed" : "pointer",
+                  opacity: isLoading ? 0.5 : 1,
+                }}
+              >
+                {isLoading ? "מעבד..." : "אישור"}
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </>
   );

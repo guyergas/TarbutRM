@@ -33,7 +33,7 @@ export default async function TopBar({ role }: { role?: Role }) {
       role={role}
       menus={menus}
       balance={balance}
-      cartIcon={<CartIcon initialCount={cartItemCount} userRole={userRole} />}
+      cartIcon={<CartIcon initialCount={cartItemCount} userRole={userRole} userBalance={balance} />}
     />
   );
 }

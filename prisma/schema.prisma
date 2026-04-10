@@ -13,6 +13,12 @@ enum Role {
   ADMIN
 }
 
+enum OrderStatus {
+  NEW
+  IN_PROGRESS
+  COMPLETED
+}
+
 model User {
   id                   String                @id @default(cuid())
   firstName            String
@@ -34,6 +40,8 @@ model User {
   items                Item[]                @relation("ItemCreatedBy")
   stockHistoryChanges  ItemStockHistory[]    @relation("StockChangedBy")
   cartItems            CartItem[]            @relation("CartItems")
+  orders               Order[]               @relation("OrderUser")
+  orderStatusHistory   OrderStatusHistory[]  @relation("OrderStatusChangedBy")
 }
 
 model BudgetTransaction {
@@ -92,6 +100,7 @@ model Item {
   creator     User            @relation("ItemCreatedBy", fields: [createdBy], references: [id])
   stockHistory ItemStockHistory[]
   cartItems    CartItem[]      @relation("CartItems")
+  orderItems   OrderItem[]     @relation("OrderItem")
 
   @@index([sectionId])
 }
@@ -120,6 +129,48 @@ model CartItem {
 
   @@unique([userId, itemId])
   @@index([userId])
+}
+
+model Order {
+  id            String          @id @default(cuid())
+  userId        String
+  user          User            @relation("OrderUser", fields: [userId], references: [id], onDelete: Cascade)
+  status        OrderStatus     @default(NEW)
+  total         Decimal         @db.Decimal(10, 2)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  items         OrderItem[]
+  statusHistory OrderStatusHistory[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId    String
+  item      Item     @relation("OrderItem", fields: [itemId], references: [id])
+  quantity  Int
+  unitPrice Decimal  @db.Decimal(10, 2)
+  subtotal  Decimal  @db.Decimal(10, 2)
+
+  @@index([orderId])
+  @@index([itemId])
+}
+
+model OrderStatusHistory {
+  id         String      @id @default(cuid())
+  orderId    String
+  order      Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  changedBy  String
+  changer    User        @relation("OrderStatusChangedBy", fields: [changedBy], references: [id])
+  changedAt  DateTime    @default(now())
+
+  @@index([orderId])
 }
 
 // Auth.js required tables (managed by Prisma adapter)
