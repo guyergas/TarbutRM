@@ -31,7 +31,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="max-w-md mx-auto space-y-6">
-      <div className="rounded-xl bg-white px-8 py-8 shadow-sm space-y-5">
+      <div className="rounded-xl bg-white dark:bg-gray-800 px-8 py-8 shadow-sm dark:shadow-xl space-y-5">
         <h1 className="text-2xl">הפרופיל שלי</h1>
 
         <dl className="space-y-3 text-sm">
@@ -55,9 +55,9 @@ export default async function ProfilePage() {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-4 border-b border-gray-100 pb-2 last:border-0 last:pb-0">
-      <dt className="font-medium text-gray-500">{label}</dt>
-      <dd className="text-gray-900">{value}</dd>
+    <div className="flex justify-between gap-4 border-b border-gray-100 dark:border-gray-700 pb-2 last:border-0 last:pb-0">
+      <dt className="font-medium text-gray-500 dark:text-gray-400">{label}</dt>
+      <dd className="text-gray-900 dark:text-gray-100">{value}</dd>
     </div>
   );
 }

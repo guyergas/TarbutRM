@@ -40,6 +40,8 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
         setItem({
           ...updatedItem,
           price: updatedItem.price.toString(),
+          description: updatedItem.description ?? undefined,
+          image: updatedItem.image ?? undefined,
         });
       }
     } catch (err) {
@@ -71,7 +73,11 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
             try {
               const { getStockHistory } = await import("./itemModalActions");
               const history = await getStockHistory(item.id);
-              setStockHistory(history || []);
+              const serialized = (history || []).map((h: any) => ({
+                ...h,
+                changedAt: h.changedAt instanceof Date ? h.changedAt.toISOString() : h.changedAt,
+              }));
+              setStockHistory(serialized);
             } catch (err) {
               console.error("Failed to fetch stock history:", err);
             }

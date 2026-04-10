@@ -537,7 +537,7 @@ export default function UnifiedItemModal({
           )}
 
           {/* Stock History - Staff and Admin */}
-          {(canToggleStock || userRole === "STAFF") && stockHistory.length > 0 && (
+          {canToggleStock && stockHistory.length > 0 && (
             <div style={{ marginBottom: 12 }}>
               <h3 style={{ fontWeight: 600, marginBottom: 6, fontSize: 12, color: "#6b7280" }}>
                 היסטוריית מלאי

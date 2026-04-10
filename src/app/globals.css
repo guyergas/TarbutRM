@@ -3,6 +3,7 @@
 :root {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  color-scheme: light dark;
 }
 
 body {
@@ -11,9 +12,16 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #111827;
+    color: #f3f4f6;
+  }
+}
+
 @layer components {
   h1, h2, h3, h4, h5, h6 {
-    @apply !text-black;
+    @apply !text-black dark:!text-white;
   }
 }
 
