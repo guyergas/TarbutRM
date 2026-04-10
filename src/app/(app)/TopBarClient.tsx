@@ -344,12 +344,17 @@ export default function TopBarClient({ role, menus, balance, cartIcon }: TopBarC
               </div>
             )}
 
-            {/* 3. Contact us */}
+            {/* 3. Orders */}
+            <Link href="/orders" onClick={close} style={linkStyle}>
+              ההזמנות שלי
+            </Link>
+
+            {/* 4. Contact us */}
             <Link href="/contactus" onClick={close} style={linkStyle}>
               צור קשר
             </Link>
 
-            {/* 4. Logout */}
+            {/* 5. Logout */}
             <div style={{ borderTop: "1px solid #e5e7eb", marginTop: 16, paddingTop: 16 }}>
               <LogoutMenuButton />
             </div>
