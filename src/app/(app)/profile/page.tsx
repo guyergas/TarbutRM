@@ -30,34 +30,59 @@ export default async function ProfilePage() {
   }
 
   const joined = new Intl.DateTimeFormat("he-IL", { dateStyle: "long" }).format(user.createdAt);
+  const balance = Number(user.balance);
 
   return (
-    <div className="max-w-md mx-auto space-y-6">
-      <div className="rounded-xl bg-white dark:bg-gray-800 px-8 py-8 shadow-sm dark:shadow-xl space-y-5">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl">הפרופיל שלי</h1>
-          <Link
-            href="/profile/edit"
-            className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition"
-          >
-            עריכה
-          </Link>
-        </div>
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">הפרופיל שלי</h1>
+        <Link
+          href="/profile/edit"
+          className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition"
+        >
+          עריכה
+        </Link>
+      </div>
 
+      {/* Personal Information Card */}
+      <div className="rounded-xl bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-xl space-y-4">
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white">פרטים אישיים</h2>
         <dl className="space-y-3 text-sm">
-          <Row label="שם" value={`${user.firstName} ${user.lastName}`} />
+          <Row label="שם מלא" value={`${user.firstName} ${user.lastName}`} />
           <Row label="אימייל" value={user.email} />
-          <Row label="תפקיד" value={ROLE_LABEL[user.role] ?? user.role} />
-          <Row label="עיר" value={user.city} />
           {user.phone && <Row label="טלפון" value={user.phone} />}
+          <Row label="עיר" value={user.city} />
           {user.street && <Row label="רחוב ומספר בית" value={user.street} />}
-          <Row label="יתרה" value={`₪${Number(user.balance).toFixed(2)}`} />
+        </dl>
+      </div>
+
+      {/* Account Information Card */}
+      <div className="rounded-xl bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-xl space-y-4">
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white">פרטי חשבון</h2>
+        <dl className="space-y-3 text-sm">
+          <Row label="תפקיד" value={ROLE_LABEL[user.role] ?? user.role} />
           <Row label="חבר מאז" value={joined} />
         </dl>
-
-        <div className="pt-2">
-          <LogoutButton />
+        <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex justify-between items-center">
+            <span className="font-medium text-gray-500 dark:text-gray-400">יתרה</span>
+            <span
+              className={`text-xl font-bold font-variant-numeric-tabular ${
+                balance >= 0
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-red-600 dark:text-red-400"
+              }`}
+            >
+              ₪{balance.toFixed(2)}
+            </span>
+          </div>
         </div>
+      </div>
+
+      {/* Actions */}
+      <div className="rounded-xl bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-xl">
+        <LogoutButton />
       </div>
     </div>
   );
@@ -65,9 +90,9 @@ export default async function ProfilePage() {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-4 border-b border-gray-100 dark:border-gray-700 pb-2 last:border-0 last:pb-0">
-      <dt className="font-medium text-gray-500 dark:text-gray-400">{label}</dt>
-      <dd className="text-gray-900 dark:text-gray-100">{value}</dd>
+    <div className="flex justify-between gap-4 border-b border-gray-100 dark:border-gray-700 pb-3 last:border-0 last:pb-0">
+      <dt className="font-medium text-gray-600 dark:text-gray-400">{label}</dt>
+      <dd className="text-right text-gray-900 dark:text-gray-100">{value}</dd>
     </div>
   );
 }

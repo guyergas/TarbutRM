@@ -4,11 +4,28 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
-export async function updateProfile(formData: FormData) {
+type Result = {
+  ok: boolean;
+  message: string;
+};
+
+export async function updateProfile(
+  userId: string,
+  _prevState: Result | null,
+  formData: FormData
+): Promise<Result> {
   const session = await auth();
 
   if (!session?.user?.id) {
     redirect("/login");
+  }
+
+  // Ensure user can only update their own profile
+  if (session.user.id !== userId) {
+    return {
+      ok: false,
+      message: "אין הרשאה לעדכן פרופיל זה",
+    };
   }
 
   const firstName = formData.get("firstName") as string;
@@ -18,11 +35,14 @@ export async function updateProfile(formData: FormData) {
   const street = formData.get("street") as string;
 
   if (!firstName || !lastName || !city) {
-    throw new Error("שם פרטי, שם משפחה ועיר נדרשים");
+    return {
+      ok: false,
+      message: "שם פרטי, שם משפחה ועיר נדרשים",
+    };
   }
 
   await prisma.user.update({
-    where: { id: session.user.id },
+    where: { id: userId },
     data: {
       firstName,
       lastName,

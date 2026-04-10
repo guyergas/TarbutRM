@@ -27,8 +27,14 @@ const inputCls =
   "mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
 const labelCls = "block text-sm font-medium text-gray-700";
 
-export default function EditUserForm({ user }: { user: User }) {
-  const bound = updateUserAction.bind(null, user.id);
+export default function EditUserForm({
+  user,
+  formAction = updateUserAction,
+}: {
+  user: User;
+  formAction?: (userId: string, prevState: any, formData: FormData) => Promise<any>;
+}) {
+  const bound = formAction.bind(null, user.id);
   const [result, action, pending] = useActionState(bound, null);
   const [phone, setPhone] = useState(user.phone ?? "");
   const [cityChoice, setCityChoice] = useState<"known" | "other">(
