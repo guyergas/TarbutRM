@@ -262,8 +262,8 @@ export default function TopBarClient({ role, menus, balance, cartIcon }: TopBarC
 
           {/* Nav items */}
           <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {/* 1. Admin (admin only) */}
-            {role === "ADMIN" && (
+            {/* 1. Admin (admin/staff) */}
+            {(role === "ADMIN" || role === "STAFF") && (
               <div>
                 <button
                   type="button"
@@ -278,8 +278,13 @@ export default function TopBarClient({ role, menus, balance, cartIcon }: TopBarC
 
                 {adminOpen && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <Link href="/admin/users" onClick={close} style={subLinkStyle}>
-                      משתמשים
+                    {role === "ADMIN" && (
+                      <Link href="/admin/users" onClick={close} style={subLinkStyle}>
+                        משתמשים
+                      </Link>
+                    )}
+                    <Link href="/staff/queue" onClick={close} style={subLinkStyle}>
+                      תור ההזמנות
                     </Link>
                   </div>
                 )}
@@ -349,19 +354,12 @@ export default function TopBarClient({ role, menus, balance, cartIcon }: TopBarC
               ההזמנות שלי
             </Link>
 
-            {/* 4. Staff Queue (staff/admin only) */}
-            {(role === "STAFF" || role === "ADMIN") && (
-              <Link href="/staff/queue" onClick={close} style={linkStyle}>
-                תור ההזמנות
-              </Link>
-            )}
-
-            {/* 6. Contact us */}
+            {/* 4. Contact us */}
             <Link href="/contactus" onClick={close} style={linkStyle}>
               צור קשר
             </Link>
 
-            {/* 7. Logout */}
+            {/* 5. Logout */}
             <div style={{ borderTop: "1px solid #e5e7eb", marginTop: 16, paddingTop: 16 }}>
               <LogoutMenuButton />
             </div>
