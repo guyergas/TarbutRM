@@ -154,7 +154,8 @@ export default function StoreView({
           style={{
             width: "125px",
             flexShrink: 0,
-            borderRight: "1px solid var(--border-color)",
+            borderLeft: "2px solid var(--border-color)",
+            borderRight: "2px solid var(--border-color)",
             borderTop: "1px solid var(--border-color)",
             overflowY: "auto",
             background: "var(--bg-primary)",
