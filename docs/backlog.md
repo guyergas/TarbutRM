@@ -15,50 +15,50 @@ Tasks grouped by phase. One task at a time. Check off only when committed and ap
 - [x] P1-06 Create `.env.example` with all required variables documented
 
 ### Database & Auth Setup
-- [ ] P1-07 Configure Prisma with PostgreSQL (`DATABASE_URL` via Docker Compose)
-- [ ] P1-08 Define `User` model: `id`, `name`, `email`, `passwordHash`, `role` (enum: USER/STAFF/ADMIN), `balance` (Decimal, default 0), `active`, `createdAt`, `updatedAt`, `createdBy?`
-- [ ] P1-09 Create initial Prisma migration
-- [ ] P1-10 Configure Auth.js: credentials provider, **database session strategy** (Prisma adapter), `Session` + `VerificationToken` tables
-- [ ] P1-11 Create seed script: creates first ADMIN user (email + password from env)
+- [x] P1-07 Configure Prisma with PostgreSQL (`DATABASE_URL` via Docker Compose)
+- [x] P1-08 Define `User` model: `id`, `name`, `email`, `passwordHash`, `role` (enum: USER/STAFF/ADMIN), `balance` (Decimal, default 0), `active`, `createdAt`, `updatedAt`, `createdBy?`
+- [x] P1-09 Create initial Prisma migration
+- [x] P1-10 Configure Auth.js: credentials provider, **database session strategy** (Prisma adapter), `Session` + `VerificationToken` tables
+- [x] P1-11 Create seed script: creates first ADMIN user (email + password from env)
 
 ### Auth Flows
-- [ ] P1-12 Login page (`/login`) + Server Action (validate credentials, start session)
-- [ ] P1-13 Logout Server Action (`signOut`, redirect to `/login`)
-- [ ] P1-14 Session-aware nav: show user name, role badge, logout button
+- [x] P1-12 Login page (`/login`) + Server Action (validate credentials, start session)
+- [x] P1-13 Logout Server Action (`signOut`, redirect to `/login`)
+- [x] P1-14 Session-aware nav: show user name, role badge, logout button
 
 ### RBAC & Route Protection
-- [ ] P1-15 `middleware.ts`: protect all non-public routes, redirect unauthenticated to `/login`, redirect wrong-role to own home
-- [ ] P1-16 `lib/rbac.ts`: role guard helpers used in service layer (second line of defense)
-- [ ] P1-17 Role-based layout shells: USER layout, STAFF layout, ADMIN layout (separate navs)
+- [x] P1-15 `middleware.ts`: protect all non-public routes, redirect unauthenticated to `/login`, redirect wrong-role to own home
+- [x] P1-16 `lib/rbac.ts`: role guard helpers used in service layer (second line of defense)
+- [x] P1-17 Role-based layout shells: USER layout, STAFF layout, ADMIN layout (separate navs)
 
 ### User Module (`/src/modules/user/`)
-- [ ] P1-18 `userService.createUser(data, actorId)` — ADMIN only, hashes password, sets `createdBy`
-- [ ] P1-19 `userService.getUserById(id)`
-- [ ] P1-20 `userService.listUsers(filters?)` — supports filter by role and active status
-- [ ] P1-21 `userService.changeRole(userId, newRole, actorId)` — ADMIN only; deletes all target user sessions after change
-- [ ] P1-22 `userService.setActive(userId, active, actorId)` — ADMIN only; on deactivate, deletes all target user sessions immediately
-- [ ] P1-23 `userService.resetPassword(userId, newPassword, actorId)` — ADMIN only; bcrypt hash; deletes all target user sessions after reset
+- [x] P1-18 `userService.createUser(data, actorId)` — ADMIN only, hashes password, sets `createdBy`
+- [x] P1-19 `userService.getUserById(id)`
+- [x] P1-20 `userService.listUsers(filters?)` — supports filter by role and active status
+- [x] P1-21 `userService.changeRole(userId, newRole, actorId)` — ADMIN only; deletes all target user sessions after change
+- [x] P1-22 `userService.setActive(userId, active, actorId)` — ADMIN only; on deactivate, deletes all target user sessions immediately
+- [x] P1-23 `userService.resetPassword(userId, newPassword, actorId)` — ADMIN only; bcrypt hash; deletes all target user sessions after reset
 
 ### Admin Screens
-- [ ] P1-24 `/admin/users` — user list (name, email, role, status, created date); link to detail
-- [ ] P1-25 `/admin/users/new` — create user form (name, email, password, role); Server Action calls `userService.createUser`
-- [ ] P1-26 `/admin/users/[id]` — user detail page:
+- [x] P1-24 `/admin/users` — user list (name, email, role, status, created date); link to detail
+- [x] P1-25 `/admin/users/new` — create user form (name, email, password, role); Server Action calls `userService.createUser`
+- [x] P1-26 `/admin/users/[id]` — user detail page:
   - Display: name, email, role, active status, createdAt, createdBy
   - Actions: change role (dropdown + save), activate/deactivate (toggle button), reset password (form)
 
 ### Placeholder Pages (for other roles to land somewhere)
-- [ ] P1-27 `/dashboard` — minimal authenticated landing for USER role
-- [ ] P1-28 `/staff/queue` — placeholder for STAFF role (message: "Coming soon")
+- [x] P1-27 `/dashboard` — minimal authenticated landing for USER role
+- [x] P1-28 `/staff/queue` — placeholder for STAFF role (message: "Coming soon")
 
 ### Tests
-- [ ] P1-29 Unit: `userService.createUser` (success, duplicate email, invalid role)
-- [ ] P1-30 Unit: `userService.changeRole`, `setActive`, `resetPassword`
-- [ ] P1-31 Unit: RBAC guard helpers (allow/deny per role)
-- [ ] P1-32 E2E: admin login → create user → logout
-- [ ] P1-33 E2E: new user login → sees dashboard → logout (session cleared, `/login` redirects correctly)
-- [ ] P1-34 E2E: unauthenticated access to `/dashboard` redirects to `/login`
-- [ ] P1-35 E2E: STAFF user cannot access `/admin/users`
-- [ ] P1-36 E2E: USER cannot access `/staff/queue`
+- [x] P1-29 Unit: `userService.createUser` (success, duplicate email, invalid role)
+- [x] P1-30 Unit: `userService.changeRole`, `setActive`, `resetPassword`
+- [x] P1-31 Unit: RBAC guard helpers (allow/deny per role)
+- [x] P1-32 E2E: admin login → create user → logout
+- [x] P1-33 E2E: new user login → sees dashboard → logout (session cleared, `/login` redirects correctly)
+- [x] P1-34 E2E: unauthenticated access to `/dashboard` redirects to `/login`
+- [x] P1-35 E2E: STAFF user cannot access `/admin/users`
+- [x] P1-36 E2E: USER cannot access `/staff/queue`
 
 ---
 
@@ -192,8 +192,8 @@ When P3 schema is implemented, seed the following test data structure:
 
 ### Service layer
 - [x] P5-05 `orderService.createOrder(userId, items[])` — atomic: stock check → balance check → `prisma.$transaction([walletDebit, orderInsert, itemsInsert, historyInsert])`
-- [ ] P5-06 `orderService.cancelOrder(orderId, actorId)` — USER on own NEW order only (per D5-02); refunds balance atomically
-- [ ] P5-07 `orderService.advanceStatus(orderId, actorId)` — STAFF/ADMIN; NEW→IN_PROGRESS→COMPLETED; appends `OrderStatusHistory`
+- [x] P5-06 `orderService.cancelOrder(orderId, actorId)` — USER on own NEW order only (per D5-02); refunds balance atomically
+- [x] P5-07 `orderService.advanceStatus(orderId, actorId)` — STAFF/ADMIN; NEW→IN_PROGRESS→COMPLETED; appends `OrderStatusHistory`
 - [x] P5-08 `orderService.getOrder(orderId, actorId)` — USER sees own only; STAFF/ADMIN see all
 - [x] P5-09 `orderService.listUserOrders(userId)` — USER filtered by own; includes items and status history with changer details
 
@@ -208,12 +208,12 @@ When P3 schema is implemented, seed the following test data structure:
 - [x] P5-15 `/staff/orders/[id]` — order detail page with "Advance Status" button for STAFF/ADMIN
 
 ### Tests
-- [ ] P5-16 Unit: createOrder success (balance deducted, order + items + history created atomically)
-- [ ] P5-17 Unit: createOrder insufficient balance (nothing created, balance unchanged)
-- [ ] P5-18 Unit: createOrder out of stock (rejected)
-- [ ] P5-19 Unit: advanceStatus valid transitions
-- [ ] P5-20 Unit: advanceStatus invalid (COMPLETED→anything rejected)
-- [ ] P5-21 E2E: full order lifecycle (place → staff advances → completed, balance reflects deduction)
+- [x] P5-16 Unit: createOrder success (balance deducted, order + items + history created atomically)
+- [x] P5-17 Unit: createOrder insufficient balance (nothing created, balance unchanged)
+- [x] P5-18 Unit: createOrder out of stock (rejected)
+- [x] P5-19 Unit: advanceStatus valid transitions
+- [x] P5-20 Unit: advanceStatus invalid (COMPLETED→anything rejected)
+- [x] P5-21 E2E: full order lifecycle (place → staff advances → completed, balance reflects deduction)
 
 ---
 
