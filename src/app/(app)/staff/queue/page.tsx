@@ -1,27 +1,17 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { orderService } from "@/modules/order";
-import Link from "next/link";
-import OrdersTableClient from "../OrdersTableClient";
+import OrdersTableClient from "../../orders/OrdersTableClient";
 
-export default async function OrderDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function StaffQueuePage() {
   const session = await auth();
-  if (!session?.user?.id) {
-    redirect("/login");
+
+  // Verify user is authenticated and has STAFF or ADMIN role
+  if (!session?.user?.id || (session.user.role !== "STAFF" && session.user.role !== "ADMIN")) {
+    redirect("/");
   }
 
-  const { id } = await params;
-  const orders = await orderService.listUserOrders(session.user.id);
-
-  // Verify user owns the requested order
-  const requestedOrder = orders.find((o) => o.id === id);
-  if (!requestedOrder) {
-    redirect("/orders");
-  }
+  const orders = await orderService.listStaffQueue();
 
   // Serialize orders to plain objects (Decimal → string, Date → ISO string)
   const serializedOrders = orders.map((order) => {
@@ -67,7 +57,7 @@ export default async function OrderDetailPage({
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 16px" }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 24 }}>ההזמנות שלי</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 24 }}>תור ההזמנות</h1>
 
       {serializedOrders.length === 0 ? (
         <div
@@ -77,13 +67,10 @@ export default async function OrderDetailPage({
             color: "#6b7280",
           }}
         >
-          <p style={{ marginBottom: 16 }}>אין לך הזמנות עדיין</p>
-          <Link href="/store" style={{ color: "#3b82f6", textDecoration: "underline" }}>
-            לחזור לחנות
-          </Link>
+          <p style={{ marginBottom: 16 }}>אין הזמנות בתור כרגע</p>
         </div>
       ) : (
-        <OrdersTableClient orders={serializedOrders} initialOpenOrderId={id} />
+        <OrdersTableClient orders={serializedOrders} initialOpenOrderId={undefined} />
       )}
     </div>
   );

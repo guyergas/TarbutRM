@@ -159,9 +159,138 @@ export async function listUserOrders(userId: string) {
   return prisma.order.findMany({
     where: { userId },
     include: {
-      items: true,
-      statusHistory: true,
+      items: {
+        include: {
+          item: true,
+        },
+      },
+      statusHistory: {
+        include: {
+          changer: true,
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
+}
+
+/**
+ * List NEW and IN_PROGRESS orders for staff queue
+ */
+export async function listStaffQueue() {
+  const prisma = getPrismaInstance();
+
+  return prisma.order.findMany({
+    where: {
+      status: {
+        in: ["NEW", "IN_PROGRESS"],
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      items: {
+        include: {
+          item: true,
+        },
+      },
+      statusHistory: {
+        include: {
+          changer: true,
+        },
+      },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
+/**
+ * Advance order status to next state
+ * NEW → IN_PROGRESS → COMPLETED
+ * Requires STAFF or ADMIN role (validation done at action layer)
+ */
+export async function advanceStatus(orderId: string, actorId: string) {
+  const prisma = getPrismaInstance();
+
+  // Fetch current order
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      statusHistory: {
+        include: {
+          changer: true,
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  // Validate current status and determine next status
+  if (order.status === "COMPLETED") {
+    throw new Error("Cannot advance from COMPLETED status");
+  }
+
+  const nextStatus = order.status === "NEW" ? "IN_PROGRESS" : "COMPLETED";
+
+  // Atomic transaction: update status + create history
+  const updatedOrder = await prisma.$transaction(async (tx) => {
+    // Update order status
+    await tx.order.update({
+      where: { id: orderId },
+      data: { status: nextStatus },
+    });
+
+    // Create status history entry
+    await tx.orderStatusHistory.create({
+      data: {
+        orderId,
+        fromStatus: order.status,
+        toStatus: nextStatus,
+        changedBy: actorId,
+      },
+    });
+
+    // Return updated order with full details
+    return tx.order.findUnique({
+      where: { id: orderId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        items: {
+          include: {
+            item: true,
+          },
+        },
+        statusHistory: {
+          include: {
+            changer: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                role: true,
+              },
+            },
+          },
+          orderBy: { changedAt: "asc" },
+        },
+      },
+    });
+  });
+
+  return updatedOrder;
 }

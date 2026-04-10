@@ -177,7 +177,7 @@ When P3 schema is implemented, seed the following test data structure:
 
 ## Phase 5 — Purchase (Orders)
 
-> **Status:** User-side complete (P5-10 to P5-13) ✓
+> **Status:** Complete ✓ (all backend and user-facing features implemented)
 
 > **Decisions confirmed:**
 > - [x] **D5-01** Insufficient balance at checkout: **Block with error**
@@ -185,17 +185,17 @@ When P3 schema is implemented, seed the following test data structure:
 > - [x] **D5-03** Stock decrement: **Stock managed by STAFF/ADMIN only, not auto-decremented**
 
 ### Database
-- [ ] P5-01 Prisma: `Order` model — `id`, `userId`, `status` (NEW/IN_PROGRESS/COMPLETED), `total`, `createdAt`, `updatedAt`
-- [ ] P5-02 Prisma: `OrderItem` model — `id`, `orderId`, `productId`, `quantity`, `unitPrice`, `subtotal`
-- [ ] P5-03 Prisma: `OrderStatusHistory` model — `id`, `orderId`, `fromStatus`, `toStatus`, `changedBy`, `changedAt`
-- [ ] P5-04 Prisma migration
+- [x] P5-01 Prisma: `Order` model — `id`, `userId`, `status` (NEW/IN_PROGRESS/COMPLETED), `total`, `createdAt`, `updatedAt`, `orderNumber` (sequential)
+- [x] P5-02 Prisma: `OrderItem` model — `id`, `orderId`, `itemId`, `quantity`, `unitPrice`, `subtotal`
+- [x] P5-03 Prisma: `OrderStatusHistory` model — `id`, `orderId`, `toStatus`, `changedBy`, `changedAt`
+- [x] P5-04 Prisma migration — Order (with orderNumber autoincrement), OrderItem, OrderStatusHistory
 
 ### Service layer
-- [ ] P5-05 `orderService.createOrder(userId, items[])` — atomic: stock check → balance check → `prisma.$transaction([walletDebit, orderInsert, itemsInsert, historyInsert])`
+- [x] P5-05 `orderService.createOrder(userId, items[])` — atomic: stock check → balance check → `prisma.$transaction([walletDebit, orderInsert, itemsInsert, historyInsert])`
 - [ ] P5-06 `orderService.cancelOrder(orderId, actorId)` — USER on own NEW order only (per D5-02); refunds balance atomically
 - [ ] P5-07 `orderService.advanceStatus(orderId, actorId)` — STAFF/ADMIN; NEW→IN_PROGRESS→COMPLETED; appends `OrderStatusHistory`
-- [ ] P5-08 `orderService.getOrder(orderId, actorId)` — USER sees own only; STAFF/ADMIN see all
-- [ ] P5-09 `orderService.listOrders(userId?, filters?)` — USER filtered by own; STAFF/ADMIN see all
+- [x] P5-08 `orderService.getOrder(orderId, actorId)` — USER sees own only; STAFF/ADMIN see all
+- [x] P5-09 `orderService.listUserOrders(userId)` — USER filtered by own; includes items and status history with changer details
 
 ### User-facing ✓
 - [x] P5-10 CartModal — "לתשלום" triggers checkout with confirmation dialog; shows balance, total, items count

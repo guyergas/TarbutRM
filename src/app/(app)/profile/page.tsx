@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import LogoutButton from "./LogoutButton";
 
@@ -14,18 +15,18 @@ export default async function ProfilePage() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    throw new Error(`User not authenticated. Session: ${JSON.stringify(session?.user || null)}`);
+    redirect("/login");
   }
 
   const userId = session.user.id;
-  if (!userId || typeof userId !== "string" || userId.length === 0) {
-    throw new Error(`Invalid user ID: ${userId}`);
-  }
-
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { firstName: true, lastName: true, email: true, role: true, city: true, street: true, phone: true, balance: true, createdAt: true },
   });
+
+  if (!user) {
+    redirect("/login");
+  }
 
   const joined = new Intl.DateTimeFormat("he-IL", { dateStyle: "long" }).format(user.createdAt);
 

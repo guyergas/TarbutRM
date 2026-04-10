@@ -147,7 +147,7 @@ export default function CartModal({
       // Clear cart
       await clearCartAction();
 
-      // Redirect to order confirmation page
+      // Redirect to order detail page (shows orders list with modal open)
       router.push(`/orders/${order.id}`);
 
       // Reset UI

@@ -1,0 +1,383 @@
+"use client";
+
+import { useState } from "react";
+import { advanceStatusAction } from "./actions";
+
+interface OrderItem {
+  id: string;
+  quantity: number;
+  unitPrice: string;
+  subtotal: string;
+  itemName: string;
+}
+
+interface OrderStatusHistory {
+  id: string;
+  toStatus: string;
+  changedAt: string;
+  changedAtTime: string;
+  changerName: string;
+}
+
+interface SerializedOrder {
+  id: string;
+  orderNumber: number;
+  status: string;
+  total: string;
+  itemCount: number;
+  createdAt: string;
+  createdAtFull: string;
+  items: OrderItem[];
+  statusHistory: OrderStatusHistory[];
+}
+
+const statusBadgeColors: Record<string, { bg: string; text: string; label: string }> = {
+  NEW: { bg: "#fef3c7", text: "#92400e", label: "חדש" },
+  IN_PROGRESS: { bg: "#dbeafe", text: "#0c4a6e", label: "בעיבוד" },
+  COMPLETED: { bg: "#dcfce7", text: "#166534", label: "הושלם" },
+};
+
+export default function StaffOrderDetailClient({ order: initialOrder }: { order: SerializedOrder }) {
+  const [order, setOrder] = useState<SerializedOrder>(initialOrder);
+  const [isAdvancing, setIsAdvancing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const handleAdvanceStatus = async () => {
+    setIsAdvancing(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    const result = await advanceStatusAction(order.id);
+
+    if (result.success && result.order) {
+      // Serialize the updated order
+      const items = result.order.items.map((item: any) => ({
+        id: item.id,
+        quantity: item.quantity,
+        unitPrice: Number(item.unitPrice).toFixed(2),
+        subtotal: Number(item.subtotal).toFixed(2),
+        itemName: item.item?.name || "Unknown Item",
+      }));
+
+      const updatedOrder: SerializedOrder = {
+        id: result.order.id,
+        orderNumber: result.order.orderNumber,
+        status: result.order.status,
+        total: Number(result.order.total).toFixed(2),
+        itemCount: items.reduce((sum: number, item: any) => sum + item.quantity, 0),
+        createdAt: new Date(result.order.createdAt).toLocaleDateString("he-IL"),
+        createdAtFull: new Date(result.order.createdAt).toLocaleTimeString("he-IL", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }),
+        items,
+        statusHistory: result.order.statusHistory.map((history: any) => {
+          const changerName = history.changer
+            ? `${history.changer.firstName} ${history.changer.lastName}`
+            : "Unknown";
+          return {
+            id: history.id,
+            toStatus: history.toStatus,
+            changedAt: new Date(history.changedAt).toLocaleDateString("he-IL"),
+            changedAtTime: new Date(history.changedAt).toLocaleTimeString("he-IL", {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            }),
+            changerName,
+          };
+        }),
+      };
+
+      setOrder(updatedOrder);
+      setSuccessMessage(`Status advanced to ${statusBadgeColors[updatedOrder.status]?.label}`);
+    } else {
+      setError(result.error || "Failed to advance status");
+    }
+
+    setIsAdvancing(false);
+  };
+
+  const canAdvance = order.status !== "COMPLETED";
+  const nextStatusLabel =
+    order.status === "NEW"
+      ? statusBadgeColors.IN_PROGRESS?.label
+      : order.status === "IN_PROGRESS"
+        ? statusBadgeColors.COMPLETED?.label
+        : null;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "rgba(0, 0, 0, 0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 50,
+        padding: "16px",
+      }}
+    >
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: "12px",
+          maxWidth: "600px",
+          maxHeight: "90vh",
+          overflow: "auto",
+          width: "100%",
+          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            padding: "24px",
+            borderBottom: "1px solid #e5e7eb",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "16px",
+          }}
+        >
+          <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: "#1f2937" }}>
+            הזמנה {order.orderNumber}
+          </h1>
+          <span
+            style={{
+              display: "inline-block",
+              padding: "6px 16px",
+              borderRadius: "6px",
+              background: statusBadgeColors[order.status]?.bg,
+              color: statusBadgeColors[order.status]?.text,
+              fontWeight: 600,
+              fontSize: 13,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {statusBadgeColors[order.status]?.label}
+          </span>
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: "24px" }}>
+          <div
+            style={{
+              paddingBottom: 16,
+              borderBottom: "1px solid #e5e7eb",
+              marginBottom: 20,
+              fontSize: 14,
+              color: "#6b7280",
+            }}
+          >
+            <p style={{ margin: "8px 0" }}>
+              <strong style={{ color: "#374151" }}>תאריך וזמן:</strong> {order.createdAt} בשעה{" "}
+              {order.createdAtFull}
+            </p>
+            <p style={{ margin: "8px 0" }}>
+              <strong style={{ color: "#374151" }}>סך הכל:</strong>{" "}
+              <span style={{ fontWeight: 700, fontSize: 16, color: "#1f2937" }}>
+                ₪{order.total}
+              </span>
+            </p>
+          </div>
+
+          {/* Items */}
+          <div style={{ marginBottom: 20 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: "#1f2937" }}>
+              פריטים בהזמנה
+            </h2>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
+                    <th
+                      style={{
+                        padding: "10px 12px",
+                        textAlign: "right",
+                        fontWeight: 600,
+                        color: "#374151",
+                      }}
+                    >
+                      שם פריט
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px 12px",
+                        textAlign: "center",
+                        fontWeight: 600,
+                        color: "#374151",
+                      }}
+                    >
+                      כמות
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px 12px",
+                        textAlign: "center",
+                        fontWeight: 600,
+                        color: "#374151",
+                      }}
+                    >
+                      מחיר
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px 12px",
+                        textAlign: "left",
+                        fontWeight: 600,
+                        color: "#374151",
+                      }}
+                    >
+                      סה"כ
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.items.map((item) => (
+                    <tr key={item.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                      <td style={{ padding: "10px 12px", textAlign: "right", color: "#374151" }}>
+                        {item.itemName}
+                      </td>
+                      <td style={{ padding: "10px 12px", textAlign: "center", color: "#374151" }}>
+                        {item.quantity}
+                      </td>
+                      <td style={{ padding: "10px 12px", textAlign: "center", color: "#374151" }}>
+                        ₪{item.unitPrice}
+                      </td>
+                      <td style={{ padding: "10px 12px", textAlign: "left", fontWeight: 600, color: "#1f2937" }}>
+                        ₪{item.subtotal}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Status History */}
+          {order.statusHistory && order.statusHistory.length > 0 && (
+            <div style={{ paddingTop: 16, borderTop: "1px solid #e5e7eb", marginBottom: 20 }}>
+              <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16, color: "#1f2937" }}>
+                היסטוריית סטטוס
+              </h2>
+              <div style={{ fontSize: 13, color: "#374151" }}>
+                {order.statusHistory.map((history, index) => (
+                  <div
+                    key={history.id}
+                    style={{
+                      display: "flex",
+                      gap: 16,
+                      paddingBottom: 16,
+                      borderBottom:
+                        index < order.statusHistory.length - 1 ? "1px solid #e5e7eb" : "none",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        paddingTop: 2,
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 12,
+                          height: 12,
+                          borderRadius: "50%",
+                          background: "#4f46e5",
+                          marginBottom: 8,
+                        }}
+                      />
+                      {index < order.statusHistory.length - 1 && (
+                        <div
+                          style={{
+                            width: 2,
+                            height: 40,
+                            background: "#e5e7eb",
+                          }}
+                        />
+                      )}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, marginBottom: 4, color: "#1f2937" }}>
+                        {statusBadgeColors[history.toStatus]?.label || history.toStatus}
+                      </div>
+                      <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 4 }}>
+                        {history.changedAt} בשעה {history.changedAtTime}
+                      </div>
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>
+                        על ידי: {history.changerName}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Messages */}
+          {error && (
+            <div
+              style={{
+                background: "#fee2e2",
+                color: "#7f1d1d",
+                padding: "12px 16px",
+                borderRadius: "6px",
+                marginBottom: 16,
+                fontSize: 13,
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          {successMessage && (
+            <div
+              style={{
+                background: "#dcfce7",
+                color: "#166534",
+                padding: "12px 16px",
+                borderRadius: "6px",
+                marginBottom: 16,
+                fontSize: 13,
+              }}
+            >
+              {successMessage}
+            </div>
+          )}
+
+          {/* Advance Status Button */}
+          {canAdvance && (
+            <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+              <button
+                onClick={handleAdvanceStatus}
+                disabled={isAdvancing}
+                style={{
+                  background: "#4f46e5",
+                  color: "#fff",
+                  border: "none",
+                  padding: "10px 16px",
+                  borderRadius: "6px",
+                  fontWeight: 600,
+                  cursor: isAdvancing ? "not-allowed" : "pointer",
+                  opacity: isAdvancing ? 0.6 : 1,
+                  fontSize: 14,
+                }}
+              >
+                {isAdvancing ? "מעדכן..." : `קדם ל${nextStatusLabel}`}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
