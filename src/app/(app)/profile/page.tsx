@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import LogoutButton from "./LogoutButton";
 
 export const metadata = { title: "הפרופיל שלי — TarbutRM" };
@@ -33,7 +34,15 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-md mx-auto space-y-6">
       <div className="rounded-xl bg-white dark:bg-gray-800 px-8 py-8 shadow-sm dark:shadow-xl space-y-5">
-        <h1 className="text-2xl">הפרופיל שלי</h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl">הפרופיל שלי</h1>
+          <Link
+            href="/profile/edit"
+            className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition"
+          >
+            עריכה
+          </Link>
+        </div>
 
         <dl className="space-y-3 text-sm">
           <Row label="שם" value={`${user.firstName} ${user.lastName}`} />
