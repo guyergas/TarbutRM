@@ -128,8 +128,8 @@ export default function MenuControls({
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveLeft && !isLoading ? "var(--text-primary)" : "var(--text-secondary)",
-          opacity: canMoveLeft && !isLoading ? 1 : 0.5,
+          color: "var(--text-primary)",
+          opacity: canMoveLeft && !isLoading ? 1 : 0.4,
         }}
       >
         →
@@ -149,8 +149,8 @@ export default function MenuControls({
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveRight && !isLoading ? "var(--text-primary)" : "var(--text-secondary)",
-          opacity: canMoveRight && !isLoading ? 1 : 0.5,
+          color: "var(--text-primary)",
+          opacity: canMoveRight && !isLoading ? 1 : 0.4,
         }}
       >
         ←

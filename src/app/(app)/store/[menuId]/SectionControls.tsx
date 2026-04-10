@@ -119,8 +119,8 @@ export default function SectionControls({
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveUp && !isLoading ? "var(--text-primary)" : "var(--text-secondary)",
-          opacity: canMoveUp && !isLoading ? 1 : 0.5,
+          color: "var(--text-primary)",
+          opacity: canMoveUp && !isLoading ? 1 : 0.4,
         }}
       >
         ↑
@@ -140,8 +140,8 @@ export default function SectionControls({
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveDown && !isLoading ? "var(--text-primary)" : "var(--text-secondary)",
-          opacity: canMoveDown && !isLoading ? 1 : 0.5,
+          color: "var(--text-primary)",
+          opacity: canMoveDown && !isLoading ? 1 : 0.4,
         }}
       >
         ↓
