@@ -1,5 +1,4 @@
 import { getPrismaInstance } from "@/lib/prisma";
-import { Prisma } from "@/generated/prisma";
 
 /**
  * Create an order from cart items
@@ -49,7 +48,7 @@ export async function createOrder(
     await tx.budgetTransaction.create({
       data: {
         userId,
-        amount: new Prisma.Decimal(-total),
+        amount: -total,
         note: "Order created",
         createdBy: userId,
       },
@@ -58,14 +57,14 @@ export async function createOrder(
     // Update user balance
     await tx.user.update({
       where: { id: userId },
-      data: { balance: { decrement: new Prisma.Decimal(total) } },
+      data: { balance: { decrement: total } },
     });
 
     // Create order
     const newOrder = await tx.order.create({
       data: {
         userId,
-        total: new Prisma.Decimal(total),
+        total: total,
         status: "NEW",
         items: {
           createMany: {
@@ -76,7 +75,7 @@ export async function createOrder(
                 itemId: cartItem.itemId,
                 quantity: cartItem.quantity,
                 unitPrice: item.price,
-                subtotal: new Prisma.Decimal(subtotal),
+                subtotal: subtotal,
               };
             }),
           },
