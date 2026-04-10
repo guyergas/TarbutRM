@@ -10,7 +10,7 @@ export default function LogoutMenuButton() {
       style={{
         padding: "10px 8px",
         borderRadius: 8,
-        color: "#374151",
+        color: "var(--text-secondary)",
         textDecoration: "none",
         fontSize: 15,
         fontWeight: 500,

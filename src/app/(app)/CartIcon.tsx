@@ -73,7 +73,7 @@ export default function CartIcon({ initialCount, userRole }: CartIconProps) {
           display: "flex",
           alignItems: "center",
           position: "relative",
-          color: "#374151",
+          color: "var(--text-secondary)",
           background: "none",
           border: "none",
           cursor: "pointer",
