@@ -53,14 +53,8 @@ export default async function OrderDetailPage({
             display: "inline-block",
             marginBottom: 16,
             color: "#3b82f6",
-            textDecoration: "none",
+            textDecoration: "underline",
             fontSize: 14,
-          }}
-          onMouseEnter={(e) => {
-            (e.target as HTMLElement).style.textDecoration = "underline";
-          }}
-          onMouseLeave={(e) => {
-            (e.target as HTMLElement).style.textDecoration = "none";
           }}
         >
           ← חזור להזמנות

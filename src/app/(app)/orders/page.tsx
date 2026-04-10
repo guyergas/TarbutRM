@@ -105,14 +105,8 @@ export default async function OrdersPage() {
                         href={`/orders/${order.id}`}
                         style={{
                           color: "#3b82f6",
-                          textDecoration: "none",
+                          textDecoration: "underline",
                           cursor: "pointer",
-                        }}
-                        onMouseEnter={(e) => {
-                          (e.target as HTMLElement).style.textDecoration = "underline";
-                        }}
-                        onMouseLeave={(e) => {
-                          (e.target as HTMLElement).style.textDecoration = "none";
                         }}
                       >
                         #{order.id.slice(0, 8)}
