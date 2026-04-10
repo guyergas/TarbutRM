@@ -14,6 +14,7 @@ export default async function TopBar({ role }: { role?: Role }) {
 
   let balance: string | null = null;
   let cartItemCount = 0;
+  let openOrdersCount = 0;
 
   if (session?.user?.id) {
     const user = await prisma.user.findUnique({
@@ -24,6 +25,15 @@ export default async function TopBar({ role }: { role?: Role }) {
 
     const cart = await cartService.getCartSummary(session.user.id);
     cartItemCount = cart.itemCount;
+
+    // Count open orders (NEW or IN_PROGRESS)
+    const openOrders = await prisma.order.count({
+      where: {
+        userId: session.user.id,
+        status: { in: ["NEW", "IN_PROGRESS"] },
+      },
+    });
+    openOrdersCount = openOrders;
   }
 
   const userRole = role || (session?.user?.role as Role) || "USER";
@@ -34,6 +44,7 @@ export default async function TopBar({ role }: { role?: Role }) {
       menus={menus}
       balance={balance}
       cartIcon={<CartIcon initialCount={cartItemCount} userRole={userRole} userBalance={balance} />}
+      openOrdersCount={openOrdersCount}
     />
   );
 }

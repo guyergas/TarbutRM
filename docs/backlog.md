@@ -72,7 +72,7 @@ Tasks grouped by phase. One task at a time. Check off only when committed and ap
 - [x] P2-02 Prisma migration
 - [x] P2-03 Atomic credit/debit: `prisma.$transaction([budgetTransaction.create, user.update balance])` in admin action
 - [x] P2-04 Admin `/admin/user/[id]`: credit/debit form + transaction history table
-- [ ] P2-05 User `/wallet`: balance display + paginated transaction history (amount, note, date, performed by)
+- [x] P2-05 User `/personal-area` (האזור האישי): unified page with tabs — Profile, Wallet (balance + transaction history), My Orders
 
 ---
 

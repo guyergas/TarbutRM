@@ -28,6 +28,7 @@ interface TopBarClientProps {
   menus: Menu[];
   balance?: string | null;
   cartIcon?: React.ReactNode;
+  openOrdersCount?: number;
 }
 
 const linkStyle: React.CSSProperties = {
@@ -73,7 +74,7 @@ const subSubLinkStyle: React.CSSProperties = {
   fontSize: 13,
 };
 
-export default function TopBarClient({ role, menus, balance, cartIcon }: TopBarClientProps) {
+export default function TopBarClient({ role, menus, balance, cartIcon, openOrdersCount = 0 }: TopBarClientProps) {
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [storeOpen, setStoreOpen] = useState(false);
@@ -349,9 +350,27 @@ export default function TopBarClient({ role, menus, balance, cartIcon }: TopBarC
               </div>
             )}
 
-            {/* 3. Orders */}
-            <Link href="/orders" onClick={close} style={linkStyle}>
-              ההזמנות שלי
+            {/* 3. Personal Area */}
+            <Link href="/personal-area" onClick={close} style={linkStyle}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                <span>האזור האישי</span>
+                {openOrdersCount > 0 && (
+                  <span style={{
+                    background: "#ef4444",
+                    color: "#fff",
+                    borderRadius: "50%",
+                    width: 20,
+                    height: 20,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}>
+                    {openOrdersCount}
+                  </span>
+                )}
+              </div>
             </Link>
 
             {/* 4. Contact us */}
