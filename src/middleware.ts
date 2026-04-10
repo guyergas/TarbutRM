@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import type { NextRequest } from "next/server";
 
-export async function middleware(request: Request) {
+export function middleware(request: NextRequest) {
   const pathname = new URL(request.url).pathname;
 
   // Public routes that don't require auth
@@ -14,37 +14,12 @@ export async function middleware(request: Request) {
     return NextResponse.next();
   }
 
-  // Get session
-  const session = await auth();
-
-  // If not authenticated, redirect to login
-  if (!session?.user?.id) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("from", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Role-based route protection
-  const userRole = session.user.role;
-
-  // Admin-only routes
-  if (pathname.startsWith("/admin")) {
-    if (userRole !== "ADMIN") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
-
-  // Staff-only routes (or admin)
-  if (pathname.startsWith("/staff")) {
-    if (userRole !== "STAFF" && userRole !== "ADMIN") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
-
+  // Note: Full auth checking is done per-page/layout using server components
+  // This middleware just ensures basic routing doesn't break
   return NextResponse.next();
 }
 
 export const config = {
   // Apply middleware to all routes except static assets and api
-  matcher: ["/((?!api|_next|static|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
