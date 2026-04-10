@@ -213,9 +213,16 @@ export default function OrdersTableClient({
           >
             {/* Header */}
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center gap-4">
-              <h1 className="text-2xl font-bold m-0 text-gray-900 dark:text-white">
-                הזמנה {selectedOrder.orderNumber}
-              </h1>
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold m-0 text-gray-900 dark:text-white">
+                  הזמנה {selectedOrder.orderNumber}
+                </h1>
+                {selectedOrder.customerName && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    לקוח: <span className="font-semibold text-gray-900 dark:text-white">{selectedOrder.customerName}</span>
+                  </p>
+                )}
+              </div>
               <span className={`inline-block px-4 py-1.5 rounded text-sm font-semibold whitespace-nowrap ${statusBadgeConfig[selectedOrder.status]?.bgClass} ${statusBadgeConfig[selectedOrder.status]?.textClass}`}>
                 {statusBadgeConfig[selectedOrder.status]?.label}
               </span>
