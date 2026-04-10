@@ -9,7 +9,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px", width: "100%" }}>
+    <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px", width: "100%", background: "#000000" }}>
       {children}
     </main>
   );

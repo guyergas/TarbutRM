@@ -70,11 +70,11 @@ export default function StoreView({
   ) || currentMenu.sections[0];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#000000" }}>
       {/* Menu Navigation Bar */}
       <div
         style={{
-          background: "var(--bg-primary)",
+          background: "#000000",
           borderTop: "2px solid var(--border-color)",
           borderBottom: "2px solid var(--border-color)",
           padding: "0",
@@ -114,9 +114,9 @@ export default function StoreView({
                   textDecoration: "none",
                   fontSize: 12,
                   fontWeight: menu.id === currentMenu.id ? 600 : 500,
-                  color: menu.id === currentMenu.id ? "var(--text-primary)" : "var(--text-secondary)",
+                  color: menu.id === currentMenu.id ? "#ffffff" : "var(--text-secondary)",
                   background:
-                    menu.id === currentMenu.id ? "var(--accent-light)" : "transparent",
+                    menu.id === currentMenu.id ? "#000000" : "transparent",
                   border: "none",
                   whiteSpace: "nowrap",
                   display: "flex",
@@ -149,7 +149,7 @@ export default function StoreView({
       </div>
 
       {/* Main content: sidebar + grid */}
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      <div style={{ display: "flex", flex: 1, overflow: "hidden", background: "#000000" }}>
         {/* Sections Sidebar */}
         <aside
           style={{
@@ -159,7 +159,7 @@ export default function StoreView({
             borderRight: "2px solid var(--border-color)",
             borderTop: "1px solid var(--border-color)",
             overflowY: "auto",
-            background: "var(--bg-primary)",
+            background: "#000000",
             padding: "16px 0",
             display: "flex",
             flexDirection: "column",
@@ -205,11 +205,11 @@ export default function StoreView({
                     border: "none",
                     background:
                       section.id === selectedSectionId
-                        ? "var(--accent-light)"
+                        ? "#000000"
                         : "transparent",
                     color:
                       section.id === selectedSectionId
-                        ? "var(--accent-dark)"
+                        ? "#ffffff"
                         : "var(--text-secondary)",
                     textAlign: "right",
                     cursor: "pointer",
@@ -218,7 +218,7 @@ export default function StoreView({
                       section.id === selectedSectionId ? 600 : 500,
                     borderLeft:
                       section.id === selectedSectionId
-                        ? "3px solid var(--accent-dark)"
+                        ? "3px solid #ffffff"
                         : "none",
                     paddingLeft:
                       section.id === selectedSectionId ? 5 : 8,
@@ -242,6 +242,7 @@ export default function StoreView({
             flex: 1,
             overflowY: "auto",
             padding: "24px 16px",
+            background: "#000000",
           }}
         >
           {!selectedSection ? (
