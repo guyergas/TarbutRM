@@ -349,12 +349,19 @@ export default function TopBarClient({ role, menus, balance, cartIcon }: TopBarC
               ההזמנות שלי
             </Link>
 
-            {/* 4. Contact us */}
+            {/* 4. Staff Queue (staff/admin only) */}
+            {(role === "STAFF" || role === "ADMIN") && (
+              <Link href="/staff/queue" onClick={close} style={linkStyle}>
+                תור ההזמנות
+              </Link>
+            )}
+
+            {/* 6. Contact us */}
             <Link href="/contactus" onClick={close} style={linkStyle}>
               צור קשר
             </Link>
 
-            {/* 5. Logout */}
+            {/* 7. Logout */}
             <div style={{ borderTop: "1px solid #e5e7eb", marginTop: 16, paddingTop: 16 }}>
               <LogoutMenuButton />
             </div>
