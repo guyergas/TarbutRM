@@ -135,7 +135,7 @@ export default function StoreView({
                 alignItems: "center",
                 paddingLeft: 8,
                 paddingRight: 8,
-                borderLeft: "2px solid var(--border-color)",
+                borderRight: "2px solid var(--border-color)",
               }}
             >
               <MenuControls
