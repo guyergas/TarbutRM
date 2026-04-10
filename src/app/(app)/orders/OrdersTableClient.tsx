@@ -491,26 +491,45 @@ export default function OrdersTableClient({
               {allowStatusAdvance && (
                 <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
                   {isStaffQueue ? (
-                    /* Staff Queue View: Show both buttons */
+                    /* Staff Queue View: Show both buttons - can skip בעיבוד if needed */
                     <>
                       {selectedOrder.status === "NEW" && (
-                        <button
-                          onClick={() => handleAdvanceStatus(selectedOrder.id)}
-                          disabled={advancingOrderId !== null}
-                          style={{
-                            background: "#4f46e5",
-                            color: "#fff",
-                            border: "none",
-                            padding: "10px 16px",
-                            borderRadius: "6px",
-                            fontWeight: 600,
-                            cursor: advancingOrderId !== null ? "not-allowed" : "pointer",
-                            opacity: advancingOrderId !== null ? 0.6 : 1,
-                            fontSize: 14,
-                          }}
-                        >
-                          {advancingOrderId !== null ? "מעדכן..." : "העבר לעיבוד"}
-                        </button>
+                        <>
+                          <button
+                            onClick={() => handleAdvanceStatus(selectedOrder.id)}
+                            disabled={advancingOrderId !== null}
+                            style={{
+                              background: "#4f46e5",
+                              color: "#fff",
+                              border: "none",
+                              padding: "10px 16px",
+                              borderRadius: "6px",
+                              fontWeight: 600,
+                              cursor: advancingOrderId !== null ? "not-allowed" : "pointer",
+                              opacity: advancingOrderId !== null ? 0.6 : 1,
+                              fontSize: 14,
+                            }}
+                          >
+                            {advancingOrderId !== null ? "מעדכן..." : "העבר לעיבוד"}
+                          </button>
+                          <button
+                            onClick={() => handleAdvanceStatus(selectedOrder.id)}
+                            disabled={advancingOrderId !== null}
+                            style={{
+                              background: "#10b981",
+                              color: "#fff",
+                              border: "none",
+                              padding: "10px 16px",
+                              borderRadius: "6px",
+                              fontWeight: 600,
+                              cursor: advancingOrderId !== null ? "not-allowed" : "pointer",
+                              opacity: advancingOrderId !== null ? 0.6 : 1,
+                              fontSize: 14,
+                            }}
+                          >
+                            {advancingOrderId !== null ? "מעדכן..." : "העבר להושלם"}
+                          </button>
+                        </>
                       )}
 
                       {selectedOrder.status === "IN_PROGRESS" && (
