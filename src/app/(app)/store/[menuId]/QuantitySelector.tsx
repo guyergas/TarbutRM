@@ -34,25 +34,15 @@ export function QuantitySelector({
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+    <div className="flex items-center gap-1">
       <button
         onClick={handleDecrease}
         disabled={quantity <= 1}
-        style={{
-          width: "28px",
-          height: "28px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "var(--bg-secondary)",
-          border: "1px solid var(--border-color)",
-          borderRadius: "4px",
-          cursor: quantity <= 1 ? "not-allowed" : "pointer",
-          opacity: quantity <= 1 ? 0.5 : 1,
-          fontSize: "16px",
-          fontWeight: "600",
-          color: "var(--text-secondary)",
-        }}
+        className={`w-7 h-7 flex items-center justify-center bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-base font-semibold text-gray-600 dark:text-gray-400 transition-colors ${
+          quantity <= 1
+            ? "opacity-50 cursor-not-allowed"
+            : "cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
+        }`}
       >
         −
       </button>
@@ -61,33 +51,11 @@ export function QuantitySelector({
         value={quantity}
         onChange={handleInputChange}
         min="1"
-        style={{
-          width: "38px",
-          textAlign: "center",
-          border: "1px solid var(--border-color)",
-          borderRadius: "4px",
-          padding: "4px 2px",
-          fontSize: "14px",
-          background: "var(--bg-secondary)",
-          color: "var(--text-secondary)",
-        }}
+        className="w-9 text-center border border-gray-300 dark:border-gray-600 rounded text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
       />
       <button
         onClick={handleIncrease}
-        style={{
-          width: "28px",
-          height: "28px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "var(--bg-secondary)",
-          border: "1px solid var(--border-color)",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontSize: "16px",
-          fontWeight: "600",
-          color: "var(--text-secondary)",
-        }}
+        className="w-7 h-7 flex items-center justify-center bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-base font-semibold text-gray-600 dark:text-gray-400 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
       >
         +
       </button>

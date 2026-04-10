@@ -11,7 +11,7 @@ export default function LoginForm() {
   return (
     <form action={action} className="space-y-5">
       {error && (
-        <p className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p className="rounded-md bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           {error}
         </p>
       )}
@@ -19,7 +19,7 @@ export default function LoginForm() {
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
           אימייל
         </label>
@@ -29,7 +29,7 @@ export default function LoginForm() {
           type="email"
           required
           autoComplete="email"
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
       </div>
 
@@ -37,13 +37,13 @@ export default function LoginForm() {
         <div className="flex items-center justify-between">
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
             סיסמא
           </label>
           <Link
             href="/reset-password"
-            className="text-sm text-indigo-600 hover:text-indigo-500"
+            className="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
           >
             איפוס סיסמא
           </Link>
@@ -54,7 +54,7 @@ export default function LoginForm() {
           type="password"
           required
           autoComplete="current-password"
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
       </div>
 
@@ -64,9 +64,9 @@ export default function LoginForm() {
           name="rememberMe"
           type="checkbox"
           defaultChecked
-          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500 dark:bg-gray-700"
         />
-        <label htmlFor="rememberMe" className="text-sm text-gray-600">
+        <label htmlFor="rememberMe" className="text-sm text-gray-600 dark:text-gray-400">
           זכור אותי
         </label>
       </div>
@@ -74,16 +74,16 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50"
+        className="w-full rounded-lg bg-indigo-600 dark:bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
       >
         {pending ? "מתחבר…" : "התחברות"}
       </button>
 
-      <div className="text-center text-sm text-gray-600">
+      <div className="text-center text-sm text-gray-600 dark:text-gray-400">
         לקוח חדש?{" "}
         <RegisterModal
           triggerLabel="להרשמה"
-          triggerClassName="font-medium text-indigo-600 hover:text-indigo-500 bg-transparent border-none p-0 cursor-pointer"
+          triggerClassName="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 bg-transparent border-none p-0 cursor-pointer"
         />
       </div>
     </form>

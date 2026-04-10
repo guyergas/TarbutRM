@@ -31,48 +31,11 @@ interface TopBarClientProps {
   openOrdersCount?: number;
 }
 
-const linkStyle: React.CSSProperties = {
-  padding: "10px 8px",
-  borderRadius: 8,
-  color: "#374151",
-  textDecoration: "none",
-  fontSize: 15,
-  fontWeight: 500,
-  display: "block",
-  textAlign: "right",
-};
-
-const collapsibleStyle: React.CSSProperties = {
-  ...linkStyle,
-  display: "flex",
-  justifyContent: "flex-start",
-  alignItems: "center",
-  gap: 8,
-  width: "100%",
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  padding: "10px 8px",
-  paddingRight: 8,
-};
-
-const subCollapsibleStyle: React.CSSProperties = {
-  ...collapsibleStyle,
-  paddingRight: 40,
-  fontSize: 14,
-};
-
-const subLinkStyle: React.CSSProperties = {
-  ...linkStyle,
-  paddingRight: 40,
-  fontSize: 14,
-};
-
-const subSubLinkStyle: React.CSSProperties = {
-  ...linkStyle,
-  paddingRight: 64,
-  fontSize: 13,
-};
+const linkClassName = "px-2 py-2.5 rounded text-gray-700 dark:text-gray-300 no-underline text-sm font-medium block text-right";
+const collapsibleClassName = "flex items-center justify-start gap-2 w-full bg-transparent border-none cursor-pointer px-2 py-2.5 pr-2 text-gray-700 dark:text-gray-300 text-sm font-medium";
+const subCollapsibleClassName = "flex items-center justify-start gap-2 w-full bg-transparent border-none cursor-pointer px-2 py-2.5 pr-10 text-gray-700 dark:text-gray-300 text-xs font-medium";
+const subLinkClassName = "px-2 py-2.5 rounded text-gray-700 dark:text-gray-300 no-underline text-xs font-medium block text-right pr-10";
+const subSubLinkClassName = "px-2 py-2.5 rounded text-gray-700 dark:text-gray-300 no-underline text-xs font-medium block text-right pr-16";
 
 export default function TopBarClient({ role, menus, balance, cartIcon, openOrdersCount = 0 }: TopBarClientProps) {
   const [open, setOpen] = useState(false);
@@ -93,41 +56,15 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
 
   return (
     <>
-      <header
-        style={{
-          background: "#fff",
-          borderBottom: "1px solid #e5e7eb",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 900,
-            margin: "0 auto",
-            padding: "0 16px",
-            height: 56,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700 sticky top-0 z-50">
+        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
           {/* Hamburger + Home icons */}
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div className="flex items-center gap-4">
             <button
               type="button"
               aria-label="פתח תפריט"
               onClick={() => setOpen(true)}
-              style={{
-                cursor: "pointer",
-                padding: 4,
-                display: "flex",
-                alignItems: "center",
-                background: "none",
-                border: "none",
-                pointerEvents: "auto",
-              }}
+              className="cursor-pointer p-1 flex items-center bg-transparent border-none"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -135,9 +72,10 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#374151"
+                stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
+                className="text-gray-700 dark:text-gray-300"
               >
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <line x1="3" y1="12" x2="21" y2="12" />
@@ -148,19 +86,15 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
             <Link
               href="/"
               title="בית"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                color: "#374151",
-                textDecoration: "none",
-              }}
+              className="flex items-center text-gray-700 dark:text-gray-300 no-underline"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
-                fill="#374151"
+                fill="currentColor"
+                className="text-gray-700 dark:text-gray-300"
               >
                 <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
                 <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
@@ -169,9 +103,9 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
           </div>
 
           {/* Balance + Cart + Profile icon */}
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div className="flex items-center gap-4">
             {balance && (
-              <div style={{ fontSize: 14, fontWeight: 500, color: "#374151" }}>
+              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
                 יתרה: ₪{balance}
               </div>
             )}
@@ -179,19 +113,15 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
             <Link
               href="/profile"
               title="פרופיל"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                color: "#374151",
-                textDecoration: "none",
-              }}
+              className="flex items-center text-gray-700 dark:text-gray-300 no-underline"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
-                fill="#374151"
+                fill="currentColor"
+                className="text-gray-700 dark:text-gray-300"
               >
                 <path
                   fillRule="evenodd"
@@ -208,83 +138,51 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
       {open && (
         <div
           onClick={close}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.3)",
-            zIndex: 100,
-          }}
+          className="fixed inset-0 bg-black/30 z-50"
         />
       )}
 
       {/* Slide-in panel */}
       {open && (
         <div
-          style={{
-            position: "fixed",
-            top: 0,
-            right: 0,
-            bottom: 0,
-            width: 196,
-            background: "#fff",
-            boxShadow: "-2px 0 12px rgba(0,0,0,0.15)",
-            zIndex: 101,
-            display: "flex",
-            flexDirection: "column",
-            padding: 24,
-            overflowY: "auto",
-          }}
+          className="fixed top-0 right-0 bottom-0 w-48 bg-white dark:bg-gray-800 shadow-lg z-51 flex flex-col p-6 overflow-y-auto"
         >
           {/* Panel header */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 24,
-            }}
-          >
-            <span style={{ fontWeight: 700, fontSize: 16 }}>תפריט</span>
+          <div className="flex justify-between items-center mb-6">
+            <span className="font-bold text-base text-gray-900 dark:text-white">תפריט</span>
             <button
               type="button"
               onClick={close}
-              style={{
-                cursor: "pointer",
-                fontSize: 22,
-                lineHeight: 1,
-                color: "#374151",
-                background: "none",
-                border: "none",
-              }}
+              className="cursor-pointer text-xl leading-none text-gray-700 dark:text-gray-300 bg-transparent border-none"
             >
               ✕
             </button>
           </div>
 
           {/* Nav items */}
-          <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <nav className="flex flex-col gap-0.5">
             {/* 1. Admin (admin/staff) */}
             {(role === "ADMIN" || role === "STAFF") && (
               <div>
                 <button
                   type="button"
                   onClick={() => setAdminOpen((v) => !v)}
-                  style={collapsibleStyle}
+                  className={collapsibleClassName}
                 >
-                  <span style={{ fontSize: 11, color: "#9ca3af" }}>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
                     {adminOpen ? "▲" : "▼"}
                   </span>
-                  <span style={{ flex: 1, textAlign: "right" }}>ניהול</span>
+                  <span className="flex-1 text-right">ניהול</span>
                 </button>
 
                 {adminOpen && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <div className="flex flex-col gap-0.5">
                     {role === "ADMIN" && (
-                      <Link href="/admin/users" onClick={close} style={subLinkStyle}>
+                      <Link href="/admin/users" onClick={close} className={subLinkClassName}>
                         משתמשים
                       </Link>
                     )}
-                    <Link href="/staff/queue" onClick={close} style={subLinkStyle}>
+                    <Link href="/staff/queue" onClick={close} className={subLinkClassName}>
                       תור ההזמנות
                     </Link>
                   </div>
@@ -298,45 +196,39 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                 <button
                   type="button"
                   onClick={() => setStoreOpen((v) => !v)}
-                  style={collapsibleStyle}
+                  className={collapsibleClassName}
                 >
-                  <span style={{ fontSize: 11, color: "#9ca3af" }}>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
                     {storeOpen ? "▲" : "▼"}
                   </span>
-                  <span style={{ flex: 1, textAlign: "right" }}>חנות</span>
+                  <span className="flex-1 text-right">חנות</span>
                 </button>
 
                 {storeOpen && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <div className="flex flex-col gap-0.5">
                     {menus.map((menu) => (
                       <div key={menu.id}>
                         <button
                           type="button"
                           onClick={() => toggleMenuExpanded(menu.id)}
-                          style={subCollapsibleStyle}
+                          className={subCollapsibleClassName}
                         >
-                          <span style={{ fontSize: 11, color: "#9ca3af" }}>
+                          <span className="text-xs text-gray-400 dark:text-gray-500">
                             {expandedMenus[menu.id] ? "▲" : "▼"}
                           </span>
-                          <span style={{ flex: 1, textAlign: "right" }}>
+                          <span className="flex-1 text-right">
                             {menu.name}
                           </span>
                         </button>
 
                         {expandedMenus[menu.id] && menu.sections.length > 0 && (
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: 2,
-                            }}
-                          >
+                          <div className="flex flex-col gap-0.5">
                             {menu.sections.map((section) => (
                               <Link
                                 key={section.id}
                                 href={`/store/${menu.id}?section=${section.id}`}
                                 onClick={close}
-                                style={subSubLinkStyle}
+                                className={subSubLinkClassName}
                               >
                                 {section.name}
                               </Link>
@@ -351,27 +243,16 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
             )}
 
             {/* 3. Wallet */}
-            <Link href="/wallet" onClick={close} style={linkStyle}>
+            <Link href="/wallet" onClick={close} className={linkClassName}>
               הארנק שלי
             </Link>
 
             {/* 4. Orders */}
-            <Link href="/orders" onClick={close} style={linkStyle}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            <Link href="/orders" onClick={close} className={linkClassName}>
+              <div className="flex justify-between items-center gap-2">
                 <span>ההזמנות שלי</span>
                 {openOrdersCount > 0 && (
-                  <span style={{
-                    background: "#ef4444",
-                    color: "#fff",
-                    borderRadius: "50%",
-                    width: 18,
-                    height: 18,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 11,
-                    fontWeight: 700,
-                  }}>
+                  <span className="bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
                     {openOrdersCount}
                   </span>
                 )}
@@ -379,12 +260,12 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
             </Link>
 
             {/* 5. Contact us */}
-            <Link href="/contactus" onClick={close} style={linkStyle}>
+            <Link href="/contactus" onClick={close} className={linkClassName}>
               צור קשר
             </Link>
 
             {/* 6. Logout */}
-            <div style={{ borderTop: "1px solid #e5e7eb", marginTop: 16, paddingTop: 16 }}>
+            <div className="border-t border-gray-300 dark:border-gray-700 mt-4 pt-4">
               <LogoutMenuButton />
             </div>
           </nav>

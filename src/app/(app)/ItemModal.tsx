@@ -17,46 +17,15 @@ export default function ItemModal({ item, onClose }: ItemModalProps) {
       {/* Overlay */}
       <div
         onClick={onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.5)",
-          zIndex: 100,
-        }}
+        className="fixed inset-0 bg-black/50 z-100"
       />
 
       {/* Modal */}
-      <div
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          background: "#fff",
-          borderRadius: "8px",
-          boxShadow: "0 20px 25px rgba(0,0,0,0.15)",
-          zIndex: 101,
-          maxWidth: "500px",
-          width: "90%",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          direction: "rtl",
-        }}
-      >
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-2xl dark:shadow-2xl z-101 max-w-lg w-11/12 max-h-[90vh] overflow-y-auto rtl">
         {/* Close button */}
         <button
           onClick={onClose}
-          style={{
-            position: "absolute",
-            top: "12px",
-            left: "12px",
-            background: "none",
-            border: "none",
-            fontSize: "24px",
-            cursor: "pointer",
-            color: "#374151",
-            zIndex: 10,
-          }}
+          className="absolute top-3 left-3 bg-none border-none text-2xl cursor-pointer text-gray-600 dark:text-gray-400 z-10 hover:text-gray-900 dark:hover:text-gray-200"
         >
           ✕
         </button>
@@ -66,62 +35,27 @@ export default function ItemModal({ item, onClose }: ItemModalProps) {
           <img
             src={item.image}
             alt={item.name}
-            style={{
-              width: "100%",
-              height: "300px",
-              objectFit: "contain",
-              background: "#f3f4f6",
-            }}
+            className="w-full h-80 object-contain bg-gray-100 dark:bg-gray-700"
           />
         ) : (
-          <div
-            style={{
-              width: "100%",
-              height: "300px",
-              background: "#f3f4f6",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#9ca3af",
-            }}
-          >
+          <div className="w-full h-80 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">
             אין תמונה
           </div>
         )}
 
         {/* Content */}
-        <div style={{ padding: "24px" }}>
-          <h2
-            style={{
-              fontSize: "24px",
-              fontWeight: "700",
-              margin: "0 0 12px 0",
-              color: "#1f2937",
-            }}
-          >
+        <div className="p-6">
+          <h2 className="text-2xl font-bold m-0 mb-3 text-gray-900 dark:text-white">
             {item.name}
           </h2>
 
           {item.description && (
-            <p
-              style={{
-                fontSize: "14px",
-                color: "#6b7280",
-                margin: "0 0 16px 0",
-                lineHeight: "1.6",
-              }}
-            >
+            <p className="text-sm text-gray-600 dark:text-gray-300 m-0 mb-4 leading-relaxed">
               {item.description}
             </p>
           )}
 
-          <div
-            style={{
-              fontSize: "20px",
-              fontWeight: "700",
-              color: "#1f2937",
-            }}
-          >
+          <div className="text-xl font-bold text-gray-900 dark:text-white">
             {item.price} ₪
           </div>
         </div>

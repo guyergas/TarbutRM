@@ -39,14 +39,14 @@ export default async function ProfilePage() {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">הפרופיל שלי</h1>
         <Link
           href="/profile/edit"
-          className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition"
+          className="rounded-lg bg-indigo-600 dark:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-600 transition"
         >
           עריכה
         </Link>
       </div>
 
       {/* Personal Information Card */}
-      <div className="rounded-xl bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-xl space-y-4">
+      <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-lg space-y-4">
         <h2 className="text-base font-semibold text-gray-900 dark:text-white">פרטים אישיים</h2>
         <dl className="space-y-3 text-sm">
           <Row label="שם מלא" value={`${user.firstName} ${user.lastName}`} />
@@ -58,7 +58,7 @@ export default async function ProfilePage() {
       </div>
 
       {/* Account Information Card */}
-      <div className="rounded-xl bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-xl space-y-4">
+      <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-lg space-y-4">
         <h2 className="text-base font-semibold text-gray-900 dark:text-white">פרטי חשבון</h2>
         <dl className="space-y-3 text-sm">
           <Row label="תפקיד" value={ROLE_LABEL[user.role] ?? user.role} />
@@ -81,7 +81,7 @@ export default async function ProfilePage() {
       </div>
 
       {/* Actions */}
-      <div className="rounded-xl bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-xl">
+      <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-lg">
         <LogoutButton />
       </div>
     </div>

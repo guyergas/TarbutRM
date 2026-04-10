@@ -70,74 +70,27 @@ export default function StoreView({
   ) || currentMenu.sections[0];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#000000" }}>
+    <div className="flex flex-col h-screen bg-black dark:bg-black">
       {/* Menu Navigation Bar */}
-      <div
-        style={{
-          background: "#000000",
-          borderTop: "2px solid var(--border-color)",
-          borderBottom: "2px solid var(--border-color)",
-          padding: "0",
-          overflowX: "auto",
-          position: "sticky",
-          top: 0,
-          zIndex: 10,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 900,
-            margin: "0 auto",
-            padding: "0 16px",
-            display: "flex",
-            gap: 0,
-            alignItems: "stretch",
-            justifyContent: "space-between",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: 0,
-              alignItems: "stretch",
-              flex: 1,
-              overflow: "auto",
-            }}
-          >
+      <div className="bg-black dark:bg-black border-t-2 border-b-2 border-gray-700 dark:border-gray-700 p-0 overflow-x-auto sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto px-4 flex gap-0 items-stretch justify-between">
+          <div className="flex gap-0 items-stretch flex-1 overflow-auto">
             {allMenus.map((menu, index) => (
               <Link
                 key={menu.id}
                 href={`/store/${menu.id}`}
-                style={{
-                  padding: "12px 16px",
-                  borderRadius: 0,
-                  textDecoration: "none",
-                  fontSize: 12,
-                  fontWeight: menu.id === currentMenu.id ? 600 : 500,
-                  color: menu.id === currentMenu.id ? "#ffffff" : "var(--text-secondary)",
-                  background:
-                    menu.id === currentMenu.id ? "#000000" : "transparent",
-                  border: "none",
-                  whiteSpace: "nowrap",
-                  display: "flex",
-                  alignItems: "center",
-                }}
+                className={`py-3 px-4 no-underline text-xs flex items-center whitespace-nowrap border-none ${
+                  menu.id === currentMenu.id
+                    ? "font-semibold text-white bg-black dark:bg-black"
+                    : "font-medium text-gray-400 dark:text-gray-500 bg-transparent"
+                }`}
               >
                 {menu.name}
               </Link>
             ))}
           </div>
           {userRole === "ADMIN" && (
-            <div
-              style={{
-                display: "flex",
-                gap: 2,
-                alignItems: "center",
-                paddingLeft: 8,
-                paddingRight: 8,
-                borderRight: "2px solid var(--border-color)",
-              }}
-            >
+            <div className="flex gap-0.5 items-center px-2 border-r-2 border-gray-700 dark:border-gray-700">
               <MenuControls
                 menu={currentMenu}
                 allMenus={allMenus}
@@ -149,38 +102,11 @@ export default function StoreView({
       </div>
 
       {/* Main content: sidebar + grid */}
-      <div style={{ display: "flex", flex: 1, overflow: "hidden", background: "#000000" }}>
+      <div className="flex flex-1 overflow-hidden bg-black dark:bg-black">
         {/* Sections Sidebar */}
-        <aside
-          style={{
-            width: "125px",
-            flexShrink: 0,
-            borderLeft: "2px solid var(--border-color)",
-            borderRight: "2px solid var(--border-color)",
-            borderTop: "1px solid var(--border-color)",
-            overflowY: "auto",
-            background: "#000000",
-            padding: "16px 0",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+        <aside className="w-32 flex-shrink-0 border-l-2 border-r-2 border-t border-gray-700 dark:border-gray-700 overflow-y-auto bg-black dark:bg-black py-4 flex flex-col">
           {userRole === "ADMIN" && selectedSection && (
-            <div
-              style={{
-                display: "flex",
-                gap: 2,
-                alignItems: "center",
-                paddingRight: 4,
-                paddingLeft: 4,
-                paddingBottom: 12,
-                borderBottom: "1px solid var(--border-color)",
-                marginBottom: 12,
-                justifyContent: "flex-end",
-                overflow: "hidden",
-                minWidth: 0,
-              }}
-            >
+            <div className="flex gap-0.5 items-center px-1 pb-3 border-b border-gray-700 dark:border-gray-700 mb-3 justify-end overflow-hidden min-w-0">
               <SectionControls
                 section={selectedSection}
                 sections={currentMenu.sections}
@@ -191,43 +117,20 @@ export default function StoreView({
           )}
 
           {currentMenu.sections.length === 0 ? (
-            <div style={{ padding: "16px", color: "var(--text-secondary)", fontSize: 14 }}>
+            <div className="px-4 text-gray-400 dark:text-gray-500 text-sm">
               אין קטגוריות
             </div>
           ) : (
-            <nav style={{ display: "flex", flexDirection: "column" }}>
+            <nav className="flex flex-col">
               {currentMenu.sections.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => setSelectedSectionId(section.id)}
-                  style={{
-                    padding: "12px 8px",
-                    border: "none",
-                    background:
-                      section.id === selectedSectionId
-                        ? "#000000"
-                        : "transparent",
-                    color:
-                      section.id === selectedSectionId
-                        ? "#ffffff"
-                        : "var(--text-secondary)",
-                    textAlign: "right",
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontWeight:
-                      section.id === selectedSectionId ? 600 : 500,
-                    borderLeft:
-                      section.id === selectedSectionId
-                        ? "3px solid #ffffff"
-                        : "none",
-                    paddingLeft:
-                      section.id === selectedSectionId ? 5 : 8,
-                    transition: "all 0.2s",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    minWidth: 0,
-                  }}
+                  className={`py-3 px-2 border-none text-right cursor-pointer text-xs transition-all overflow-hidden text-ellipsis whitespace-nowrap min-w-0 ${
+                    section.id === selectedSectionId
+                      ? "font-semibold text-white bg-black dark:bg-black border-l-[3px] border-white dark:border-white pl-1"
+                      : "font-medium text-gray-400 dark:text-gray-500 bg-transparent"
+                  }`}
                 >
                   {section.name}
                 </button>
@@ -237,44 +140,23 @@ export default function StoreView({
         </aside>
 
         {/* Items Grid */}
-        <main
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "24px 16px",
-            background: "#000000",
-          }}
-        >
+        <main className="flex-1 overflow-y-auto p-6 bg-black dark:bg-black">
           {!selectedSection ? (
-            <div style={{ color: "var(--text-secondary)", fontSize: 14 }}>
+            <div className="text-gray-400 dark:text-gray-500 text-sm">
               בחר קטגוריה
             </div>
           ) : (
             <>
-              <h2
-                style={{
-                  fontSize: 20,
-                  fontWeight: 700,
-                  marginBottom: 16,
-                  color: "var(--text-primary)",
-                }}
-              >
+              <h2 className="text-xl font-bold mb-4 text-white dark:text-white">
                 {selectedSection.name}
               </h2>
 
               {selectedSection.items.length === 0 ? (
-                <div style={{ color: "var(--text-secondary)", fontSize: 14 }}>
+                <div className="text-gray-400 dark:text-gray-500 text-sm">
                   אין מוצרים בקטגוריה זו
                 </div>
               ) : (
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      "repeat(auto-fill, minmax(220px, 1fr))",
-                    gap: 16,
-                  }}
-                >
+                <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
                   {selectedSection.items.map((item) => (
                     <ItemCard
                       key={item.id}

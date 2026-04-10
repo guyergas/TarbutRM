@@ -4,7 +4,7 @@ import { useState, useActionState } from "react";
 import { resetPasswordAction } from "./actions";
 
 const INPUT =
-  "mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
+  "mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
 
 function strength(pw: string): { score: number; label: string; ok: boolean } {
   if (!pw) return { score: 0, label: "", ok: false };
@@ -38,11 +38,11 @@ function ResetForm({ userId, onClose }: { userId: string; onClose: () => void })
   if (result?.ok) {
     return (
       <div className="space-y-4">
-        <p className="rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">{result.message}</p>
+        <p className="rounded-md bg-green-50 dark:bg-green-900/20 px-4 py-3 text-sm text-green-700 dark:text-green-400">{result.message}</p>
         <button
           type="button"
           onClick={onClose}
-          className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50"
+          className="w-full rounded-md bg-indigo-600 dark:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50"
         >
           סגור
         </button>
@@ -53,7 +53,7 @@ function ResetForm({ userId, onClose }: { userId: string; onClose: () => void })
   return (
     <form action={action} onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">סיסמא חדשה</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">סיסמא חדשה</label>
         <input
           name="password"
           type="password"
@@ -73,7 +73,7 @@ function ResetForm({ userId, onClose }: { userId: string; onClose: () => void })
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">אימות סיסמא</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">אימות סיסמא</label>
         <input
           name="confirm"
           type="password"
@@ -84,14 +84,14 @@ function ResetForm({ userId, onClose }: { userId: string; onClose: () => void })
           className={INPUT}
         />
         {confirm.length > 0 && (
-          <p className={`mt-1 text-sm font-medium ${matches ? "text-green-600" : "text-red-500"}`}>
+          <p className={`mt-1 text-sm font-medium ${matches ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
             {matches ? "✓ הסיסמאות תואמות" : "✗ הסיסמאות אינן תואמות"}
           </p>
         )}
       </div>
 
       {(clientError || result?.message) && (
-        <p className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p className="rounded-md bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           {clientError ?? result?.message}
         </p>
       )}
@@ -100,14 +100,14 @@ function ResetForm({ userId, onClose }: { userId: string; onClose: () => void })
         <button
           type="button"
           onClick={onClose}
-          className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
         >
           ביטול
         </button>
         <button
           type="submit"
           disabled={pending}
-          className="flex-1 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50"
+          className="flex-1 rounded-md bg-indigo-600 dark:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 transition"
         >
           {pending ? "שומר…" : "שמור"}
         </button>
@@ -131,24 +131,9 @@ export default function ResetPasswordDialog({ userId }: { userId: string }) {
 
       {open && (
         <>
-          <div
-            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 50 }}
-          />
-          <div
-            style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%,-50%)",
-              zIndex: 51,
-              background: "#fff",
-              borderRadius: 12,
-              padding: "32px",
-              width: "min(400px, 90vw)",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-            }}
-          >
-            <h2 style={{ fontSize: 16, fontWeight: 600, color: "#111827", marginBottom: 20 }}>
+          <div className="fixed inset-0 bg-black/40 z-50" />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-51 bg-white dark:bg-gray-800 rounded-lg p-8 w-full max-w-sm shadow-2xl dark:shadow-2xl">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-5">
               איפוס סיסמא
             </h2>
             <ResetForm userId={userId} onClose={() => setOpen(false)} />

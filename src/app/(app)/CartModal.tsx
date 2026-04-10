@@ -168,150 +168,55 @@ export default function CartModal({
       {/* Overlay */}
       <div
         onClick={onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.3)",
-          zIndex: 100,
-        }}
+        className="fixed inset-0 bg-black/30 z-100"
       />
 
       {/* Modal Drawer */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          maxHeight: "70vh",
-          width: "100%",
-          maxWidth: "300px",
-          background: "#fff",
-          boxShadow: "2px 0 12px rgba(0,0,0,0.15)",
-          zIndex: 101,
-          display: "flex",
-          flexDirection: "column",
-          overflowY: "auto",
-          direction: "rtl",
-        }}
-      >
+      <div className="fixed top-0 left-0 h-screen max-h-[70vh] w-screen max-w-xs bg-white dark:bg-gray-800 shadow-xl dark:shadow-2xl z-101 flex flex-col overflow-y-auto rtl">
         {/* Modal Header */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "16px 20px",
-            borderBottom: "1px solid #e5e7eb",
-            flexShrink: 0,
-          }}
-        >
-          <span style={{ fontWeight: 700, fontSize: 18, color: "#000" }}>סל קניות</span>
+        <div className="flex justify-between items-center px-5 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <span className="font-bold text-lg text-gray-900 dark:text-white">סל קניות</span>
           <button
             type="button"
             onClick={onClose}
-            style={{
-              cursor: "pointer",
-              fontSize: 22,
-              lineHeight: 1,
-              color: "#374151",
-              background: "none",
-              border: "none",
-              padding: 0,
-            }}
+            className="text-2xl leading-none text-gray-600 dark:text-gray-400 bg-none border-none p-0 cursor-pointer hover:text-gray-900 dark:hover:text-gray-200"
           >
             ✕
           </button>
         </div>
 
         {/* Modal Content */}
-        <div style={{ flex: 1, padding: "16px 20px", overflowY: "auto" }}>
+        <div className="flex-1 px-5 py-4 overflow-y-auto">
           {items.length === 0 ? (
-            <div style={{ textAlign: "center", color: "#6b7280", paddingTop: "32px" }}>
+            <div className="text-center text-gray-500 dark:text-gray-400 pt-8">
               <p>סל הקניות שלך ריק</p>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div className="flex flex-col gap-3">
               {items.map((item) => (
                 <div
                   key={item.itemId}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "12px",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "6px",
-                    opacity: item.archived ? 0.6 : 1,
-                  }}
+                  className={`flex justify-between items-center p-3 border border-gray-200 dark:border-gray-700 rounded-md ${
+                    item.archived ? "opacity-60" : ""
+                  } bg-white dark:bg-gray-700`}
                 >
-                  <div style={{ flex: 1 }}>
+                  <div className="flex-1">
                     <button
                       onClick={() => handleItemClick(item)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "#3b82f6",
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                        padding: 0,
-                        fontWeight: "600",
-                        marginBottom: "4px",
-                        display: "block",
-                        fontSize: "inherit",
-                      }}
+                      className="bg-none border-none text-blue-500 dark:text-blue-400 cursor-pointer underline p-0 font-semibold mb-1 block text-sm hover:text-blue-600 dark:hover:text-blue-300"
                     >
                       {item.name}
                     </button>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        fontSize: "12px",
-                        color: "#6b7280",
-                      }}
-                    >
+                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                       <span>{item.price} ₪</span>
                       <span>×</span>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                        }}
-                      >
+                      <div className="flex items-center gap-1">
                         <button
                           onClick={() =>
                             handleUpdateQuantity(item.itemId, item.quantity - 1)
                           }
                           disabled={isLoading || item.quantity <= 1}
-                          style={{
-                            width: "24px",
-                            height: "24px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            background: "#f3f4f6",
-                            border: "1px solid #d1d5db",
-                            borderRadius: "3px",
-                            cursor:
-                              isLoading || item.quantity <= 1
-                                ? "not-allowed"
-                                : "pointer",
-                            opacity: isLoading || item.quantity <= 1 ? 0.5 : 1,
-                            fontSize: "14px",
-                            padding: 0,
-                          }}
-                          onMouseEnter={(e) => {
-                            if (!isLoading && item.quantity > 1)
-                              (e.target as HTMLButtonElement).style.background =
-                                "#e5e7eb";
-                          }}
-                          onMouseLeave={(e) => {
-                            if (!isLoading && item.quantity > 1)
-                              (e.target as HTMLButtonElement).style.background =
-                                "#f3f4f6";
-                          }}
+                          className="w-6 h-6 flex items-center justify-center bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded hover:bg-gray-200 dark:hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                         >
                           −
                         </button>
@@ -323,74 +228,26 @@ export default function CartModal({
                             handleUpdateQuantity(item.itemId, val);
                           }}
                           min="1"
-                          style={{
-                            width: "36px",
-                            textAlign: "center",
-                            border: "1px solid #d1d5db",
-                            borderRadius: "3px",
-                            padding: "4px",
-                          }}
+                          className="w-9 text-center border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-600 text-gray-900 dark:text-white text-xs"
                         />
                         <button
                           onClick={() =>
                             handleUpdateQuantity(item.itemId, item.quantity + 1)
                           }
                           disabled={isLoading}
-                          style={{
-                            width: "24px",
-                            height: "24px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            background: "#f3f4f6",
-                            border: "1px solid #d1d5db",
-                            borderRadius: "3px",
-                            cursor: isLoading ? "not-allowed" : "pointer",
-                            opacity: isLoading ? 0.5 : 1,
-                            fontSize: "14px",
-                            padding: 0,
-                          }}
-                          onMouseEnter={(e) => {
-                            if (!isLoading)
-                              (e.target as HTMLButtonElement).style.background =
-                                "#e5e7eb";
-                          }}
-                          onMouseLeave={(e) => {
-                            if (!isLoading)
-                              (e.target as HTMLButtonElement).style.background =
-                                "#f3f4f6";
-                          }}
+                          className="w-6 h-6 flex items-center justify-center bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded hover:bg-gray-200 dark:hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                         >
                           +
                         </button>
                       </div>
                       <span>=</span>
-                      <span style={{ fontWeight: "600" }}>{item.cost} ₪</span>
+                      <span className="font-semibold">{item.cost} ₪</span>
                     </div>
                   </div>
                   <button
                     onClick={() => handleRemoveItem(item.itemId)}
                     disabled={isLoading}
-                    style={{
-                      width: "28px",
-                      height: "28px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "#e5e7eb",
-                      border: "1px solid #d1d5db",
-                      borderRadius: "4px",
-                      cursor: isLoading ? "not-allowed" : "pointer",
-                      opacity: isLoading ? 0.5 : 1,
-                      fontSize: "14px",
-                      marginRight: "12px",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isLoading) (e.target as HTMLButtonElement).style.background = "#d1d5db";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isLoading) (e.target as HTMLButtonElement).style.background = "#e5e7eb";
-                    }}
+                    className="w-7 h-7 flex items-center justify-center bg-gray-200 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm ml-3"
                   >
                     🗑️
                   </button>
@@ -402,42 +259,15 @@ export default function CartModal({
 
         {/* Modal Footer */}
         {items.length > 0 && (
-          <div
-            style={{
-              padding: "16px 20px",
-              borderTop: "1px solid #e5e7eb",
-              flexShrink: 0,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "12px",
-                fontSize: "16px",
-                fontWeight: "600",
-              }}
-            >
+          <div className="px-5 py-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
+            <div className="flex justify-between items-center mb-3 text-base font-semibold text-gray-900 dark:text-white">
               <span>סה"כ:</span>
               <span>{totalCost.toFixed(2)} ₪</span>
             </div>
             <button
               onClick={() => setShowCheckoutConfirm(true)}
               disabled={isLoading}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "10px",
-                background: "#059669",
-                color: "#fff",
-                border: "none",
-                borderRadius: "6px",
-                textAlign: "center",
-                fontWeight: "600",
-                cursor: isLoading ? "not-allowed" : "pointer",
-                opacity: isLoading ? 0.5 : 1,
-              }}
+              className="block w-full py-2.5 bg-green-600 dark:bg-green-700 text-white border-none rounded-md text-center font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               {isLoading ? "מעבד..." : "לתשלום"}
             </button>
@@ -463,58 +293,29 @@ export default function CartModal({
         <>
           <div
             onClick={() => !isLoading && setShowCheckoutConfirm(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,0.3)",
-              zIndex: 102,
-            }}
+            className="fixed inset-0 bg-black/30 z-102"
           />
-          <div
-            style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              background: "#fff",
-              borderRadius: "8px",
-              boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
-              zIndex: 103,
-              padding: "24px",
-              maxWidth: "400px",
-              width: "90%",
-              direction: "rtl",
-            }}
-          >
-            <h2 style={{ margin: "0 0 16px 0", fontSize: "20px", fontWeight: "700" }}>
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl dark:shadow-2xl z-103 p-6 max-w-sm w-11/12 rtl">
+            <h2 className="m-0 mb-4 text-xl font-bold text-gray-900 dark:text-white">
               אישור הזמנה
             </h2>
 
             {checkoutError && (
-              <div
-                style={{
-                  background: "#fee2e2",
-                  color: "#991b1b",
-                  padding: "12px",
-                  borderRadius: "6px",
-                  marginBottom: "16px",
-                  fontSize: "14px",
-                }}
-              >
+              <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 p-3 rounded-md mb-4 text-sm">
                 {checkoutError}
               </div>
             )}
 
-            <div style={{ marginBottom: "16px", fontSize: "14px", color: "#374151" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+            <div className="mb-4 text-sm text-gray-700 dark:text-gray-300 space-y-2">
+              <div className="flex justify-between">
                 <span>יתרה נוכחית:</span>
-                <span style={{ fontWeight: "600" }}>₪{userBalance || "0"}</span>
+                <span className="font-semibold">₪{userBalance || "0"}</span>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+              <div className="flex justify-between">
                 <span>סה"כ הזמנה:</span>
-                <span style={{ fontWeight: "600" }}>₪{totalCost.toFixed(2)}</span>
+                <span className="font-semibold">₪{totalCost.toFixed(2)}</span>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div className="flex justify-between">
                 <span>פריטים:</span>
                 <span>{items.length}</span>
               </div>
@@ -523,52 +324,23 @@ export default function CartModal({
             {userBalance &&
               Number(userBalance) - totalCost < 5 &&
               Number(userBalance) >= totalCost && (
-                <div
-                  style={{
-                    background: "#fef3c7",
-                    color: "#92400e",
-                    padding: "12px",
-                    borderRadius: "6px",
-                    marginBottom: "16px",
-                    fontSize: "13px",
-                  }}
-                >
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-3 rounded-md mb-4 text-xs">
                   התראה: היתרה שלך לאחר הרכישה תהיה נמוכה
                 </div>
               )}
 
-            <div style={{ display: "flex", gap: "12px" }}>
+            <div className="flex gap-3">
               <button
                 onClick={() => !isLoading && setShowCheckoutConfirm(false)}
                 disabled={isLoading}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  background: "#e5e7eb",
-                  color: "#374151",
-                  border: "none",
-                  borderRadius: "6px",
-                  fontWeight: "600",
-                  cursor: isLoading ? "not-allowed" : "pointer",
-                  opacity: isLoading ? 0.5 : 1,
-                }}
+                className="flex-1 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border-none rounded-md font-semibold cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 ביטול
               </button>
               <button
                 onClick={handleCheckout}
                 disabled={isLoading}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  background: "#059669",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  fontWeight: "600",
-                  cursor: isLoading ? "not-allowed" : "pointer",
-                  opacity: isLoading ? 0.5 : 1,
-                }}
+                className="flex-1 py-2.5 bg-green-600 dark:bg-green-700 text-white border-none rounded-md font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 {isLoading ? "מעבד..." : "אישור"}
               </button>

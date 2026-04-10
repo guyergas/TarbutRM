@@ -27,26 +27,9 @@ export default function RegisterModal({
 
       {open && (
         <>
-          <div
-            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 50 }}
-          />
-          <div
-            style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              zIndex: 51,
-              background: "#fff",
-              borderRadius: 12,
-              padding: "32px",
-              width: "min(480px, 90vw)",
-              maxHeight: "90vh",
-              overflowY: "auto",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-            }}
-          >
-            <h2 style={{ fontSize: 16, fontWeight: 600, color: "#111827", marginBottom: 20 }}>הרשמה</h2>
+          <div className="fixed inset-0 bg-black/40 z-50" />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-51 bg-white dark:bg-gray-800 rounded-lg p-8 w-full max-w-sm max-h-[90vh] overflow-y-auto shadow-2xl dark:shadow-2xl">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-5">הרשמה</h2>
             <RegisterForm onSuccess={handleSuccess} onCancel={() => setOpen(false)} />
           </div>
         </>

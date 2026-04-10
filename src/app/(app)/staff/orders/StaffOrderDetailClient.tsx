@@ -31,10 +31,10 @@ interface SerializedOrder {
   statusHistory: OrderStatusHistory[];
 }
 
-const statusBadgeColors: Record<string, { bg: string; text: string; label: string }> = {
-  NEW: { bg: "#fef3c7", text: "#92400e", label: "חדש" },
-  IN_PROGRESS: { bg: "#dbeafe", text: "#0c4a6e", label: "בעיבוד" },
-  COMPLETED: { bg: "#dcfce7", text: "#166534", label: "הושלם" },
+const statusBadgeClasses: Record<string, { bgClassName: string; textClassName: string; label: string }> = {
+  NEW: { bgClassName: "bg-yellow-100 dark:bg-yellow-900/30", textClassName: "text-yellow-800 dark:text-yellow-400", label: "חדש" },
+  IN_PROGRESS: { bgClassName: "bg-blue-100 dark:bg-blue-900/30", textClassName: "text-blue-800 dark:text-blue-400", label: "בעיבוד" },
+  COMPLETED: { bgClassName: "bg-green-100 dark:bg-green-900/30", textClassName: "text-green-800 dark:text-green-400", label: "הושלם" },
 };
 
 export default function StaffOrderDetailClient({ order: initialOrder }: { order: SerializedOrder }) {
@@ -92,7 +92,7 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
       };
 
       setOrder(updatedOrder);
-      setSuccessMessage(`Status advanced to ${statusBadgeColors[updatedOrder.status]?.label}`);
+      setSuccessMessage(`Status advanced to ${statusBadgeClasses[updatedOrder.status]?.label}`);
     } else {
       setError(result.error || "Failed to advance status");
     }
@@ -101,149 +101,68 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: "rgba(0, 0, 0, 0.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 50,
-        padding: "16px",
-      }}
-    >
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: "12px",
-          maxWidth: "600px",
-          maxHeight: "90vh",
-          overflow: "auto",
-          width: "100%",
-          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-        }}
-      >
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl max-h-[90vh] overflow-auto w-full shadow-xl dark:shadow-2xl">
         {/* Header */}
-        <div
-          style={{
-            padding: "24px",
-            borderBottom: "1px solid #e5e7eb",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "16px",
-          }}
-        >
-          <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: "#1f2937" }}>
+        <div className="p-6 border-b border-gray-300 dark:border-gray-700 flex justify-between items-center gap-4">
+          <h1 className="text-2xl font-bold m-0 text-gray-900 dark:text-white">
             הזמנה {order.orderNumber}
           </h1>
-          <span
-            style={{
-              display: "inline-block",
-              padding: "6px 16px",
-              borderRadius: "6px",
-              background: statusBadgeColors[order.status]?.bg,
-              color: statusBadgeColors[order.status]?.text,
-              fontWeight: 600,
-              fontSize: 13,
-              whiteSpace: "nowrap",
-            }}
-          >
-            {statusBadgeColors[order.status]?.label}
+          <span className={`inline-block px-4 py-1.5 rounded text-xs font-semibold whitespace-nowrap ${statusBadgeClasses[order.status]?.bgClassName} ${statusBadgeClasses[order.status]?.textClassName}`}>
+            {statusBadgeClasses[order.status]?.label}
           </span>
         </div>
 
         {/* Content */}
-        <div style={{ padding: "24px" }}>
-          <div
-            style={{
-              paddingBottom: 16,
-              borderBottom: "1px solid #e5e7eb",
-              marginBottom: 20,
-              fontSize: 14,
-              color: "#6b7280",
-            }}
-          >
-            <p style={{ margin: "8px 0" }}>
-              <strong style={{ color: "#374151" }}>תאריך וזמן:</strong> {order.createdAt} בשעה{" "}
-              {order.createdAtFull}
+        <div className="p-6">
+          <div className="pb-4 border-b border-gray-300 dark:border-gray-700 mb-5 text-sm text-gray-600 dark:text-gray-400">
+            <p className="m-2 m-t-0 m-b-0">
+              <strong className="text-gray-700 dark:text-gray-300">תאריך וזמן:</strong> {order.createdAt} בשעה {order.createdAtFull}
             </p>
-            <p style={{ margin: "8px 0" }}>
-              <strong style={{ color: "#374151" }}>סך הכל:</strong>{" "}
-              <span style={{ fontWeight: 700, fontSize: 16, color: "#1f2937" }}>
+            <p className="m-2 m-t-0 m-b-0">
+              <strong className="text-gray-700 dark:text-gray-300">סך הכל:</strong>{" "}
+              <span className="font-bold text-base text-gray-900 dark:text-white">
                 ₪{order.total}
               </span>
             </p>
           </div>
 
           {/* Items */}
-          <div style={{ marginBottom: 20 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: "#1f2937" }}>
+          <div className="mb-5">
+            <h2 className="text-base font-semibold mb-3 text-gray-900 dark:text-white">
               פריטים בהזמנה
             </h2>
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-xs">
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
-                    <th
-                      style={{
-                        padding: "10px 12px",
-                        textAlign: "right",
-                        fontWeight: 600,
-                        color: "#374151",
-                      }}
-                    >
+                  <tr className="border-b border-gray-300 dark:border-gray-700">
+                    <th className="p-2.5 text-right font-semibold text-gray-700 dark:text-gray-300">
                       שם פריט
                     </th>
-                    <th
-                      style={{
-                        padding: "10px 12px",
-                        textAlign: "center",
-                        fontWeight: 600,
-                        color: "#374151",
-                      }}
-                    >
+                    <th className="p-2.5 text-center font-semibold text-gray-700 dark:text-gray-300">
                       כמות
                     </th>
-                    <th
-                      style={{
-                        padding: "10px 12px",
-                        textAlign: "center",
-                        fontWeight: 600,
-                        color: "#374151",
-                      }}
-                    >
+                    <th className="p-2.5 text-center font-semibold text-gray-700 dark:text-gray-300">
                       מחיר
                     </th>
-                    <th
-                      style={{
-                        padding: "10px 12px",
-                        textAlign: "left",
-                        fontWeight: 600,
-                        color: "#374151",
-                      }}
-                    >
+                    <th className="p-2.5 text-left font-semibold text-gray-700 dark:text-gray-300">
                       סה"כ
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {order.items.map((item) => (
-                    <tr key={item.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                      <td style={{ padding: "10px 12px", textAlign: "right", color: "#374151" }}>
+                    <tr key={item.id} className="border-b border-gray-200 dark:border-gray-700">
+                      <td className="p-2.5 text-right text-gray-700 dark:text-gray-300">
                         {item.itemName}
                       </td>
-                      <td style={{ padding: "10px 12px", textAlign: "center", color: "#374151" }}>
+                      <td className="p-2.5 text-center text-gray-700 dark:text-gray-300">
                         {item.quantity}
                       </td>
-                      <td style={{ padding: "10px 12px", textAlign: "center", color: "#374151" }}>
+                      <td className="p-2.5 text-center text-gray-700 dark:text-gray-300">
                         ₪{item.unitPrice}
                       </td>
-                      <td style={{ padding: "10px 12px", textAlign: "left", fontWeight: 600, color: "#1f2937" }}>
+                      <td className="p-2.5 text-left font-semibold text-gray-900 dark:text-white">
                         ₪{item.subtotal}
                       </td>
                     </tr>
@@ -255,57 +174,30 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
 
           {/* Status History */}
           {order.statusHistory && order.statusHistory.length > 0 && (
-            <div style={{ paddingTop: 16, borderTop: "1px solid #e5e7eb", marginBottom: 20 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16, color: "#1f2937" }}>
+            <div className="pt-4 border-t border-gray-300 dark:border-gray-700 mb-5">
+              <h2 className="text-base font-semibold mb-4 text-gray-900 dark:text-white">
                 היסטוריית סטטוס
               </h2>
-              <div style={{ fontSize: 13, color: "#374151" }}>
+              <div className="text-xs text-gray-700 dark:text-gray-300">
                 {order.statusHistory.map((history, index) => (
                   <div
                     key={history.id}
-                    style={{
-                      display: "flex",
-                      gap: 16,
-                      paddingBottom: 16,
-                      borderBottom:
-                        index < order.statusHistory.length - 1 ? "1px solid #e5e7eb" : "none",
-                    }}
+                    className={`flex gap-4 pb-4 ${index < order.statusHistory.length - 1 ? "border-b border-gray-300 dark:border-gray-700" : ""}`}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        paddingTop: 2,
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: "50%",
-                          background: "#4f46e5",
-                          marginBottom: 8,
-                        }}
-                      />
+                    <div className="flex flex-col items-center pt-0.5">
+                      <div className="w-3 h-3 rounded-full bg-indigo-500 dark:bg-indigo-400 mb-2" />
                       {index < order.statusHistory.length - 1 && (
-                        <div
-                          style={{
-                            width: 2,
-                            height: 40,
-                            background: "#e5e7eb",
-                          }}
-                        />
+                        <div className="w-0.5 h-10 bg-gray-300 dark:bg-gray-600" />
                       )}
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, marginBottom: 4, color: "#1f2937" }}>
-                        {statusBadgeColors[history.toStatus]?.label || history.toStatus}
+                    <div className="flex-1">
+                      <div className="font-semibold mb-1 text-gray-900 dark:text-white">
+                        {statusBadgeClasses[history.toStatus]?.label || history.toStatus}
                       </div>
-                      <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 4 }}>
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
                         {history.changedAt} בשעה {history.changedAtTime}
                       </div>
-                      <div style={{ fontSize: 12, color: "#6b7280" }}>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
                         על ידי: {history.changerName}
                       </div>
                     </div>
@@ -317,70 +209,32 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
 
           {/* Messages */}
           {error && (
-            <div
-              style={{
-                background: "#fee2e2",
-                color: "#7f1d1d",
-                padding: "12px 16px",
-                borderRadius: "6px",
-                marginBottom: 16,
-                fontSize: 13,
-              }}
-            >
+            <div className="bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 px-4 py-3 rounded text-xs mb-4">
               {error}
             </div>
           )}
 
           {successMessage && (
-            <div
-              style={{
-                background: "#dcfce7",
-                color: "#166534",
-                padding: "12px 16px",
-                borderRadius: "6px",
-                marginBottom: 16,
-                fontSize: 13,
-              }}
-            >
+            <div className="bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-4 py-3 rounded text-xs mb-4">
               {successMessage}
             </div>
           )}
 
           {/* Status Advancement Buttons */}
-          <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+          <div className="flex gap-3 justify-end">
             {order.status === "NEW" && (
               <>
                 <button
                   onClick={() => handleAdvanceStatus()}
                   disabled={advancingToStatus !== null}
-                  style={{
-                    background: "#4f46e5",
-                    color: "#fff",
-                    border: "none",
-                    padding: "10px 16px",
-                    borderRadius: "6px",
-                    fontWeight: 600,
-                    cursor: advancingToStatus !== null ? "not-allowed" : "pointer",
-                    opacity: advancingToStatus !== null ? 0.6 : 1,
-                    fontSize: 14,
-                  }}
+                  className="bg-indigo-500 dark:bg-indigo-600 text-white border-none px-4 py-2 rounded font-semibold cursor-pointer hover:bg-indigo-600 dark:hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition text-sm"
                 >
                   {advancingToStatus !== null ? "מעדכן..." : "העבר לעיבוד"}
                 </button>
                 <button
                   onClick={() => handleAdvanceStatus()}
                   disabled={advancingToStatus !== null}
-                  style={{
-                    background: "#059669",
-                    color: "#fff",
-                    border: "none",
-                    padding: "10px 16px",
-                    borderRadius: "6px",
-                    fontWeight: 600,
-                    cursor: advancingToStatus !== null ? "not-allowed" : "pointer",
-                    opacity: advancingToStatus !== null ? 0.6 : 1,
-                    fontSize: 14,
-                  }}
+                  className="bg-green-600 dark:bg-green-700 text-white border-none px-4 py-2 rounded font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed transition text-sm"
                 >
                   {advancingToStatus !== null ? "מעדכן..." : "העבר להושלם"}
                 </button>
@@ -391,24 +245,14 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
               <button
                 onClick={() => handleAdvanceStatus()}
                 disabled={advancingToStatus !== null}
-                style={{
-                  background: "#059669",
-                  color: "#fff",
-                  border: "none",
-                  padding: "10px 16px",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  cursor: advancingToStatus !== null ? "not-allowed" : "pointer",
-                  opacity: advancingToStatus !== null ? 0.6 : 1,
-                  fontSize: 14,
-                }}
+                className="bg-green-600 dark:bg-green-700 text-white border-none px-4 py-2 rounded font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed transition text-sm"
               >
                 {advancingToStatus !== null ? "מעדכן..." : "העבר להושלם"}
               </button>
             )}
 
             {order.status === "COMPLETED" && (
-              <span style={{ fontSize: 14, color: "#9ca3af", fontWeight: 600 }}>
+              <span className="text-sm text-gray-500 dark:text-gray-400 font-semibold">
                 ✓ הזמנה הושלמה
               </span>
             )}

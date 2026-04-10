@@ -48,23 +48,23 @@ export default async function WalletPage() {
       </h1>
 
       {/* Balance Card */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-8 text-white mb-8">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 rounded-lg shadow-lg dark:shadow-2xl p-8 text-white mb-8">
         <p className="text-sm font-medium opacity-90 mb-2">היתרה שלך</p>
-        <p className="text-4xl font-bold">₪{Number(user.balance).toFixed(2)}</p>
+        <p className="text-5xl font-bold">₪{Number(user.balance).toFixed(2)}</p>
       </div>
 
       {/* Transaction History */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm dark:shadow-lg overflow-hidden">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold">היסטוריית עסקאות</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">היסטוריית עסקאות</h2>
         </div>
 
         {transactions.length === 0 ? (
-          <div className="p-6 text-center text-gray-500">אין עסקאות עדיין</div>
+          <div className="p-6 text-center text-gray-500 dark:text-gray-400">אין עסקאות עדיין</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700/50">
                 <tr>
                   <th className="px-6 py-3 text-right font-medium text-gray-700 dark:text-gray-300">
                     תאריך
@@ -103,20 +103,18 @@ export default async function WalletPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
-                          style={{
-                            background: isIn ? "#dcfce7" : "#fee2e2",
-                            color: isIn ? "#166534" : "#991b1b",
-                          }}
+                          className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                            isIn
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                              : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                          }`}
                         >
                           {isIn ? "הפקדה" : "החזר"}
                         </span>
                       </td>
                       <td className="px-6 py-4 font-semibold">
                         <span
-                          style={{
-                            color: isIn ? "#10b981" : "#ef4444",
-                          }}
+                          className={isIn ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}
                         >
                           {isIn ? "+" : ""}₪{Math.abs(amt).toFixed(2)}
                         </span>

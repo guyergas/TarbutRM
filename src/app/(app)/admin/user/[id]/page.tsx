@@ -51,72 +51,55 @@ export default async function AdminUserPage({
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <Link
           href="/admin/users"
-          className="text-sm text-indigo-600 hover:text-indigo-500"
+          className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition"
         >
           ← חזרה לרשימה
         </Link>
-        <h1 className="text-2xl">{user.firstName} {user.lastName}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{user.firstName} {user.lastName}</h1>
         <span
-          style={{
-            padding: "2px 10px",
-            borderRadius: 12,
-            fontSize: 12,
-            fontWeight: 600,
-            background: user.active ? "#dcfce7" : "#fee2e2",
-            color: user.active ? "#166534" : "#991b1b",
-          }}
+          className={`px-2.5 py-1 rounded text-xs font-semibold ${
+            user.active
+              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+              : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+          }`}
         >
           {user.active ? "פעיל" : "מושבת"}
         </span>
-        <span
-          style={{
-            marginRight: "auto",
-            fontSize: 22,
-            fontWeight: 700,
-            fontVariantNumeric: "tabular-nums",
-            color: Number(user.balance) >= 0 ? "#4ade80" : "#f87171",
-          }}
-        >
+        <span className={`ml-auto text-lg font-bold font-variant-numeric-tabular ${Number(user.balance) >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
           יתרה: {serialized.balance} ₪
         </span>
       </div>
 
       {/* Edit form */}
-      <div className="rounded-xl bg-white px-8 py-6 shadow-sm space-y-4">
-        <h2 className="text-base font-semibold text-gray-900">פרטי משתמש</h2>
+      <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-lg space-y-4">
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white">פרטי משתמש</h2>
         <EditUserForm user={serialized} />
-        <div className="pt-1 border-t border-gray-100">
+        <div className="pt-1 border-t border-gray-200 dark:border-gray-700">
           <ResetPasswordDialog userId={user.id} />
         </div>
       </div>
 
       {/* Transaction history */}
-      <div className="rounded-xl bg-white px-8 py-6 shadow-sm space-y-4">
+      <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-lg space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-900">היסטוריית עסקאות</h2>
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white">היסטוריית עסקאות</h2>
           <AddTransactionForm userId={user.id} />
         </div>
         {transactions.length === 0 ? (
-          <p className="text-sm text-gray-400">אין עסקאות עדיין</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">אין עסקאות עדיין</p>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                fontSize: 14,
-              }}
-            >
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
               <thead>
-                <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
-                  <th style={th}>תאריך</th>
-                  <th style={th}>סוג</th>
-                  <th style={th}>סכום</th>
-                  <th style={th}>הערה</th>
-                  <th style={th}>בוצע על ידי</th>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <th className="px-3 py-2.5 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">תאריך</th>
+                  <th className="px-3 py-2.5 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">סוג</th>
+                  <th className="px-3 py-2.5 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">סכום</th>
+                  <th className="px-3 py-2.5 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">הערה</th>
+                  <th className="px-3 py-2.5 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">בוצע על ידי</th>
                 </tr>
               </thead>
               <tbody>
@@ -124,8 +107,8 @@ export default async function AdminUserPage({
                   const amt = Number(tx.amount);
                   const isIn = amt > 0;
                   return (
-                    <tr key={tx.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                      <td style={td}>
+                    <tr key={tx.id} className="border-b border-gray-100 dark:border-gray-700">
+                      <td className="px-3 py-2.5 text-gray-700 dark:text-gray-300">
                         {tx.createdAt.toLocaleDateString("he-IL", {
                           day: "2-digit",
                           month: "2-digit",
@@ -134,46 +117,35 @@ export default async function AdminUserPage({
                           minute: "2-digit",
                         })}
                       </td>
-                      <td style={td}>
+                      <td className="px-3 py-2.5">
                         <span
-                          style={{
-                            padding: "2px 8px",
-                            borderRadius: 10,
-                            fontSize: 12,
-                            fontWeight: 600,
-                            background: isIn ? "#dcfce7" : "#fee2e2",
-                            color: isIn ? "#166534" : "#991b1b",
-                          }}
+                          className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${
+                            isIn
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                              : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                          }`}
                         >
                           {isIn ? "הפקדה" : "החזר"}
                         </span>
                       </td>
-                      <td
-                        style={{
-                          ...td,
-                          fontVariantNumeric: "tabular-nums",
-                          fontWeight: 600,
-                          color: isIn ? "#166534" : "#991b1b",
-                        }}
-                      >
-                        {isIn ? "+" : ""}
-                        {amt.toFixed(2)} ₪
+                      <td className="px-3 py-2.5 font-variant-numeric-tabular font-semibold">
+                        <span className={isIn ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}>
+                          {isIn ? "+" : ""}
+                          {amt.toFixed(2)} ₪
+                        </span>
                       </td>
-                      <td style={{ ...td, color: "#6b7280" }}>{tx.note ?? "—"}</td>
-                      <td style={{ ...td, color: "#6b7280" }}>
+                      <td className="px-3 py-2.5 text-gray-600 dark:text-gray-400">{tx.note ?? "—"}</td>
+                      <td className="px-3 py-2.5">
                         {(() => {
                           const c = creatorMap[tx.createdBy];
                           if (!c) return tx.createdBy;
                           const isSelf = c.id === user.id;
                           return (
-                            <span style={{
-                              padding: "2px 8px",
-                              borderRadius: 10,
-                              fontSize: 12,
-                              fontWeight: 600,
-                              background: isSelf ? "#eff6ff" : "#faf5ff",
-                              color: isSelf ? "#1d4ed8" : "#7e22ce",
-                            }}>
+                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${
+                              isSelf
+                                ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                                : "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400"
+                            }`}>
                               {isSelf ? "המשתמש" : `${c.firstName} ${c.lastName}`}
                             </span>
                           );
@@ -190,16 +162,3 @@ export default async function AdminUserPage({
     </div>
   );
 }
-
-const th: React.CSSProperties = {
-  padding: "10px 12px",
-  textAlign: "right",
-  fontWeight: 600,
-  color: "#374151",
-  whiteSpace: "nowrap",
-};
-
-const td: React.CSSProperties = {
-  padding: "10px 12px",
-  color: "#374151",
-};

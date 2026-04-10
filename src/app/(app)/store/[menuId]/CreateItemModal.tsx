@@ -30,31 +30,14 @@ export default function CreateItemModal({
 
   return (
     <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000,
-        padding: "16px",
-      }}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-1000 p-4"
       onClick={onClose}
     >
       <div
-        style={{
-          background: "#fff",
-          borderRadius: 8,
-          padding: 24,
-          maxWidth: 600,
-          width: "100%",
-          maxHeight: "90vh",
-          overflowY: "auto",
-        }}
+        className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h1 style={{ margin: "0 0 24px 0", fontSize: 28, fontWeight: 700, color: "#1f2937" }}>
+        <h1 className="m-0 mb-6 text-3xl font-bold text-gray-900 dark:text-white">
           יצירת מוצר חדש
         </h1>
 

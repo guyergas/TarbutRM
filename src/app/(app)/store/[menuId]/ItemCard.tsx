@@ -50,20 +50,9 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
   };
 
   return (
-    <div
+    <div className={`border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 overflow-hidden relative cursor-pointer transition-shadow duration-200 ${isHovered ? "shadow-lg" : "shadow-sm"}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={{
-        border: "1px solid var(--border-color)",
-        borderRadius: 8,
-        background: "#000",
-        overflow: "hidden",
-        position: "relative",
-        cursor: "pointer",
-        transition: "box-shadow 0.2s",
-        boxShadow: isHovered ? "0 4px 12px rgba(0,0,0,0.3)" : "none",
-        color: "var(--text-secondary)",
-      }}
     >
       {/* Image */}
       <div
@@ -84,32 +73,16 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
             }
           }
         }}
-        style={{
-          width: 200,
-          height: 200,
-          background: "#f3f4f6",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-          margin: "0 auto",
-          position: "relative",
-          zIndex: 0,
-          cursor: "pointer",
-        }}
+        className="w-52 h-52 bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden mx-auto relative z-0 cursor-pointer"
       >
         {item.image ? (
           <img
             src={item.image}
             alt={item.name}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-            }}
+            className="w-full h-full object-contain"
           />
         ) : (
-          <div style={{ color: "#9ca3af", fontSize: 12 }}>
+          <div className="text-gray-400 dark:text-gray-500 text-xs">
             אין תמונה
           </div>
         )}
@@ -117,66 +90,30 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
 
       {/* Stock badge */}
       {!item.inStock && (
-        <div
-          style={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            background: "#7f1d1d",
-            color: "#fecaca",
-            padding: "4px 8px",
-            borderRadius: 4,
-            fontSize: 12,
-            fontWeight: 500,
-            zIndex: 10,
-          }}
-        >
+        <div className="absolute top-2 right-2 bg-red-900 dark:bg-red-800 text-red-200 dark:text-red-300 px-2 py-1 rounded text-xs font-medium z-10">
           אזל מהמלאי
         </div>
       )}
 
-
       {/* Content */}
-      <div style={{ padding: "12px" }}>
-        <h3
-          style={{
-            fontSize: 14,
-            fontWeight: 600,
-            margin: "0 0 4px 0",
-            color: "var(--text-secondary)",
-            wordBreak: "break-word",
-          }}
-        >
+      <div className="p-3">
+        <h3 className="text-sm font-semibold m-0 mb-1 text-gray-700 dark:text-gray-300 break-words">
           {item.name}
         </h3>
 
         {item.description && (
-          <p
-            style={{
-              fontSize: 12,
-              color: "var(--text-secondary)",
-              margin: "0 0 8px 0",
-              lineHeight: 1.4,
-            }}
-          >
+          <p className="text-xs text-gray-600 dark:text-gray-400 m-0 mb-2 leading-relaxed">
             {item.description}
           </p>
         )}
 
-        <div
-          style={{
-            fontSize: 16,
-            fontWeight: 700,
-            color: "var(--text-secondary)",
-            marginBottom: "12px",
-          }}
-        >
+        <div className="text-base font-bold text-gray-800 dark:text-gray-200 mb-3">
           {item.price} ₪
         </div>
 
         {/* Quantity selector and add to cart button - only show if in stock */}
         {item.inStock && (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className="flex items-center gap-2">
             <QuantitySelector
               initialQuantity={1}
               onQuantityChange={setQuantity}

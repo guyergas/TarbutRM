@@ -41,16 +41,16 @@ export default async function EditProfilePage() {
       <div className="flex items-center gap-4">
         <Link
           href="/profile"
-          className="text-sm text-indigo-600 hover:text-indigo-500"
+          className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition"
         >
           ← חזור לפרופיל
         </Link>
-        <h1 className="text-2xl">{user.firstName} {user.lastName}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{user.firstName} {user.lastName}</h1>
       </div>
 
       {/* Edit form */}
-      <div className="rounded-xl bg-white px-8 py-6 shadow-sm space-y-4">
-        <h2 className="text-base font-semibold text-gray-900">פרטי משתמש</h2>
+      <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-lg space-y-4">
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white">פרטי משתמש</h2>
         <EditUserForm user={serialized} formAction={updateProfile} />
       </div>
     </div>

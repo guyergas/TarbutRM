@@ -237,73 +237,35 @@ export default function ItemEditor({
     <>
       {/* Image Cropper Modal */}
       {showCropper && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "16px",
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 8,
-              padding: 24,
-              maxWidth: 600,
-              width: "100%",
-            }}
-          >
-            <h2 style={{ margin: "0 0 16px 0", fontSize: 18, fontWeight: 700 }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full">
+            <h2 className="m-0 mb-4 text-lg font-bold text-gray-900 dark:text-white">
               חתוך את התמונה
             </h2>
-            <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 16 }}>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
               הזז וגדל את הריבוע כדי לחתוך את התמונה לפורמט ריבועי
             </p>
 
             {/* Cropper Container */}
             <div
               ref={cropperContainerRef}
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: 400,
-                margin: "0 auto 24px",
-                overflow: "hidden",
-                borderRadius: 8,
-                border: "2px solid #d1d5db",
-                aspectRatio: "1",
-                background: "#f3f4f6",
-              }}
+              className="relative w-full max-w-sm mx-auto mb-6 overflow-hidden rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 aspect-square"
             >
               <img
                 src={uploadedImage}
                 alt="Upload preview"
-                style={{
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                  imageRendering: "crisp-edges",
-                }}
+                className="absolute w-full h-full object-contain"
+                style={{ imageRendering: "crisp-edges" }}
               />
 
               {/* Crop Box */}
               <div
+                className="absolute border-4 border-blue-500 dark:border-blue-400 cursor-move bg-blue-500/10 dark:bg-blue-400/10 select-none"
                 style={{
-                  position: "absolute",
                   left: `${cropX}px`,
                   top: `${cropY}px`,
                   width: `${cropSize}px`,
                   height: `${cropSize}px`,
-                  border: "3px solid #3b82f6",
-                  cursor: "move",
-                  background: "rgba(59, 130, 246, 0.1)",
-                  userSelect: "none",
                 }}
                 onPointerDown={(e) => {
                   dragStartRef.current = {
@@ -339,8 +301,8 @@ export default function ItemEditor({
             </div>
 
             {/* Size Control */}
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", marginBottom: 8, fontSize: 14, fontWeight: 500 }}>
+            <div className="mb-6">
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                 גודל החתיכה: {Math.min(cropSize, maxCropSize)}px (מקסימום: {maxCropSize}px)
               </label>
               <input
@@ -349,39 +311,21 @@ export default function ItemEditor({
                 max={maxCropSize}
                 value={Math.min(cropSize, maxCropSize)}
                 onChange={(e) => setCropSize(parseInt(e.target.value))}
-                style={{ width: "100%" }}
+                className="w-full"
               />
             </div>
 
             {/* Buttons */}
-            <div style={{ display: "flex", gap: 12 }}>
+            <div className="flex gap-3">
               <button
                 onClick={handleCropImage}
-                style={{
-                  flex: 1,
-                  padding: "10px 16px",
-                  background: "#3b82f6",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
+                className="flex-1 py-2.5 px-4 bg-blue-500 dark:bg-blue-600 text-white border-none rounded font-medium cursor-pointer hover:bg-blue-600 dark:hover:bg-blue-700 transition"
               >
                 חתוך ושמור
               </button>
               <button
                 onClick={handleCropCancel}
-                style={{
-                  flex: 1,
-                  padding: "10px 16px",
-                  background: "#e5e7eb",
-                  color: "#374151",
-                  border: "none",
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
+                className="flex-1 py-2.5 px-4 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-none rounded font-medium cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition"
               >
                 ביטול
               </button>
@@ -392,45 +336,31 @@ export default function ItemEditor({
 
       {/* Form */}
       <div>
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+          <div className="mb-6">
+            <label className="block mb-2 font-medium text-gray-900 dark:text-gray-100">
               שם המוצר
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid #d1d5db",
-                borderRadius: 6,
-                fontSize: 14,
-              }}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+          <div className="mb-6">
+            <label className="block mb-2 font-medium text-gray-900 dark:text-gray-100">
               תיאור
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid #d1d5db",
-                borderRadius: 6,
-                fontSize: 14,
-                minHeight: 100,
-                fontFamily: "inherit",
-              }}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-24"
             />
           </div>
 
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+          <div className="mb-6">
+            <label className="block mb-2 font-medium text-gray-900 dark:text-gray-100">
               מחיר (₪)
             </label>
             <input
@@ -438,34 +368,21 @@ export default function ItemEditor({
               step="0.01"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid #d1d5db",
-                borderRadius: 6,
-                fontSize: 14,
-              }}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+          <div className="mb-6">
+            <label className="block mb-2 font-medium text-gray-900 dark:text-gray-100">
               תמונה
             </label>
             <input
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid #d1d5db",
-                borderRadius: 6,
-                fontSize: 14,
-                cursor: "pointer",
-              }}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
             />
-            <p style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
               תמונה JPG, PNG עד 5MB
             </p>
           </div>
@@ -473,26 +390,20 @@ export default function ItemEditor({
 
           {/* Stock History */}
           {!isNew && stockHistory.length > 0 && (
-            <div style={{ marginBottom: 24 }}>
-              <h3 style={{ fontWeight: 600, marginBottom: 12, fontSize: 14 }}>
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3 text-sm text-gray-900 dark:text-gray-100">
                 היסטוריית מלאי
               </h3>
-              <table
-                style={{
-                  width: "100%",
-                  borderCollapse: "collapse",
-                  fontSize: 13,
-                }}
-              >
+              <table className="w-full border-collapse text-xs">
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
-                    <th style={{ padding: 8, textAlign: "right", fontWeight: 600 }}>
+                  <tr className="border-b border-gray-300 dark:border-gray-600">
+                    <th className="p-2 text-right font-semibold text-gray-900 dark:text-gray-100">
                       סטטוס
                     </th>
-                    <th style={{ padding: 8, textAlign: "right", fontWeight: 600 }}>
+                    <th className="p-2 text-right font-semibold text-gray-900 dark:text-gray-100">
                       בידי
                     </th>
-                    <th style={{ padding: 8, textAlign: "right", fontWeight: 600 }}>
+                    <th className="p-2 text-right font-semibold text-gray-900 dark:text-gray-100">
                       תאריך
                     </th>
                   </tr>
@@ -501,31 +412,30 @@ export default function ItemEditor({
                   {stockHistory.map((record) => (
                     <tr
                       key={record.id}
-                      style={{ borderBottom: "1px solid #f3f4f6" }}
+                      className="border-b border-gray-200 dark:border-gray-700"
                     >
-                      <td style={{ padding: 8 }}>
+                      <td className="p-2">
                         <span
-                          style={{
-                            padding: "2px 6px",
-                            borderRadius: 3,
-                            background: record.inStock ? "#ecfdf5" : "#fef2f2",
-                            color: record.inStock ? "#047857" : "#991b1b",
-                          }}
+                          className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                            record.inStock
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                              : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                          }`}
                         >
                           {record.inStock ? "במלאי" : "אזל"}
                         </span>
                       </td>
-                      <td style={{ padding: 8 }}>
+                      <td className="p-2 text-gray-900 dark:text-gray-100">
                         {record.changer.firstName} {record.changer.lastName}
                         <br />
-                        <span style={{ color: "#6b7280", fontSize: 12 }}>
+                        <span className="text-gray-600 dark:text-gray-400 text-xs">
                           ({record.changer.role})
                         </span>
                       </td>
-                      <td style={{ padding: 8 }}>
+                      <td className="p-2 text-gray-900 dark:text-gray-100">
                         {new Date(typeof record.changedAt === 'string' ? record.changedAt : record.changedAt.toISOString()).toLocaleDateString("he-IL")}
                         <br />
-                        <span style={{ color: "#6b7280", fontSize: 12 }}>
+                        <span className="text-gray-600 dark:text-gray-400 text-xs">
                           {new Date(typeof record.changedAt === 'string' ? record.changedAt : record.changedAt.toISOString()).toLocaleTimeString("he-IL")}
                         </span>
                       </td>
@@ -538,50 +448,22 @@ export default function ItemEditor({
 
           {/* Messages */}
           {error && (
-            <div
-              style={{
-                marginBottom: 16,
-                padding: 12,
-                background: "#fee2e2",
-                color: "#991b1b",
-                borderRadius: 6,
-                fontSize: 14,
-              }}
-            >
+            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded text-sm">
               {error}
             </div>
           )}
           {success && (
-            <div
-              style={{
-                marginBottom: 16,
-                padding: 12,
-                background: "#ecfdf5",
-                color: "#047857",
-                borderRadius: 6,
-                fontSize: 14,
-              }}
-            >
+            <div className="mb-4 p-3 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded text-sm">
               {success}
             </div>
           )}
 
           {/* Action Buttons */}
-          <div style={{ display: "flex", gap: 12 }}>
+          <div className="flex gap-3">
             <button
               onClick={handleSave}
               disabled={loading}
-              style={{
-                flex: 1,
-                padding: "10px 16px",
-                background: "#3b82f6",
-                color: "#fff",
-                border: "none",
-                borderRadius: 6,
-                fontWeight: 500,
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.6 : 1,
-              }}
+              className="flex-1 py-2.5 px-4 bg-blue-500 dark:bg-blue-600 text-white border-none rounded font-medium cursor-pointer hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               {loading ? (isNew ? "יוצר..." : "שומר...") : (isNew ? "צור מוצר" : "שמור שינויים")}
             </button>
@@ -589,18 +471,11 @@ export default function ItemEditor({
               <button
                 onClick={handleStockToggle}
                 disabled={stockLoading}
-                style={{
-                  flex: 1,
-                  padding: "10px 16px",
-                  background: inStock ? "#ecfdf5" : "#fef2f2",
-                  color: inStock ? "#047857" : "#991b1b",
-                  border: "1px solid " + (inStock ? "#d1fae5" : "#fee2e2"),
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  fontSize: 14,
-                  cursor: stockLoading ? "not-allowed" : "pointer",
-                  opacity: stockLoading ? 0.6 : 1,
-                }}
+                className={`flex-1 py-2.5 px-4 border rounded font-medium text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition ${
+                  inStock
+                    ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900/50"
+                    : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900/50"
+                }`}
               >
                 {stockLoading ? "עדכון..." : (inStock ? "✓ במלאי" : "✗ אזל")}
               </button>
@@ -608,16 +483,7 @@ export default function ItemEditor({
             {onClose && (
               <button
                 onClick={onClose}
-                style={{
-                  flex: 1,
-                  padding: "10px 16px",
-                  background: "#e5e7eb",
-                  color: "#374151",
-                  border: "none",
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
+                className="flex-1 py-2.5 px-4 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-none rounded font-medium cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition"
               >
                 סגור
               </button>

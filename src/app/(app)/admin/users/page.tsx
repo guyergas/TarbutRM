@@ -27,79 +27,64 @@ export default async function AdminUsersPage() {
   const totalBalance = users.reduce((sum, u) => sum + Number(u.balance), 0);
 
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <h1 className="text-2xl">ניהול משתמשים</h1>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">ניהול משתמשים</h1>
           <RegisterModal
             triggerLabel="+ חדש"
-            triggerClassName="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 border-none cursor-pointer"
+            triggerClassName="rounded-lg bg-indigo-600 dark:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-600 border-none cursor-pointer transition"
           />
         </div>
-        <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 2 }}>סה״כ תקציב</div>
-          <div style={{ fontSize: 20, fontWeight: 700, color: "#111827", fontVariantNumeric: "tabular-nums" }}>
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-center shadow-sm">
+          <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">סה״כ תקציב</div>
+          <div className="text-xl font-bold text-gray-900 dark:text-white font-variant-numeric-tabular">
             {totalBalance.toFixed(2)} ₪
           </div>
         </div>
       </div>
 
-      <div style={{ overflowX: "auto" }}>
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            fontSize: 14,
-            background: "#fff",
-            borderRadius: 8,
-            overflow: "hidden",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-          }}
-        >
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm border-collapse bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
           <thead>
-            <tr style={{ background: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
-              <th style={th}>שם</th>
-              <th style={th}>אימייל</th>
-              <th style={th}>טלפון</th>
-              <th style={th}>תקציב</th>
-              <th style={th}>תפקיד</th>
-              <th style={th}>סטטוס</th>
+            <tr className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">שם</th>
+              <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">אימייל</th>
+              <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">טלפון</th>
+              <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">תקציב</th>
+              <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">תפקיד</th>
+              <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">סטטוס</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user, i) => (
               <tr
                 key={user.id}
-                style={{
-                  borderBottom: "1px solid #f3f4f6",
-                  background: i % 2 === 0 ? "#fff" : "#fafafa",
-                  cursor: "pointer",
-                }}
+                className={`border-b border-gray-100 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition ${
+                  i % 2 === 0 ? "bg-white dark:bg-gray-800" : "bg-gray-50 dark:bg-gray-800/50"
+                }`}
               >
-                <td style={td}>
+                <td className="px-4 py-3 text-gray-900 dark:text-white">
                   <Link
                     href={`/admin/user/${user.id}`}
-                    style={{ color: "inherit", textDecoration: "none", display: "block" }}
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition"
                   >
                     {user.firstName} {user.lastName}
                   </Link>
                 </td>
-                <td style={td}>{user.email}</td>
-                <td style={td}>{user.phone ?? "—"}</td>
-                <td style={{ ...td, fontVariantNumeric: "tabular-nums" }}>
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{user.email}</td>
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{user.phone ?? "—"}</td>
+                <td className="px-4 py-3 text-gray-900 dark:text-white font-variant-numeric-tabular">
                   {Number(user.balance).toFixed(2)} ₪
                 </td>
-                <td style={td}>{roleLabel(user.role)}</td>
-                <td style={td}>
+                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{roleLabel(user.role)}</td>
+                <td className="px-4 py-3">
                   <span
-                    style={{
-                      padding: "2px 8px",
-                      borderRadius: 12,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      background: user.active ? "#dcfce7" : "#fee2e2",
-                      color: user.active ? "#166534" : "#991b1b",
-                    }}
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                      user.active
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                        : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                    }`}
                   >
                     {user.active ? "פעיל" : "מושבת"}
                   </span>
@@ -108,7 +93,7 @@ export default async function AdminUsersPage() {
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan={6} style={{ ...td, textAlign: "center", color: "#9ca3af" }}>
+                <td colSpan={6} className="px-4 py-3 text-center text-gray-400 dark:text-gray-500">
                   אין משתמשים במערכת
                 </td>
               </tr>
@@ -119,19 +104,6 @@ export default async function AdminUsersPage() {
     </div>
   );
 }
-
-const th: React.CSSProperties = {
-  padding: "12px 16px",
-  textAlign: "right",
-  fontWeight: 600,
-  color: "#374151",
-  whiteSpace: "nowrap",
-};
-
-const td: React.CSSProperties = {
-  padding: "12px 16px",
-  color: "#374151",
-};
 
 function roleLabel(role: string) {
   if (role === "ADMIN") return "מנהל";

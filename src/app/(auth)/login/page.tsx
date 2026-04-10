@@ -11,11 +11,11 @@ export default async function LoginPage() {
   return (
     <div className="w-full max-w-sm space-y-8">
       <div className="text-center">
-        <h1 className="text-2xl">ברוכים הבאים</h1>
-        <p className="mt-1 text-sm text-gray-600">התחבר כדי להמשיך</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">ברוכים הבאים</h1>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">התחבר כדי להמשיך</p>
       </div>
 
-      <div className="rounded-xl bg-white px-8 py-10 shadow-md">
+      <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-10 shadow-md dark:shadow-lg">
         <LoginForm />
       </div>
     </div>

@@ -24,8 +24,8 @@ type User = {
 };
 
 const inputCls =
-  "mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
-const labelCls = "block text-sm font-medium text-gray-700";
+  "mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
+const labelCls = "block text-sm font-medium text-gray-700 dark:text-gray-300";
 
 export default function EditUserForm({
   user,
@@ -48,8 +48,8 @@ export default function EditUserForm({
         <p
           className={`rounded-md px-4 py-3 text-sm ${
             result.ok
-              ? "bg-green-50 text-green-700"
-              : "bg-red-50 text-red-700"
+              ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
+              : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400"
           }`}
         >
           {result.message}
@@ -79,7 +79,7 @@ export default function EditUserForm({
             className={inputCls}
           />
           {phone.length > 0 && (
-            <p className={`mt-1 text-sm font-medium ${/^\d{3}-\d{7}$/.test(phone) ? "text-green-600" : "text-red-500"}`}>
+            <p className={`mt-1 text-sm font-medium ${/^\d{3}-\d{7}$/.test(phone) ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
               {/^\d{3}-\d{7}$/.test(phone) ? "✓ מספר תקין" : "✗ יש להזין 10 ספרות בפורמט 050-0000000"}
             </p>
           )}
@@ -130,7 +130,7 @@ export default function EditUserForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50"
+          className="rounded-md bg-indigo-600 dark:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 transition"
         >
           {pending ? "שומר…" : "שמור שינויים"}
         </button>

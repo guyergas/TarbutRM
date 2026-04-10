@@ -40,19 +40,7 @@ export function AddToCartButton({
       <button
         disabled
         title="Added to cart"
-        style={{
-          width: "28px",
-          height: "28px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#10b981",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "not-allowed",
-          color: "#fff",
-          fontSize: "16px",
-        }}
+        className="w-7 h-7 flex items-center justify-center bg-green-600 dark:bg-green-700 border-none rounded text-white text-base cursor-not-allowed"
       >
         ✓
       </button>
@@ -64,26 +52,11 @@ export function AddToCartButton({
       onClick={handleAddToCart}
       disabled={isLoading}
       title="Add to cart"
-      style={{
-        width: "28px",
-        height: "28px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "var(--bg-secondary)",
-        border: "1px solid var(--border-color)",
-        borderRadius: "4px",
-        cursor: isLoading ? "not-allowed" : "pointer",
-        opacity: isLoading ? 0.5 : 1,
-        fontSize: "16px",
-        color: "var(--text-secondary)",
-      }}
-      onMouseEnter={(e) => {
-        if (!isLoading) (e.target as HTMLButtonElement).style.background = "var(--accent-light)";
-      }}
-      onMouseLeave={(e) => {
-        if (!isLoading) (e.target as HTMLButtonElement).style.background = "var(--bg-secondary)";
-      }}
+      className={`w-7 h-7 flex items-center justify-center bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-base text-gray-600 dark:text-gray-400 transition-colors ${
+        isLoading
+          ? "opacity-50 cursor-not-allowed"
+          : "cursor-pointer hover:bg-gray-900 dark:hover:bg-gray-900"
+      }`}
     >
       🛒
     </button>

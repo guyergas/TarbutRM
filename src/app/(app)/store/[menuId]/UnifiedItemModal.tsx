@@ -188,47 +188,18 @@ export default function UnifiedItemModal({
   return (
     <>
       {showCropper && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "16px",
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 8,
-              padding: 24,
-              maxWidth: 600,
-              width: "100%",
-            }}
-          >
-            <h2 style={{ margin: "0 0 16px 0", fontSize: 18, fontWeight: 700 }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-1000 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full">
+            <h2 className="m-0 mb-4 text-lg font-bold text-gray-900 dark:text-white">
               חתוך את התמונה
             </h2>
-            <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 16 }}>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
               הזז וגדל את הריבוע כדי לחתוך את התמונה לפורמט ריבועי
             </p>
 
             <div
               ref={cropperContainerRef}
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: 400,
-                margin: "0 auto 24px",
-                overflow: "hidden",
-                borderRadius: 8,
-                border: "2px solid #d1d5db",
-                aspectRatio: "1",
-                background: "#f3f4f6",
-              }}
+              className="relative w-full max-w-sm mx-auto mb-6 overflow-hidden rounded-lg border-2 border-gray-300 dark:border-gray-600 aspect-square bg-gray-100 dark:bg-gray-700"
             >
               <img
                 src={uploadedImage}
@@ -252,6 +223,7 @@ export default function UnifiedItemModal({
                   cursor: "move",
                   background: "rgba(59, 130, 246, 0.1)",
                   userSelect: "none",
+                  zIndex: 10,
                 }}
                 onPointerDown={(e) => {
                   dragStartRef.current = {
@@ -286,8 +258,8 @@ export default function UnifiedItemModal({
               />
             </div>
 
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", marginBottom: 8, fontSize: 14, fontWeight: 500 }}>
+            <div className="mb-6">
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 גודל החתיכה: {cropSize}px
               </label>
               <input
@@ -296,38 +268,20 @@ export default function UnifiedItemModal({
                 max="400"
                 value={cropSize}
                 onChange={(e) => setCropSize(parseInt(e.target.value))}
-                style={{ width: "100%" }}
+                className="w-full"
               />
             </div>
 
-            <div style={{ display: "flex", gap: 12 }}>
+            <div className="flex gap-3">
               <button
                 onClick={handleCropImage}
-                style={{
-                  flex: 1,
-                  padding: "10px 16px",
-                  background: "#3b82f6",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
+                className="flex-1 py-2.5 px-4 bg-blue-600 dark:bg-blue-700 text-white border-none rounded-md font-medium cursor-pointer hover:bg-blue-700 dark:hover:bg-blue-600 transition"
               >
                 חתוך ושמור
               </button>
               <button
                 onClick={handleCropCancel}
-                style={{
-                  flex: 1,
-                  padding: "10px 16px",
-                  background: "#e5e7eb",
-                  color: "#374151",
-                  border: "none",
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
+                className="flex-1 py-2.5 px-4 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border-none rounded-md font-medium cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition"
               >
                 ביטול
               </button>
@@ -339,46 +293,15 @@ export default function UnifiedItemModal({
       {/* Overlay */}
       <div
         onClick={onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.5)",
-          zIndex: 100,
-        }}
+        className="fixed inset-0 bg-black/50 z-100"
       />
 
       {/* Modal */}
-      <div
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          background: "#fff",
-          borderRadius: "8px",
-          boxShadow: "0 20px 25px rgba(0,0,0,0.15)",
-          zIndex: 101,
-          maxWidth: "500px",
-          width: "90%",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          direction: "rtl",
-        }}
-      >
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-2xl dark:shadow-2xl z-101 max-w-lg w-11/12 max-h-[90vh] overflow-y-auto rtl">
         {/* Close button */}
         <button
           onClick={onClose}
-          style={{
-            position: "absolute",
-            top: "12px",
-            left: "12px",
-            background: "none",
-            border: "none",
-            fontSize: "24px",
-            cursor: "pointer",
-            color: "#374151",
-            zIndex: 10,
-          }}
+          className="absolute top-3 left-3 bg-none border-none text-2xl cursor-pointer text-gray-600 dark:text-gray-400 z-10 hover:text-gray-900 dark:hover:text-gray-200"
         >
           ✕
         </button>
@@ -388,36 +311,21 @@ export default function UnifiedItemModal({
           <img
             src={item.image}
             alt={item.name}
-            style={{
-              width: "100%",
-              height: "300px",
-              objectFit: "contain",
-              background: "#f3f4f6",
-            }}
+            className="w-full h-80 object-contain bg-gray-100 dark:bg-gray-700"
           />
         ) : (
-          <div
-            style={{
-              width: "100%",
-              height: "300px",
-              background: "#f3f4f6",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#9ca3af",
-            }}
-          >
+          <div className="w-full h-80 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">
             אין תמונה
           </div>
         )}
 
         {/* Content */}
-        <div style={{ padding: "24px" }}>
+        <div className="p-6">
           {/* Name and Price - Compact Layout */}
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ display: "flex", gap: 12, marginBottom: 12, alignItems: "flex-end" }}>
-              <div style={{ flex: 1 }}>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 4, color: "#6b7280" }}>
+          <div className="mb-4">
+            <div className="flex gap-3 mb-3 items-end">
+              <div className="flex-1">
+                <label className="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">
                   שם המוצר
                 </label>
                 <input
@@ -425,19 +333,15 @@ export default function UnifiedItemModal({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={isReadOnly}
-                  style={{
-                    width: "100%",
-                    padding: "6px 8px",
-                    border: "1px solid #d1d5db",
-                    borderRadius: 4,
-                    fontSize: 13,
-                    background: isReadOnly ? "#f3f4f6" : "#fff",
-                    color: "#1f2937",
-                  }}
+                  className={`w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-xs ${
+                    isReadOnly
+                      ? "bg-gray-100 dark:bg-gray-700"
+                      : "bg-white dark:bg-gray-700"
+                  } text-gray-900 dark:text-white disabled:opacity-50`}
                 />
               </div>
-              <div style={{ width: 70 }}>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 4, color: "#6b7280" }}>
+              <div className="w-20">
+                <label className="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">
                   מחיר (₪)
                 </label>
                 <input
@@ -446,86 +350,57 @@ export default function UnifiedItemModal({
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   disabled={isReadOnly}
-                  style={{
-                    width: "100%",
-                    padding: "6px 8px",
-                    border: "1px solid #d1d5db",
-                    borderRadius: 4,
-                    fontSize: 13,
-                    background: isReadOnly ? "#f3f4f6" : "#fff",
-                    color: "#1f2937",
-                  }}
+                  className={`w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-xs ${
+                    isReadOnly
+                      ? "bg-gray-100 dark:bg-gray-700"
+                      : "bg-white dark:bg-gray-700"
+                  } text-gray-900 dark:text-white disabled:opacity-50`}
                 />
               </div>
             </div>
           </div>
 
           {/* Description */}
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 4, color: "#6b7280" }}>
+          <div className="mb-3">
+            <label className="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">
               תיאור
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={isReadOnly}
-              style={{
-                width: "100%",
-                padding: "6px 8px",
-                border: "1px solid #d1d5db",
-                borderRadius: 4,
-                fontSize: 13,
-                minHeight: 60,
-                fontFamily: "inherit",
-                background: isReadOnly ? "#f3f4f6" : "#fff",
-                color: "#1f2937",
-              }}
+              className={`w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-xs min-h-[60px] font-family-inherit ${
+                isReadOnly
+                  ? "bg-gray-100 dark:bg-gray-700"
+                  : "bg-white dark:bg-gray-700"
+              } text-gray-900 dark:text-white disabled:opacity-50`}
             />
           </div>
 
           {/* Image Upload - Admin Only */}
           {canEdit && (
-            <div style={{ marginBottom: 12 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 4, color: "#6b7280" }}>
+            <div className="mb-3">
+              <label className="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">
                 תמונה
               </label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                style={{
-                  width: "100%",
-                  padding: "6px 8px",
-                  border: "1px solid #d1d5db",
-                  borderRadius: 4,
-                  fontSize: 13,
-                  cursor: "pointer",
-                }}
+                className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-xs cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
-              <p style={{ fontSize: 11, color: "#6b7280", marginTop: 3 }}>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 JPG, PNG עד 5MB
               </p>
 
               {/* Image Preview */}
               {imagePreview && (
-                <div style={{ marginTop: 8 }}>
-                  <div
-                    style={{
-                      width: 120,
-                      height: 120,
-                      borderRadius: 4,
-                      overflow: "hidden",
-                      background: "#f3f4f6",
-                    }}
-                  >
+                <div className="mt-2">
+                  <div className="w-32 h-32 rounded overflow-hidden bg-gray-100 dark:bg-gray-700">
                     <img
                       src={imagePreview}
                       alt={name}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
+                      className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = "none";
                       }}
@@ -538,50 +413,42 @@ export default function UnifiedItemModal({
 
           {/* Stock History - Staff and Admin */}
           {canToggleStock && stockHistory.length > 0 && (
-            <div style={{ marginBottom: 12 }}>
-              <h3 style={{ fontWeight: 600, marginBottom: 6, fontSize: 12, color: "#6b7280" }}>
+            <div className="mb-3">
+              <h3 className="font-semibold mb-2 text-xs text-gray-600 dark:text-gray-400">
                 היסטוריית מלאי
               </h3>
-              <table
-                style={{
-                  width: "100%",
-                  borderCollapse: "collapse",
-                  fontSize: 12,
-                }}
-              >
+              <table className="w-full border-collapse text-xs">
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
-                    <th style={{ padding: 4, textAlign: "right", fontWeight: 600, fontSize: 11 }}>
+                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                    <th className="p-1 text-right font-semibold text-xs text-gray-700 dark:text-gray-300">
                       סטטוס
                     </th>
-                    <th style={{ padding: 4, textAlign: "right", fontWeight: 600, fontSize: 11 }}>
+                    <th className="p-1 text-right font-semibold text-xs text-gray-700 dark:text-gray-300">
                       בידי
                     </th>
-                    <th style={{ padding: 4, textAlign: "right", fontWeight: 600, fontSize: 11 }}>
+                    <th className="p-1 text-right font-semibold text-xs text-gray-700 dark:text-gray-300">
                       תאריך
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {stockHistory.map((record) => (
-                    <tr key={record.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                      <td style={{ padding: 4 }}>
+                    <tr key={record.id} className="border-b border-gray-100 dark:border-gray-700">
+                      <td className="p-1">
                         <span
-                          style={{
-                            padding: "1px 4px",
-                            borderRadius: 3,
-                            background: record.inStock ? "#ecfdf5" : "#fef2f2",
-                            color: record.inStock ? "#047857" : "#991b1b",
-                            fontSize: 11,
-                          }}
+                          className={`inline-block px-1.5 py-0.5 rounded text-xs font-semibold ${
+                            record.inStock
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                              : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                          }`}
                         >
                           {record.inStock ? "במלאי" : "אזל"}
                         </span>
                       </td>
-                      <td style={{ padding: 4, fontSize: 11 }}>
+                      <td className="p-1 text-xs text-gray-700 dark:text-gray-300">
                         {record.changer.firstName} {record.changer.lastName}
                       </td>
-                      <td style={{ padding: 4, fontSize: 11, color: "#6b7280" }}>
+                      <td className="p-1 text-xs text-gray-600 dark:text-gray-400">
                         {new Date(record.changedAt).toLocaleDateString("he-IL")}
                       </td>
                     </tr>
@@ -593,52 +460,27 @@ export default function UnifiedItemModal({
 
           {/* Messages */}
           {error && (
-            <div
-              style={{
-                marginBottom: 12,
-                padding: 8,
-                background: "#fee2e2",
-                color: "#991b1b",
-                borderRadius: 4,
-                fontSize: 12,
-              }}
-            >
+            <div className="mb-3 p-2 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded text-xs">
               {error}
             </div>
           )}
           {success && (
-            <div
-              style={{
-                marginBottom: 12,
-                padding: 8,
-                background: "#ecfdf5",
-                color: "#047857",
-                borderRadius: 4,
-                fontSize: 12,
-              }}
-            >
+            <div className="mb-3 p-2 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded text-xs">
               {success}
             </div>
           )}
 
           {/* Action Buttons */}
-          <div style={{ display: "flex", gap: 8 }}>
+          <div className="flex gap-2">
             {canToggleStock && (
               <button
                 onClick={handleStockToggle}
                 disabled={stockLoading}
-                style={{
-                  flex: 1,
-                  padding: "8px 12px",
-                  background: inStock ? "#ecfdf5" : "#fef2f2",
-                  color: inStock ? "#047857" : "#991b1b",
-                  border: "1px solid " + (inStock ? "#d1fae5" : "#fee2e2"),
-                  borderRadius: 4,
-                  fontWeight: 500,
-                  fontSize: 12,
-                  cursor: stockLoading ? "not-allowed" : "pointer",
-                  opacity: stockLoading ? 0.6 : 1,
-                }}
+                className={`flex-1 py-2 px-3 border rounded text-xs font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition ${
+                  inStock
+                    ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700 hover:bg-green-100 dark:hover:bg-green-900/30"
+                    : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
+                }`}
               >
                 {stockLoading ? "עדכון..." : (inStock ? "✓ במלאי" : "✗ אזל")}
               </button>
@@ -648,18 +490,7 @@ export default function UnifiedItemModal({
               <button
                 onClick={handleSave}
                 disabled={loading}
-                style={{
-                  flex: 1,
-                  padding: "8px 12px",
-                  background: "#3b82f6",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 4,
-                  fontWeight: 500,
-                  fontSize: 12,
-                  cursor: loading ? "not-allowed" : "pointer",
-                  opacity: loading ? 0.6 : 1,
-                }}
+                className="flex-1 py-2 px-3 bg-blue-600 dark:bg-blue-700 text-white border-none rounded text-xs font-medium cursor-pointer hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 {loading ? "שומר..." : "שמור שינויים"}
               </button>
@@ -667,17 +498,7 @@ export default function UnifiedItemModal({
 
             <button
               onClick={onClose}
-              style={{
-                flex: 1,
-                padding: "8px 12px",
-                background: "#e5e7eb",
-                color: "#374151",
-                border: "none",
-                borderRadius: 4,
-                fontWeight: 500,
-                fontSize: 12,
-                cursor: "pointer",
-              }}
+              className="flex-1 py-2 px-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border-none rounded text-xs font-medium cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition"
             >
               סגור
             </button>

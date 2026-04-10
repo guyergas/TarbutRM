@@ -55,19 +55,13 @@ export default async function OrdersPage() {
   });
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 16px" }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 24 }}>ההזמנות שלי</h1>
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">ההזמנות שלי</h1>
 
       {serializedOrders.length === 0 ? (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "48px 24px",
-            color: "#6b7280",
-          }}
-        >
-          <p style={{ marginBottom: 16 }}>אין לך הזמנות עדיין</p>
-          <Link href="/store" style={{ color: "#3b82f6", textDecoration: "underline" }}>
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+          <p className="mb-4">אין לך הזמנות עדיין</p>
+          <Link href="/store" className="text-blue-600 dark:text-blue-400 underline hover:text-blue-700 dark:hover:text-blue-300">
             לחזור לחנות
           </Link>
         </div>
