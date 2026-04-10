@@ -78,6 +78,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [storeOpen, setStoreOpen] = useState(false);
+  const [personalAreaOpen, setPersonalAreaOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
 
   function close() {
@@ -350,28 +351,52 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
               </div>
             )}
 
-            {/* 3. Personal Area */}
-            <Link href="/personal-area" onClick={close} style={linkStyle}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-                <span>האזור האישי</span>
-                {openOrdersCount > 0 && (
-                  <span style={{
-                    background: "#ef4444",
-                    color: "#fff",
-                    borderRadius: "50%",
-                    width: 20,
-                    height: 20,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 12,
-                    fontWeight: 700,
-                  }}>
-                    {openOrdersCount}
-                  </span>
-                )}
-              </div>
-            </Link>
+            {/* 3. Personal Area (collapsible) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setPersonalAreaOpen((v) => !v)}
+                style={collapsibleStyle}
+              >
+                <span style={{ fontSize: 11, color: "#9ca3af" }}>
+                  {personalAreaOpen ? "▲" : "▼"}
+                </span>
+                <span style={{ flex: 1, textAlign: "right" }}>
+                  האזור האישי
+                  {openOrdersCount > 0 && (
+                    <span style={{
+                      marginRight: 8,
+                      background: "#ef4444",
+                      color: "#fff",
+                      borderRadius: "50%",
+                      width: 18,
+                      height: 18,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 11,
+                      fontWeight: 700,
+                    }}>
+                      {openOrdersCount}
+                    </span>
+                  )}
+                </span>
+              </button>
+
+              {personalAreaOpen && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <Link href="/profile" onClick={close} style={subLinkStyle}>
+                    הפרופיל שלי
+                  </Link>
+                  <Link href="/wallet" onClick={close} style={subLinkStyle}>
+                    הארנק שלי
+                  </Link>
+                  <Link href="/orders" onClick={close} style={subLinkStyle}>
+                    ההזמנות שלי
+                  </Link>
+                </div>
+              )}
+            </div>
 
             {/* 4. Contact us */}
             <Link href="/contactus" onClick={close} style={linkStyle}>
