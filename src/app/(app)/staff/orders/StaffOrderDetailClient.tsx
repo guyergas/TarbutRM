@@ -364,7 +364,7 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
                   fontSize: 14,
                 }}
               >
-                {advancingToStatus !== null ? "מעדכן..." : "העבר לטופל"}
+                {advancingToStatus !== null ? "מעדכן..." : "העבר להושלם"}
               </button>
             )}
 

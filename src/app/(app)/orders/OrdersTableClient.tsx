@@ -505,7 +505,7 @@ export default function OrdersTableClient({
                         fontSize: 14,
                       }}
                     >
-                      {advancingOrderId !== null ? "מעדכן..." : "העבר לטופל"}
+                      {advancingOrderId !== null ? "מעדכן..." : "העבר להושלם"}
                     </button>
                   )}
 
