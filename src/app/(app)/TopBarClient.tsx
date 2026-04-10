@@ -176,6 +176,30 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
               </div>
             )}
             {cartIcon}
+            <Link
+              href="/profile"
+              title="פרופיל"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                color: "#374151",
+                textDecoration: "none",
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="#374151"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </Link>
           </div>
         </div>
       </header>
@@ -326,18 +350,12 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
               </div>
             )}
 
-            {/* 3. Personal Area (collapsible) */}
-            {/* 3. Profile */}
-            <Link href="/profile" onClick={close} style={linkStyle}>
-              הפרופיל שלי
-            </Link>
-
-            {/* 4. Wallet */}
+            {/* 3. Wallet */}
             <Link href="/wallet" onClick={close} style={linkStyle}>
               הארנק שלי
             </Link>
 
-            {/* 5. Orders */}
+            {/* 4. Orders */}
             <Link href="/orders" onClick={close} style={linkStyle}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                 <span>ההזמנות שלי</span>
@@ -360,12 +378,12 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
               </div>
             </Link>
 
-            {/* 6. Contact us */}
+            {/* 5. Contact us */}
             <Link href="/contactus" onClick={close} style={linkStyle}>
               צור קשר
             </Link>
 
-            {/* 7. Logout */}
+            {/* 6. Logout */}
             <div style={{ borderTop: "1px solid #e5e7eb", marginTop: 16, paddingTop: 16 }}>
               <LogoutMenuButton />
             </div>
