@@ -74,10 +74,10 @@ export default function StoreView({
       {/* Menu Navigation Bar */}
       <div
         style={{
-          background: "var(--bg-secondary)",
+          background: "var(--bg-primary)",
           borderTop: "2px solid var(--border-color)",
           borderBottom: "2px solid var(--border-color)",
-          padding: "12px 0",
+          padding: "0",
           overflowX: "auto",
           position: "sticky",
           top: 0,
@@ -90,38 +90,38 @@ export default function StoreView({
             margin: "0 auto",
             padding: "0 16px",
             display: "flex",
-            gap: 8,
-            alignItems: "center",
+            gap: 0,
+            alignItems: "stretch",
             justifyContent: "space-between",
           }}
         >
           <div
             style={{
               display: "flex",
-              gap: 8,
-              alignItems: "center",
+              gap: 0,
+              alignItems: "stretch",
               flex: 1,
               overflow: "auto",
             }}
           >
-            {allMenus.map((menu) => (
+            {allMenus.map((menu, index) => (
               <Link
                 key={menu.id}
                 href={`/store/${menu.id}`}
                 style={{
-                  padding: "8px 16px",
-                  borderRadius: 6,
+                  padding: "12px 16px",
+                  borderRadius: 0,
                   textDecoration: "none",
                   fontSize: 14,
                   fontWeight: menu.id === currentMenu.id ? 600 : 500,
                   color: menu.id === currentMenu.id ? "var(--text-primary)" : "var(--text-secondary)",
                   background:
-                    menu.id === currentMenu.id ? "var(--bg-card)" : "transparent",
-                  border:
-                    menu.id === currentMenu.id
-                      ? "1px solid var(--border-color)"
-                      : "none",
+                    menu.id === currentMenu.id ? "var(--accent-light)" : "transparent",
+                  border: "none",
+                  borderRight: index < allMenus.length - 1 ? "1px solid var(--border-color)" : "none",
                   whiteSpace: "nowrap",
+                  display: "flex",
+                  alignItems: "center",
                 }}
               >
                 {menu.name}
@@ -135,7 +135,8 @@ export default function StoreView({
                 gap: 2,
                 alignItems: "center",
                 paddingLeft: 8,
-                borderLeft: "1px solid var(--border-color)",
+                paddingRight: 8,
+                borderLeft: "2px solid var(--border-color)",
               }}
             >
               <MenuControls
