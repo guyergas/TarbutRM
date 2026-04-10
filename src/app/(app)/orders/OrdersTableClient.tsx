@@ -28,6 +28,7 @@ interface SerializedOrder {
   createdAtFull: string;
   items: OrderItem[];
   statusHistory: OrderStatusHistory[];
+  customerName?: string;
 }
 
 const statusBadgeColors: Record<string, { bg: string; text: string; label: string }> = {
@@ -39,9 +40,11 @@ const statusBadgeColors: Record<string, { bg: string; text: string; label: strin
 export default function OrdersTableClient({
   orders,
   initialOpenOrderId,
+  showCustomerName = false,
 }: {
   orders: SerializedOrder[];
   initialOpenOrderId?: string;
+  showCustomerName?: boolean;
 }) {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialOpenOrderId || null);
   const selectedOrder = orders.find((o) => o.id === selectedOrderId);
@@ -55,6 +58,11 @@ export default function OrdersTableClient({
               <th style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>
                 מס׳ הזמנה
               </th>
+              {showCustomerName && (
+                <th style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>
+                  שם הלקוח
+                </th>
+              )}
               <th style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>
                 תאריך
               </th>
@@ -94,6 +102,11 @@ export default function OrdersTableClient({
                   <td style={{ padding: "12px", color: "#4f46e5", fontWeight: 600 }}>
                     {order.orderNumber}
                   </td>
+                  {showCustomerName && (
+                    <td style={{ padding: "12px", color: "#374151" }}>
+                      {order.customerName}
+                    </td>
+                  )}
                   <td style={{ padding: "12px", color: "#374151" }}>
                     {order.createdAt} {order.createdAtFull}
                   </td>

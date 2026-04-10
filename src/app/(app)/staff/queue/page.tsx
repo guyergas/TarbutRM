@@ -23,12 +23,17 @@ export default async function StaffQueuePage() {
       itemName: item.item?.name || "Unknown Item",
     }));
 
+    const customerName = order.user
+      ? `${order.user.firstName} ${order.user.lastName}`
+      : "Unknown Customer";
+
     return {
       id: order.id,
       orderNumber: order.orderNumber,
       status: order.status,
       total: Number(order.total).toFixed(2),
       itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
+      customerName,
       createdAt: new Date(order.createdAt).toLocaleDateString("he-IL"),
       createdAtFull: new Date(order.createdAt).toLocaleTimeString("he-IL", {
         hour: "2-digit",
@@ -70,7 +75,7 @@ export default async function StaffQueuePage() {
           <p style={{ marginBottom: 16 }}>אין הזמנות בתור כרגע</p>
         </div>
       ) : (
-        <OrdersTableClient orders={serializedOrders} initialOpenOrderId={undefined} />
+        <OrdersTableClient orders={serializedOrders} initialOpenOrderId={undefined} showCustomerName={true} />
       )}
     </div>
   );
