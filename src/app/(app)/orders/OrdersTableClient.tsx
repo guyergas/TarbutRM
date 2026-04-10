@@ -38,16 +38,53 @@ const statusBadgeColors: Record<string, { bg: string; text: string; label: strin
 };
 
 export default function OrdersTableClient({
-  orders,
+  orders: initialOrders,
   initialOpenOrderId,
   showCustomerName = false,
+  allowStatusAdvance = false,
+  onStatusAdvance,
 }: {
   orders: SerializedOrder[];
   initialOpenOrderId?: string;
   showCustomerName?: boolean;
+  allowStatusAdvance?: boolean;
+  onStatusAdvance?: (orderId: string) => Promise<SerializedOrder | null>;
 }) {
+  const [orders, setOrders] = useState(initialOrders);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialOpenOrderId || null);
+  const [advancingOrderId, setAdvancingOrderId] = useState<string | null>(null);
   const selectedOrder = orders.find((o) => o.id === selectedOrderId);
+
+  const handleAdvanceStatus = async (orderId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent modal from opening when clicking the button
+    if (!onStatusAdvance) return;
+
+    setAdvancingOrderId(orderId);
+    try {
+      const updatedOrder = await onStatusAdvance(orderId);
+      if (updatedOrder) {
+        // Update the orders list with the new order data
+        setOrders((prev) =>
+          prev.map((o) => (o.id === orderId ? updatedOrder : o))
+        );
+        // Update selected order if it's open in the modal
+        if (selectedOrderId === orderId) {
+          // Re-fetch to get latest data
+        }
+      }
+    } finally {
+      setAdvancingOrderId(null);
+    }
+  };
+
+  const getNextStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      NEW: "בעיבוד",
+      IN_PROGRESS: "הושלם",
+      COMPLETED: "הושלם",
+    };
+    return labels[status] || status;
+  };
 
   return (
     <>
@@ -75,6 +112,11 @@ export default function OrdersTableClient({
               <th style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>
                 סטטוס
               </th>
+              {allowStatusAdvance && (
+                <th style={{ padding: "12px", textAlign: "center", fontWeight: 600, color: "#374151" }}>
+                  פעולה
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -131,6 +173,31 @@ export default function OrdersTableClient({
                       {statusColors.label}
                     </span>
                   </td>
+                  {allowStatusAdvance && (
+                    <td style={{ padding: "12px", textAlign: "center" }}>
+                      {order.status !== "COMPLETED" ? (
+                        <button
+                          onClick={(e) => handleAdvanceStatus(order.id, e)}
+                          disabled={advancingOrderId === order.id}
+                          style={{
+                            background: "#4f46e5",
+                            color: "#fff",
+                            border: "none",
+                            padding: "6px 12px",
+                            borderRadius: "4px",
+                            fontWeight: 600,
+                            fontSize: 12,
+                            cursor: advancingOrderId === order.id ? "not-allowed" : "pointer",
+                            opacity: advancingOrderId === order.id ? 0.6 : 1,
+                          }}
+                        >
+                          {advancingOrderId === order.id ? "עדכון..." : "קדם"}
+                        </button>
+                      ) : (
+                        <span style={{ fontSize: 12, color: "#9ca3af" }}>סיום</span>
+                      )}
+                    </td>
+                  )}
                 </tr>
               );
             })}

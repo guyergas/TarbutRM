@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { orderService } from "@/modules/order";
-import OrdersTableClient from "../../orders/OrdersTableClient";
+import StaffQueueClient from "./StaffQueueClient";
 
 export default async function StaffQueuePage() {
   const session = await auth();
@@ -75,7 +75,7 @@ export default async function StaffQueuePage() {
           <p style={{ marginBottom: 16 }}>אין הזמנות בתור כרגע</p>
         </div>
       ) : (
-        <OrdersTableClient orders={serializedOrders} initialOpenOrderId={undefined} showCustomerName={true} />
+        <StaffQueueClient orders={serializedOrders} />
       )}
     </div>
   );
