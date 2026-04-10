@@ -70,18 +70,19 @@ export function AddToCartButton({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#e5e7eb",
-        border: "1px solid #d1d5db",
+        background: "var(--bg-secondary)",
+        border: "1px solid var(--border-color)",
         borderRadius: "4px",
         cursor: isLoading ? "not-allowed" : "pointer",
         opacity: isLoading ? 0.5 : 1,
         fontSize: "16px",
+        color: "var(--text-secondary)",
       }}
       onMouseEnter={(e) => {
-        if (!isLoading) (e.target as HTMLButtonElement).style.background = "#d1d5db";
+        if (!isLoading) (e.target as HTMLButtonElement).style.background = "var(--accent-light)";
       }}
       onMouseLeave={(e) => {
-        if (!isLoading) (e.target as HTMLButtonElement).style.background = "#e5e7eb";
+        if (!isLoading) (e.target as HTMLButtonElement).style.background = "var(--bg-secondary)";
       }}
     >
       🛒

@@ -44,13 +44,14 @@ export function QuantitySelector({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#e5e7eb",
-          border: "1px solid #d1d5db",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-color)",
           borderRadius: "4px",
           cursor: quantity <= 1 ? "not-allowed" : "pointer",
           opacity: quantity <= 1 ? 0.5 : 1,
           fontSize: "16px",
           fontWeight: "600",
+          color: "var(--text-secondary)",
         }}
       >
         −
@@ -63,10 +64,12 @@ export function QuantitySelector({
         style={{
           width: "38px",
           textAlign: "center",
-          border: "1px solid #d1d5db",
+          border: "1px solid var(--border-color)",
           borderRadius: "4px",
           padding: "4px 2px",
           fontSize: "14px",
+          background: "var(--bg-secondary)",
+          color: "var(--text-secondary)",
         }}
       />
       <button
@@ -77,12 +80,13 @@ export function QuantitySelector({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#e5e7eb",
-          border: "1px solid #d1d5db",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-color)",
           borderRadius: "4px",
           cursor: "pointer",
           fontSize: "16px",
           fontWeight: "600",
+          color: "var(--text-secondary)",
         }}
       >
         +
