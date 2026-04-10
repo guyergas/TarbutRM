@@ -54,14 +54,15 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        border: "1px solid #e5e7eb",
+        border: "1px solid var(--border-color)",
         borderRadius: 8,
-        background: "#fff",
+        background: "#000",
         overflow: "hidden",
         position: "relative",
         cursor: "pointer",
         transition: "box-shadow 0.2s",
-        boxShadow: isHovered ? "0 4px 12px rgba(0,0,0,0.1)" : "none",
+        boxShadow: isHovered ? "0 4px 12px rgba(0,0,0,0.3)" : "none",
+        color: "var(--text-secondary)",
       }}
     >
       {/* Image */}
@@ -121,8 +122,8 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
             position: "absolute",
             top: 8,
             right: 8,
-            background: "#fee2e2",
-            color: "#991b1b",
+            background: "#7f1d1d",
+            color: "#fecaca",
             padding: "4px 8px",
             borderRadius: 4,
             fontSize: 12,
@@ -142,7 +143,7 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
             fontSize: 14,
             fontWeight: 600,
             margin: "0 0 4px 0",
-            color: "#1f2937",
+            color: "var(--text-secondary)",
             wordBreak: "break-word",
           }}
         >
@@ -153,7 +154,7 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
           <p
             style={{
               fontSize: 12,
-              color: "#6b7280",
+              color: "var(--text-secondary)",
               margin: "0 0 8px 0",
               lineHeight: 1.4,
             }}
@@ -166,7 +167,7 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
           style={{
             fontSize: 16,
             fontWeight: 700,
-            color: "#1f2937",
+            color: "var(--text-secondary)",
             marginBottom: "12px",
           }}
         >
