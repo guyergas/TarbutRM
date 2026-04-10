@@ -38,22 +38,22 @@ export default function CreateItemButton({
           minHeight: 220,
           padding: 16,
           borderRadius: 8,
-          border: "2px dashed #d1d5db",
-          background: "#f9fafb",
+          border: "2px dashed var(--border-color)",
+          background: "var(--bg-primary)",
           cursor: "pointer",
           fontSize: 32,
-          color: "#9ca3af",
+          color: "var(--text-tertiary)",
           transition: "all 0.2s",
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.borderColor = "#6b7280";
-          (e.currentTarget as HTMLElement).style.color = "#6b7280";
-          (e.currentTarget as HTMLElement).style.background = "#f3f4f6";
+          (e.currentTarget as HTMLElement).style.borderColor = "var(--text-secondary)";
+          (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+          (e.currentTarget as HTMLElement).style.background = "var(--bg-secondary)";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.borderColor = "#d1d5db";
-          (e.currentTarget as HTMLElement).style.color = "#9ca3af";
-          (e.currentTarget as HTMLElement).style.background = "#f9fafb";
+          (e.currentTarget as HTMLElement).style.borderColor = "var(--border-color)";
+          (e.currentTarget as HTMLElement).style.color = "var(--text-tertiary)";
+          (e.currentTarget as HTMLElement).style.background = "var(--bg-primary)";
         }}
       >
         +

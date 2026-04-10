@@ -91,14 +91,14 @@ export default function SectionControls({
         title="עריכה"
         style={{
           padding: "4px 8px",
-          background: "#f3f4f6",
-          border: "1px solid #d1d5db",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor: isLoading ? "not-allowed" : "pointer",
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: "#374151",
+          color: "var(--text-primary)",
           opacity: isLoading ? 0.6 : 1,
         }}
       >
@@ -111,15 +111,15 @@ export default function SectionControls({
         title="הזז למעלה"
         style={{
           padding: "4px 8px",
-          background: canMoveUp && !isLoading ? "#f3f4f6" : "#f9fafb",
-          border: "1px solid #d1d5db",
+          background: canMoveUp && !isLoading ? "var(--bg-secondary)" : "var(--bg-primary)",
+          border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor:
             canMoveUp && !isLoading ? "pointer" : "not-allowed",
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveUp && !isLoading ? "#374151" : "#d1d5db",
+          color: canMoveUp && !isLoading ? "var(--text-primary)" : "var(--border-color)",
           opacity: isLoading ? 0.6 : 1,
         }}
       >
@@ -133,15 +133,15 @@ export default function SectionControls({
         style={{
           padding: "4px 8px",
           background:
-            canMoveDown && !isLoading ? "#f3f4f6" : "#f9fafb",
-          border: "1px solid #d1d5db",
+            canMoveDown && !isLoading ? "var(--bg-secondary)" : "var(--bg-primary)",
+          border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor:
             canMoveDown && !isLoading ? "pointer" : "not-allowed",
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveDown && !isLoading ? "#374151" : "#d1d5db",
+          color: canMoveDown && !isLoading ? "var(--text-primary)" : "var(--border-color)",
           opacity: isLoading ? 0.6 : 1,
         }}
       >

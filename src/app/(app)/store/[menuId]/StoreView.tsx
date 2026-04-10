@@ -155,6 +155,7 @@ export default function StoreView({
             width: "125px",
             flexShrink: 0,
             borderRight: "1px solid var(--border-color)",
+            borderTop: "1px solid var(--border-color)",
             overflowY: "auto",
             background: "var(--bg-primary)",
             padding: "16px 0",

@@ -100,14 +100,14 @@ export default function MenuControls({
         title="עריכה"
         style={{
           padding: "4px 8px",
-          background: "#f3f4f6",
-          border: "1px solid #d1d5db",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor: isLoading ? "not-allowed" : "pointer",
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: "#374151",
+          color: "var(--text-primary)",
           opacity: isLoading ? 0.6 : 1,
         }}
       >
@@ -121,15 +121,15 @@ export default function MenuControls({
         style={{
           padding: "4px 8px",
           background:
-            canMoveLeft && !isLoading ? "#f3f4f6" : "#f9fafb",
-          border: "1px solid #d1d5db",
+            canMoveLeft && !isLoading ? "var(--bg-secondary)" : "var(--bg-primary)",
+          border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor:
             canMoveLeft && !isLoading ? "pointer" : "not-allowed",
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveLeft && !isLoading ? "#374151" : "#d1d5db",
+          color: canMoveLeft && !isLoading ? "var(--text-primary)" : "var(--border-color)",
           opacity: isLoading ? 0.6 : 1,
         }}
       >
@@ -143,15 +143,15 @@ export default function MenuControls({
         style={{
           padding: "4px 8px",
           background:
-            canMoveRight && !isLoading ? "#f3f4f6" : "#f9fafb",
-          border: "1px solid #d1d5db",
+            canMoveRight && !isLoading ? "var(--bg-secondary)" : "var(--bg-primary)",
+          border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor:
             canMoveRight && !isLoading ? "pointer" : "not-allowed",
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: canMoveRight && !isLoading ? "#374151" : "#d1d5db",
+          color: canMoveRight && !isLoading ? "var(--text-primary)" : "var(--border-color)",
           opacity: isLoading ? 0.6 : 1,
         }}
       >
@@ -164,14 +164,14 @@ export default function MenuControls({
         title={menu.archived ? "שחזור" : "ארכיווציה"}
         style={{
           padding: "4px 8px",
-          background: "#f3f4f6",
-          border: "1px solid #d1d5db",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-color)",
           borderRadius: 4,
           cursor: isLoading ? "not-allowed" : "pointer",
           fontSize: 12,
           display: "flex",
           alignItems: "center",
-          color: "#374151",
+          color: "var(--text-primary)",
           opacity: isLoading ? 0.6 : 1,
         }}
       >

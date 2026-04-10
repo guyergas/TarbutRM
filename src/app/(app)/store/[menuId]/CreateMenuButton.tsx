@@ -28,14 +28,14 @@ export default function CreateMenuButton() {
       title="תפריט חדש"
       style={{
         padding: "4px 8px",
-        background: "#f3f4f6",
-        border: "1px solid #d1d5db",
+        background: "var(--bg-secondary)",
+        border: "1px solid var(--border-color)",
         borderRadius: 4,
         cursor: isLoading ? "not-allowed" : "pointer",
         fontSize: 12,
         display: "flex",
         alignItems: "center",
-        color: "#374151",
+        color: "var(--text-primary)",
         opacity: isLoading ? 0.6 : 1,
       }}
     >
