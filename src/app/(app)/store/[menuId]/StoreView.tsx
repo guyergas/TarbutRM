@@ -112,7 +112,7 @@ export default function StoreView({
                   padding: "12px 16px",
                   borderRadius: 0,
                   textDecoration: "none",
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: menu.id === currentMenu.id ? 600 : 500,
                   color: menu.id === currentMenu.id ? "var(--text-primary)" : "var(--text-secondary)",
                   background:
