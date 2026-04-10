@@ -224,7 +224,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon }: TopBarC
             top: 0,
             right: 0,
             bottom: 0,
-            width: 280,
+            width: 196,
             background: "#fff",
             boxShadow: "-2px 0 12px rgba(0,0,0,0.15)",
             zIndex: 101,

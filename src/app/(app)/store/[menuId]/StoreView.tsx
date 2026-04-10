@@ -152,7 +152,8 @@ export default function StoreView({
         {/* Sections Sidebar */}
         <aside
           style={{
-            width: 200,
+            width: "125px",
+            flexShrink: 0,
             borderRight: "1px solid #e5e7eb",
             overflowY: "auto",
             background: "#f9fafb",
@@ -167,12 +168,14 @@ export default function StoreView({
                 display: "flex",
                 gap: 2,
                 alignItems: "center",
-                paddingRight: 16,
-                paddingLeft: 8,
+                paddingRight: 4,
+                paddingLeft: 4,
                 paddingBottom: 12,
                 borderBottom: "1px solid #e5e7eb",
                 marginBottom: 12,
                 justifyContent: "flex-end",
+                overflow: "hidden",
+                minWidth: 0,
               }}
             >
               <SectionControls
@@ -195,7 +198,7 @@ export default function StoreView({
                   key={section.id}
                   onClick={() => setSelectedSectionId(section.id)}
                   style={{
-                    padding: "12px 16px",
+                    padding: "12px 8px",
                     border: "none",
                     background:
                       section.id === selectedSectionId
@@ -207,7 +210,7 @@ export default function StoreView({
                         : "#6b7280",
                     textAlign: "right",
                     cursor: "pointer",
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight:
                       section.id === selectedSectionId ? 600 : 500,
                     borderLeft:
@@ -215,8 +218,12 @@ export default function StoreView({
                         ? "3px solid #1e40af"
                         : "none",
                     paddingLeft:
-                      section.id === selectedSectionId ? 13 : 16,
+                      section.id === selectedSectionId ? 5 : 8,
                     transition: "all 0.2s",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    minWidth: 0,
                   }}
                 >
                   {section.name}

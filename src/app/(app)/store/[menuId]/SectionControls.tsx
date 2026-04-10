@@ -81,6 +81,8 @@ export default function SectionControls({
         display: "flex",
         gap: 2,
         alignItems: "center",
+        overflow: "hidden",
+        minWidth: 0,
       }}
     >
       <button
