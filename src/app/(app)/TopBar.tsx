@@ -26,12 +26,14 @@ export default async function TopBar({ role }: { role?: Role }) {
     cartItemCount = cart.itemCount;
   }
 
+  const userRole = role || (session?.user?.role as Role) || "USER";
+
   return (
     <TopBarClient
       role={role}
       menus={menus}
       balance={balance}
-      cartIcon={<CartIcon initialCount={cartItemCount} />}
+      cartIcon={<CartIcon initialCount={cartItemCount} userRole={userRole} />}
     />
   );
 }

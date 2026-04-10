@@ -3,23 +3,65 @@
 import { useState, useEffect } from "react";
 import CartModal from "./CartModal";
 
-interface CartIconProps {
-  initialCount: number;
+interface CartItem {
+  cartItemId: string;
+  itemId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  cost: number;
+  archived: boolean;
 }
 
-export default function CartIcon({ initialCount }: CartIconProps) {
+interface CartIconProps {
+  initialCount: number;
+  userRole: "USER" | "STAFF" | "ADMIN";
+}
+
+export default function CartIcon({ initialCount, userRole }: CartIconProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [itemCount, setItemCount] = useState(initialCount);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [totalCost, setTotalCost] = useState(0);
 
+  // Load cart data from API
+  const loadCart = async () => {
+    try {
+      const response = await fetch("/api/cart", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCartItems(data.items);
+        setTotalCost(data.totalCost);
+        setItemCount(data.items.length);
+      }
+    } catch (error) {
+      console.error("Failed to load cart:", error);
+    }
+  };
+
+  // Preload cart data on component mount
   useEffect(() => {
-    const handleCartItemAdded = (event: Event) => {
-      const customEvent = event as CustomEvent<{ quantity: number }>;
-      setItemCount((prev) => prev + customEvent.detail.quantity);
+    loadCart();
+  }, []);
+
+  // Refetch cart when items are added to keep data in sync
+  useEffect(() => {
+    const handleCartItemAdded = () => {
+      loadCart();
     };
 
     window.addEventListener("cartItemAdded", handleCartItemAdded);
     return () => window.removeEventListener("cartItemAdded", handleCartItemAdded);
   }, []);
+
+  const handleCartUpdate = (items: CartItem[], total: number) => {
+    setCartItems(items);
+    setTotalCost(total);
+    setItemCount(items.length);
+  };
 
   return (
     <>
@@ -79,8 +121,12 @@ export default function CartIcon({ initialCount }: CartIconProps) {
       {/* Cart Modal */}
       {isOpen && (
         <CartModal
+          initialItems={cartItems}
+          initialTotalCost={totalCost}
+          userRole={userRole}
           onClose={() => setIsOpen(false)}
           onItemCountChange={setItemCount}
+          onCartUpdate={handleCartUpdate}
         />
       )}
     </>

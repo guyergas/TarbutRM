@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ItemModal from "./ItemModal";
+import UnifiedItemModal from "./store/[menuId]/UnifiedItemModal";
 import { cartService } from "@/modules/cart";
 import {
   removeFromCartAction,
@@ -16,54 +16,61 @@ interface CartItem {
   quantity: number;
   cost: number;
   archived: boolean;
+  description?: string;
+  image?: string;
+}
+
+interface FullItemData {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  inStock: boolean;
+  image?: string;
+  archived?: boolean;
+}
+
+interface StockHistory {
+  id: string;
+  inStock: boolean;
+  changedAt: string;
+  changer: { firstName: string; lastName: string; role: string };
 }
 
 interface CartModalProps {
+  initialItems: CartItem[];
+  initialTotalCost: number;
+  userRole: "USER" | "STAFF" | "ADMIN";
   onClose: () => void;
   onItemCountChange: (count: number) => void;
+  onCartUpdate: (items: CartItem[], totalCost: number) => void;
 }
 
 export default function CartModal({
+  initialItems,
+  initialTotalCost,
+  userRole,
   onClose,
   onItemCountChange,
+  onCartUpdate,
 }: CartModalProps) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [totalCost, setTotalCost] = useState(0);
+  const [items, setItems] = useState<CartItem[]>(initialItems);
+  const [totalCost, setTotalCost] = useState(initialTotalCost);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
-
-  // Load cart on mount
-  useEffect(() => {
-    const loadCart = async () => {
-      try {
-        const response = await fetch("/api/cart", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setItems(data.items);
-          setTotalCost(data.totalCost);
-          onItemCountChange(data.items.length);
-        }
-      } catch (error) {
-        console.error("Failed to load cart:", error);
-      }
-    };
-
-    loadCart();
-  }, [onItemCountChange]);
+  const [selectedItemFull, setSelectedItemFull] = useState<FullItemData | null>(null);
+  const [stockHistory, setStockHistory] = useState<StockHistory[]>([]);
 
   const handleRemoveItem = async (itemId: string) => {
     setIsLoading(true);
     try {
       await removeFromCartAction(itemId);
       const updatedItems = items.filter((item) => item.itemId !== itemId);
+      const newTotal = updatedItems.reduce((sum, item) => sum + item.cost, 0);
       setItems(updatedItems);
-      setTotalCost(
-        updatedItems.reduce((sum, item) => sum + item.cost, 0)
-      );
+      setTotalCost(newTotal);
       onItemCountChange(updatedItems.length);
+      onCartUpdate(updatedItems, newTotal);
     } catch (error) {
       console.error("Failed to remove item:", error);
       alert("Failed to remove item");
@@ -90,13 +97,31 @@ export default function CartModal({
             }
           : item
       );
+      const newTotal = updatedItems.reduce((sum, item) => sum + item.cost, 0);
       setItems(updatedItems);
-      setTotalCost(updatedItems.reduce((sum, item) => sum + item.cost, 0));
+      setTotalCost(newTotal);
+      onCartUpdate(updatedItems, newTotal);
     } catch (error) {
       console.error("Failed to update quantity:", error);
       alert("Failed to update quantity");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleItemClick = async (item: CartItem) => {
+    try {
+      const response = await fetch(`/api/items/${item.itemId}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedItemFull(data.item);
+        setStockHistory(data.stockHistory || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch item details:", error);
     }
   };
 
@@ -183,7 +208,7 @@ export default function CartModal({
                 >
                   <div style={{ flex: 1 }}>
                     <button
-                      onClick={() => setSelectedItem(item)}
+                      onClick={() => handleItemClick(item)}
                       style={{
                         background: "none",
                         border: "none",
@@ -210,22 +235,97 @@ export default function CartModal({
                     >
                       <span>{item.price} ₪</span>
                       <span>×</span>
-                      <input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) => {
-                          const val = parseInt(e.target.value) || 1;
-                          handleUpdateQuantity(item.itemId, val);
-                        }}
-                        min="1"
+                      <div
                         style={{
-                          width: "40px",
-                          textAlign: "center",
-                          border: "1px solid #d1d5db",
-                          borderRadius: "4px",
-                          padding: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
                         }}
-                      />
+                      >
+                        <button
+                          onClick={() =>
+                            handleUpdateQuantity(item.itemId, item.quantity - 1)
+                          }
+                          disabled={isLoading || item.quantity <= 1}
+                          style={{
+                            width: "24px",
+                            height: "24px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "#f3f4f6",
+                            border: "1px solid #d1d5db",
+                            borderRadius: "3px",
+                            cursor:
+                              isLoading || item.quantity <= 1
+                                ? "not-allowed"
+                                : "pointer",
+                            opacity: isLoading || item.quantity <= 1 ? 0.5 : 1,
+                            fontSize: "14px",
+                            padding: 0,
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!isLoading && item.quantity > 1)
+                              (e.target as HTMLButtonElement).style.background =
+                                "#e5e7eb";
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isLoading && item.quantity > 1)
+                              (e.target as HTMLButtonElement).style.background =
+                                "#f3f4f6";
+                          }}
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value) || 1;
+                            handleUpdateQuantity(item.itemId, val);
+                          }}
+                          min="1"
+                          style={{
+                            width: "36px",
+                            textAlign: "center",
+                            border: "1px solid #d1d5db",
+                            borderRadius: "3px",
+                            padding: "4px",
+                          }}
+                        />
+                        <button
+                          onClick={() =>
+                            handleUpdateQuantity(item.itemId, item.quantity + 1)
+                          }
+                          disabled={isLoading}
+                          style={{
+                            width: "24px",
+                            height: "24px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "#f3f4f6",
+                            border: "1px solid #d1d5db",
+                            borderRadius: "3px",
+                            cursor: isLoading ? "not-allowed" : "pointer",
+                            opacity: isLoading ? 0.5 : 1,
+                            fontSize: "14px",
+                            padding: 0,
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!isLoading)
+                              (e.target as HTMLButtonElement).style.background =
+                                "#e5e7eb";
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isLoading)
+                              (e.target as HTMLButtonElement).style.background =
+                                "#f3f4f6";
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
                       <span>=</span>
                       <span style={{ fontWeight: "600" }}>{item.cost} ₪</span>
                     </div>
@@ -305,16 +405,15 @@ export default function CartModal({
       </div>
 
       {/* Item Modal */}
-      {selectedItem && (
-        <ItemModal
-          item={{
-            id: selectedItem.itemId,
-            name: selectedItem.name,
-            price: selectedItem.price,
-            description: selectedItem.description,
-            image: selectedItem.image,
+      {selectedItemFull && (
+        <UnifiedItemModal
+          item={selectedItemFull}
+          userRole={userRole}
+          onClose={() => {
+            setSelectedItemFull(null);
+            setStockHistory([]);
           }}
-          onClose={() => setSelectedItem(null)}
+          stockHistory={stockHistory}
         />
       )}
     </>
