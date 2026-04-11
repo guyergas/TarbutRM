@@ -62,7 +62,6 @@ export default async function StaffQueuePage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">תור ההזמנות</h1>
       <StaffQueueClient orders={serializedOrders} />
     </div>
   );
