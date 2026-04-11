@@ -31,6 +31,9 @@ _stop:
 
 ## Start dev environment (runs as service, accessible even if shell disconnects)
 run:
+	@echo "Stopping production environment..."
+	@sudo systemctl stop tarbutrm-prod 2>/dev/null || true
+	@echo "Starting dev environment..."
 	sudo systemctl start tarbutrm-dev
 	@echo ""
 	@echo "Dev environment starting → http://$(shell hostname -I | awk '{print $$1}'):3001"
@@ -49,6 +52,9 @@ run:
 
 ## Start production environment (runs as service, port 80)
 prod:
+	@echo "Stopping dev environment..."
+	@sudo systemctl stop tarbutrm-dev 2>/dev/null || true
+	@echo "Starting production environment..."
 	sudo systemctl start tarbutrm-prod
 	@echo ""
 	@echo "Production environment starting → http://$(shell hostname -I | awk '{print $$1}')"
