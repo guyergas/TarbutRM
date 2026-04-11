@@ -70,16 +70,16 @@ export default function StoreView({
   ) || currentMenu.sections[0];
 
   return (
-    <div className="flex flex-col h-screen bg-black dark:bg-black">
+    <div className="flex flex-col h-screen bg-black dark:bg-black" style={{ scrollbarGutter: "stable" }}>
       {/* Menu Navigation Bar */}
-      <div className="bg-black dark:bg-black border-t-2 border-b-2 border-gray-700 dark:border-gray-700 p-0 overflow-x-auto sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto px-4 flex gap-0 items-stretch justify-between">
-          <div className="flex gap-0 items-stretch flex-1 overflow-auto">
+      <div className="bg-black dark:bg-black border-t-2 border-b-2 border-gray-700 dark:border-gray-700 p-0 overflow-x-auto sticky top-0 z-10" style={{ scrollbarGutter: "stable", height: "56px" }}>
+        <div className="h-full mx-auto px-4 flex gap-0 items-stretch justify-between" style={{ scrollbarGutter: "stable", maxWidth: "1024px" }}>
+          <div className="flex gap-0 items-stretch flex-1" style={{ overflowX: "scroll", scrollbarGutter: "stable", maxHeight: "56px" }}>
             {allMenus.map((menu, index) => (
               <Link
                 key={menu.id}
                 href={`/store/${menu.id}`}
-                className={`py-3 px-4 no-underline text-xs flex items-center whitespace-nowrap border-none ${
+                className={`py-3 px-4 no-underline text-xs flex items-center whitespace-nowrap border-none h-full ${
                   menu.id === currentMenu.id
                     ? "font-semibold text-white bg-black dark:bg-black"
                     : "font-medium text-gray-400 dark:text-gray-500 bg-transparent"
@@ -90,7 +90,7 @@ export default function StoreView({
             ))}
           </div>
           {userRole === "ADMIN" && (
-            <div className="flex gap-0.5 items-center px-2 border-r-2 border-gray-700 dark:border-gray-700">
+            <div className="flex gap-0.5 items-center px-2 border-r-2 border-gray-700 dark:border-gray-700 h-full" style={{ maxHeight: "56px", overflow: "hidden" }}>
               <MenuControls
                 menu={currentMenu}
                 allMenus={allMenus}
@@ -104,7 +104,7 @@ export default function StoreView({
       {/* Main content: sidebar + grid */}
       <div className="flex flex-1 overflow-hidden bg-black dark:bg-black">
         {/* Sections Sidebar */}
-        <aside className="w-32 flex-shrink-0 border-l-2 border-r-2 border-t border-gray-700 dark:border-gray-700 overflow-y-auto bg-black dark:bg-black py-4 flex flex-col">
+        <aside className="w-24 flex-shrink-0 border-l-2 border-r-2 border-t border-gray-700 dark:border-gray-700 bg-black dark:bg-black py-4 flex flex-col" style={{ overflowY: "scroll", scrollbarGutter: "stable" }}>
           {userRole === "ADMIN" && selectedSection && (
             <div className="flex gap-0.5 items-center px-1 pb-3 border-b border-gray-700 dark:border-gray-700 mb-3 justify-end overflow-hidden min-w-0">
               <SectionControls
@@ -140,7 +140,7 @@ export default function StoreView({
         </aside>
 
         {/* Items Grid */}
-        <main className="flex-1 overflow-y-auto p-6 bg-black dark:bg-black">
+        <main className="flex-1 p-3 bg-black dark:bg-black" style={{ overflowY: "scroll", scrollbarGutter: "stable" }}>
           {!selectedSection ? (
             <div className="text-gray-400 dark:text-gray-500 text-sm">
               בחר קטגוריה

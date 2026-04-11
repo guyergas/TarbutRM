@@ -24,20 +24,29 @@ type User = {
 };
 
 const inputCls =
-  "mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
-const labelCls = "block text-sm font-medium text-gray-700 dark:text-gray-300";
+  "mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-right";
+const labelCls = "block text-sm font-medium text-gray-700 dark:text-gray-300 text-right";
 
 export default function EditUserForm({
   user,
   formAction = updateUserAction,
   isAdminEdit = true,
+  onSuccess,
+  onCancel,
 }: {
   user: User;
   formAction?: (userId: string, prevState: any, formData: FormData) => Promise<any>;
   isAdminEdit?: boolean;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }) {
   const bound = formAction.bind(null, user.id);
   const [result, action, pending] = useActionState(bound, null);
+
+  // Call onSuccess callback when save is successful
+  if (result?.ok && onSuccess) {
+    onSuccess();
+  }
   const [phone, setPhone] = useState(user.phone ?? "");
   const [cityChoice, setCityChoice] = useState<"known" | "other">(
     user.city === KNOWN_CITY ? "known" : "other"
@@ -45,7 +54,7 @@ export default function EditUserForm({
   const [cityText, setCityText] = useState(user.city !== KNOWN_CITY ? user.city : "");
 
   return (
-    <form action={action} className="space-y-4">
+    <form action={action} className="space-y-4 text-right">
       {result && (
         <p
           className={`rounded-md px-4 py-3 text-sm ${
@@ -132,11 +141,20 @@ export default function EditUserForm({
         )}
       </div>
 
-      <div className="pt-2">
+      <div className="pt-2 flex flex-row gap-2 justify-end items-center">
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-md bg-gray-300 dark:bg-gray-600 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm hover:bg-gray-400 dark:hover:bg-gray-500 transition whitespace-nowrap"
+          >
+            ביטול עריכה
+          </button>
+        )}
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-indigo-600 dark:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 transition"
+          className="rounded-md bg-indigo-600 dark:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 transition whitespace-nowrap"
         >
           {pending ? "שומר…" : "שמור שינויים"}
         </button>

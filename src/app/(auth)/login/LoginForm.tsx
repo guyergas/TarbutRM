@@ -3,7 +3,6 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { loginAction } from "./actions";
-import RegisterModal from "@/components/RegisterModal";
 
 export default function LoginForm() {
   const [error, action, pending] = useActionState(loginAction, null);
@@ -78,14 +77,6 @@ export default function LoginForm() {
       >
         {pending ? "מתחבר…" : "התחברות"}
       </button>
-
-      <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-        לקוח חדש?{" "}
-        <RegisterModal
-          triggerLabel="להרשמה"
-          triggerClassName="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 bg-transparent border-none p-0 cursor-pointer"
-        />
-      </div>
     </form>
   );
 }

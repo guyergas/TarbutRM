@@ -52,7 +52,6 @@ export default function ItemEditor({
   const [image, setImage] = useState(item.image || "");
   const [inStock, setInStock] = useState(item.inStock);
   const [loading, setLoading] = useState(false);
-  const [stockLoading, setStockLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
@@ -217,44 +216,19 @@ export default function ItemEditor({
     setCropY(0);
   };
 
-  const handleStockToggle = async () => {
-    if (stockLoading || isNew) return;
-    setStockLoading(true);
-    setError(null);
-    try {
-      await toggleStockAction(item.id, !inStock);
-      setInStock(!inStock);
-      setSuccess(inStock ? "המוצר סומן כאזל" : "המוצר סומן כזמין");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "שגיאה בעדכון המלאי");
-    } finally {
-      setStockLoading(false);
-    }
-  };
-
   const handleSave = async () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
     try {
-      if (isNew) {
-        await createItem(section.id, name, parseFloat(price), description, image);
-        setSuccess("המוצר נוצר בהצלחה");
-      } else {
-        await updateItemAction(item.id, {
-          name,
-          description,
-          price: parseFloat(price),
-          image,
-        });
-        setSuccess("המוצר עודכן בהצלחה");
-      }
+      await createItem(section.id, name, parseFloat(price), description, image);
+      setSuccess("המוצר נוצר בהצלחה");
       // Close popup after successful save
       setTimeout(() => {
         if (onClose) onClose();
       }, 1000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : (isNew ? "שגיאה ביצירת המוצר" : "שגיאה בעדכון המוצר"));
+      setError(err instanceof Error ? err.message : "שגיאה ביצירת המוצר");
     } finally {
       setLoading(false);
     }
@@ -495,19 +469,6 @@ export default function ItemEditor({
             >
               {loading ? (isNew ? "יוצר..." : "שומר...") : (isNew ? "צור מוצר" : "שמור שינויים")}
             </button>
-            {!isNew && (
-              <button
-                onClick={handleStockToggle}
-                disabled={stockLoading}
-                className={`flex-1 py-2.5 px-4 border rounded font-medium text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition ${
-                  inStock
-                    ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900/50"
-                    : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900/50"
-                }`}
-              >
-                {stockLoading ? "עדכון..." : (inStock ? "✓ במלאי" : "✗ אזל")}
-              </button>
-            )}
             {onClose && (
               <button
                 onClick={onClose}

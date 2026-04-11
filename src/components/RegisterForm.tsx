@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const INPUT =
-  "mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
+const inputCls =
+  "mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-right";
+
+const labelCls = "block text-sm font-medium text-gray-700 dark:text-gray-300 text-right";
 
 function strength(pw: string): { score: number; label: string; ok: boolean } {
   if (!pw) return { score: 0, label: "", ok: false };
@@ -65,44 +67,44 @@ export default function RegisterForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5 text-right">
       <div>
-        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">שם פרטי</label>
-        <input id="firstName" name="firstName" type="text" required autoComplete="given-name" className={INPUT} />
+        <label htmlFor="firstName" className={labelCls}>שם פרטי</label>
+        <input id="firstName" name="firstName" type="text" required autoComplete="given-name" className={inputCls} />
       </div>
 
       <div>
-        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">שם משפחה</label>
-        <input id="lastName" name="lastName" type="text" required autoComplete="family-name" className={INPUT} />
+        <label htmlFor="lastName" className={labelCls}>שם משפחה</label>
+        <input id="lastName" name="lastName" type="text" required autoComplete="family-name" className={inputCls} />
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">אימייל</label>
-        <input id="email" name="email" type="email" required autoComplete="email" className={INPUT} />
+        <label htmlFor="email" className={labelCls}>אימייל</label>
+        <input id="email" name="email" type="email" required autoComplete="email" className={inputCls} />
       </div>
 
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">טלפון</label>
+        <label htmlFor="phone" className={labelCls}>טלפון</label>
         <input
           id="phone" name="phone" type="tel" autoComplete="tel"
           value={phone} onChange={(e) => setPhone(fmtPhone(e.target.value))}
           placeholder="050-0000000"
-          className={INPUT}
+          className={inputCls}
         />
         {phone.length > 0 && (
-          <p className={`mt-1 text-sm font-medium ${/^\d{3}-\d{7}$/.test(phone) ? "text-green-600" : "text-red-500"}`}>
+          <p className={`mt-1 text-sm font-medium ${/^\d{3}-\d{7}$/.test(phone) ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
             {/^\d{3}-\d{7}$/.test(phone) ? "✓ מספר תקין" : "✗ יש להזין 10 ספרות בפורמט 050-0000000"}
           </p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">עיר</label>
+        <label className={labelCls}>עיר</label>
         <input type="hidden" name="city" value={cityChoice === "known" ? KNOWN_CITY : cityText} />
         <select
           value={cityChoice}
           onChange={(e) => setCityChoice(e.target.value as "known" | "other")}
-          className={INPUT}
+          className={inputCls}
         >
           <option value="known">{KNOWN_CITY}</option>
           <option value="other">אחר</option>
@@ -114,23 +116,23 @@ export default function RegisterForm({
             onChange={(e) => setCityText(e.target.value)}
             placeholder="הזן עיר..."
             autoComplete="address-level2"
-            className={`${INPUT} mt-2`}
+            className={`${inputCls} mt-2`}
           />
         )}
       </div>
 
       <div>
-        <label htmlFor="street" className="block text-sm font-medium text-gray-700">רחוב ומספר בית</label>
-        <input id="street" name="street" type="text" autoComplete="street-address" className={INPUT} />
+        <label htmlFor="street" className={labelCls}>רחוב ומספר בית</label>
+        <input id="street" name="street" type="text" autoComplete="street-address" className={inputCls} />
       </div>
 
       <div>
-        <label htmlFor="pw" className="block text-sm font-medium text-gray-700">סיסמא</label>
+        <label htmlFor="pw" className={labelCls}>סיסמא</label>
         <input
           id="pw" name="password" type="password" required autoComplete="new-password"
-          value={pw} onChange={(e) => setPw(e.target.value)} className={INPUT}
+          value={pw} onChange={(e) => setPw(e.target.value)} className={inputCls}
         />
-        <p className={`mt-1 text-sm font-medium ${str.ok ? "text-green-600" : "text-red-500"}`}>
+        <p className={`mt-1 text-sm font-medium ${str.ok ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
           {str.ok
             ? `✓ סיסמא ${str.label}`
             : pw.length === 0
@@ -140,20 +142,20 @@ export default function RegisterForm({
       </div>
 
       <div>
-        <label htmlFor="confirm" className="block text-sm font-medium text-gray-700">אימות סיסמא</label>
+        <label htmlFor="confirm" className={labelCls}>אימות סיסמא</label>
         <input
           id="confirm" name="confirm" type="password" required autoComplete="new-password"
-          value={confirm} onChange={(e) => setConfirm(e.target.value)} className={INPUT}
+          value={confirm} onChange={(e) => setConfirm(e.target.value)} className={inputCls}
         />
         {confirm.length > 0 && (
-          <p className={`mt-1 text-sm font-medium ${matches ? "text-green-600" : "text-red-500"}`}>
+          <p className={`mt-1 text-sm font-medium ${matches ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
             {matches ? "✓ הסיסמאות תואמות" : "✗ הסיסמאות אינן תואמות"}
           </p>
         )}
       </div>
 
       {error && (
-        <p className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+        <p className="rounded-md bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">{error}</p>
       )}
 
       <div className={onCancel ? "flex gap-3" : ""}>
@@ -161,23 +163,23 @@ export default function RegisterForm({
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             ביטול
           </button>
         )}
         <button
           type="submit" disabled={pending}
-          className={`${onCancel ? "flex-1" : "w-full"} rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50`}
+          className={`${onCancel ? "flex-1" : "w-full"} rounded-md bg-indigo-600 dark:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 transition`}
         >
           {pending ? "נרשם…" : "הרשמה"}
         </button>
       </div>
 
       {!onSuccess && redirectTo === "/login" && (
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
           כבר יש לך חשבון?{" "}
-          <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">התחברות</Link>
+          <Link href="/login" className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300">התחברות</Link>
         </p>
       )}
     </form>

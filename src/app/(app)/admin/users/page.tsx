@@ -66,7 +66,7 @@ export default async function AdminUsersPage() {
               >
                 <td className="px-4 py-3 text-gray-900 dark:text-white">
                   <Link
-                    href={`/admin/user/${user.id}`}
+                    href={`/user/${user.id}`}
                     className="hover:text-indigo-600 dark:hover:text-indigo-400 transition"
                   >
                     {user.firstName} {user.lastName}

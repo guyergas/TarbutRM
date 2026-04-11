@@ -43,6 +43,7 @@ export default async function TopBar({ role }: { role?: Role }) {
       role={role}
       menus={menus}
       balance={balance}
+      userId={session?.user?.id}
       cartIcon={<CartIcon initialCount={cartItemCount} userRole={userRole} userBalance={balance} />}
       openOrdersCount={openOrdersCount}
     />

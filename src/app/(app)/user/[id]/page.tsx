@@ -2,21 +2,28 @@ import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import EditUserForm from "./EditUserForm";
+import EditableUserForm from "./EditableUserForm";
 import AddTransactionForm from "./AddTransactionForm";
 import ResetPasswordDialog from "./ResetPasswordDialog";
 
-export const metadata = { title: "עריכת משתמש – TarbutRM" };
-
-export default async function AdminUserPage({
+export default async function UserPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const session = await auth();
-  if (!session || session.user.role !== "ADMIN") redirect("/");
+  if (!session?.user?.id) redirect("/login");
 
   const { id } = await params;
+
+  // Check permissions
+  const isOwnProfile = session.user.id === id;
+  const isAdmin = session.user.role === "ADMIN";
+
+  // Only allow viewing own profile or if admin
+  if (!isOwnProfile && !isAdmin) {
+    redirect("/");
+  }
 
   const [user, transactions] = await Promise.all([
     prisma.user.findUnique({ where: { id } }),
@@ -53,21 +60,23 @@ export default async function AdminUserPage({
       {/* Header */}
       <div className="flex items-center gap-4 flex-wrap">
         <Link
-          href="/admin/users"
+          href={isAdmin ? "/admin/users" : "/"}
           className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition"
         >
-          ← חזרה לרשימה
+          ← {isAdmin && !isOwnProfile ? "חזרה לרשימה" : "חזרה לעמוד הבית"}
         </Link>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{user.firstName} {user.lastName}</h1>
-        <span
-          className={`px-2.5 py-1 rounded text-xs font-semibold ${
-            user.active
-              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-              : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
-          }`}
-        >
-          {user.active ? "פעיל" : "מושבת"}
-        </span>
+        {isAdmin && (
+          <span
+            className={`px-2.5 py-1 rounded text-xs font-semibold ${
+              user.active
+                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+            }`}
+          >
+            {user.active ? "פעיל" : "מושבת"}
+          </span>
+        )}
         <span className={`ml-auto text-lg font-bold font-variant-numeric-tabular ${Number(user.balance) >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
           יתרה: {serialized.balance} ₪
         </span>
@@ -76,17 +85,19 @@ export default async function AdminUserPage({
       {/* Edit form */}
       <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-lg space-y-4">
         <h2 className="text-base font-semibold text-gray-900 dark:text-white">פרטי משתמש</h2>
-        <EditUserForm user={serialized} />
-        <div className="pt-1 border-t border-gray-200 dark:border-gray-700">
-          <ResetPasswordDialog userId={user.id} />
-        </div>
+        <EditableUserForm user={serialized} isAdminEdit={isAdmin} />
+        {isAdmin && (
+          <div className="pt-1 border-t border-gray-200 dark:border-gray-700">
+            <ResetPasswordDialog userId={user.id} />
+          </div>
+        )}
       </div>
 
       {/* Transaction history */}
       <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-lg space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold text-gray-900 dark:text-white">היסטוריית עסקאות</h2>
-          <AddTransactionForm userId={user.id} />
+          {isAdmin && <AddTransactionForm userId={user.id} />}
         </div>
         {transactions.length === 0 ? (
           <p className="text-sm text-gray-400 dark:text-gray-500">אין עסקאות עדיין</p>

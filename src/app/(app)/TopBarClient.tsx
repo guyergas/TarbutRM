@@ -29,15 +29,18 @@ interface TopBarClientProps {
   balance?: string | null;
   cartIcon?: React.ReactNode;
   openOrdersCount?: number;
+  userId?: string;
 }
 
-const linkClassName = "px-2 py-2.5 rounded text-gray-700 dark:text-gray-300 no-underline text-sm font-medium block text-right";
-const collapsibleClassName = "flex items-center justify-start gap-2 w-full bg-transparent border-none cursor-pointer px-2 py-2.5 pr-2 text-gray-700 dark:text-gray-300 text-sm font-medium";
-const subCollapsibleClassName = "flex items-center justify-start gap-2 w-full bg-transparent border-none cursor-pointer px-2 py-2.5 pr-10 text-gray-700 dark:text-gray-300 text-xs font-medium";
-const subLinkClassName = "px-2 py-2.5 rounded text-gray-700 dark:text-gray-300 no-underline text-xs font-medium block text-right pr-10";
-const subSubLinkClassName = "px-2 py-2.5 rounded text-gray-700 dark:text-gray-300 no-underline text-xs font-medium block text-right pr-16";
+const linkClassName = "px-1 py-2 rounded text-white dark:text-gray-300 no-underline text-sm font-medium block text-right pr-4";
+const collapsibleClassName = "flex items-center justify-start gap-4 w-full bg-transparent border-none cursor-pointer px-1 py-2 pr-4 text-white dark:text-gray-300 text-sm font-medium";
+const subCollapsibleClassName = "flex items-center justify-start gap-4 w-full bg-transparent border-none cursor-pointer px-1 py-2 pr-4 mr-8 text-white dark:text-gray-300 text-xs font-medium";
+const subCollapsibleClassName1 = "flex items-center justify-start gap-4 w-full bg-transparent border-none cursor-pointer px-1 py-2 pr-4 pl-8 text-white dark:text-gray-300 text-xs font-medium";
+const subLinkClassName = "px-1 py-2 rounded text-white dark:text-gray-300 no-underline text-xs font-medium block text-right pr-4 mr-8";
+const subSubLinkClassName = "px-1 py-2 rounded text-white dark:text-gray-300 no-underline text-xs font-medium block text-right pr-4 mr-16";
 
-export default function TopBarClient({ role, menus, balance, cartIcon, openOrdersCount = 0 }: TopBarClientProps) {
+
+export default function TopBarClient({ role, menus, balance, cartIcon, openOrdersCount = 0, userId }: TopBarClientProps) {
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [storeOpen, setStoreOpen] = useState(false);
@@ -57,9 +60,9 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
   return (
     <>
       <header className="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700 sticky top-0 z-50">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-          {/* Hamburger + Home icons */}
-          <div className="flex items-center gap-4">
+        <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
+          {/* Left section */}
+          <div className="flex items-center gap-4 justify-start">
             <button
               type="button"
               aria-label="פתח תפריט"
@@ -75,7 +78,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
-                className="text-gray-700 dark:text-gray-300"
+                className="text-white"
               >
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <line x1="3" y1="12" x2="21" y2="12" />
@@ -86,7 +89,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
             <Link
               href="/"
               title="בית"
-              className="flex items-center text-gray-700 dark:text-gray-300 no-underline"
+              className="flex items-center text-white no-underline"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +97,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                 height="24"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="text-gray-700 dark:text-gray-300"
+                className="text-white"
               >
                 <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
                 <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
@@ -102,18 +105,21 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
             </Link>
           </div>
 
-          {/* Balance + Cart + Profile icon */}
-          <div className="flex items-center gap-4">
+          {/* Title - centered */}
+          <h1 className="text-sm font-semibold text-white text-center m-0 flex-1">תרבות רמות מנשה</h1>
+
+          {/* Right section */}
+          <div className="flex items-center gap-4 justify-end">
             {balance && (
-              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+              <div className="text-xs font-medium text-white dark:text-gray-300">
                 יתרה: ₪{balance}
               </div>
             )}
             {cartIcon}
             <Link
-              href="/profile"
+              href={userId ? `/user/${userId}` : "/login"}
               title="פרופיל"
-              className="flex items-center text-gray-700 dark:text-gray-300 no-underline"
+              className="flex items-center text-white no-underline"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +127,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                 height="24"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="text-gray-700 dark:text-gray-300"
+                className="text-white"
               >
                 <path
                   fillRule="evenodd"
@@ -145,22 +151,22 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
       {/* Slide-in panel */}
       {open && (
         <div
-          className="fixed top-0 right-0 bottom-0 w-48 bg-white dark:bg-gray-800 shadow-lg z-51 flex flex-col p-6 overflow-y-auto"
+          className="fixed top-0 right-0 bottom-0 w-60 bg-white dark:bg-gray-800 shadow-lg z-51 flex flex-col p-6 overflow-y-auto"
         >
           {/* Panel header */}
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6 px-4 pt-6">
             <span className="font-bold text-base text-gray-900 dark:text-white">תפריט</span>
             <button
               type="button"
               onClick={close}
-              className="cursor-pointer text-xl leading-none text-gray-700 dark:text-gray-300 bg-transparent border-none"
+              className="cursor-pointer text-xl leading-none text-white dark:text-gray-300 bg-transparent border-none"
             >
               ✕
             </button>
           </div>
 
           {/* Nav items */}
-          <nav className="flex flex-col gap-0.5">
+          <nav className="flex flex-col gap-0">
             {/* 1. Admin (admin/staff) */}
             {(role === "ADMIN" || role === "STAFF") && (
               <div>
@@ -169,10 +175,10 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                   onClick={() => setAdminOpen((v) => !v)}
                   className={collapsibleClassName}
                 >
-                  <span className="text-xs text-gray-400 dark:text-gray-500">
-                    {adminOpen ? "▲" : "▼"}
+                  <span className="text-right">ניהול</span>
+                  <span className={`text-sm text-gray-400 dark:text-gray-500 transition-transform duration-300 ${adminOpen ? "rotate-180" : ""}`}>
+                    ▼
                   </span>
-                  <span className="flex-1 text-right">ניהול</span>
                 </button>
 
                 {adminOpen && (
@@ -198,10 +204,10 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                   onClick={() => setStoreOpen((v) => !v)}
                   className={collapsibleClassName}
                 >
-                  <span className="text-xs text-gray-400 dark:text-gray-500">
-                    {storeOpen ? "▲" : "▼"}
+                  <span className="text-right">חנות</span>
+                  <span className={`text-sm text-gray-400 dark:text-gray-500 transition-transform duration-300 ${storeOpen ? "rotate-180" : ""}`}>
+                    ▼
                   </span>
-                  <span className="flex-1 text-right">חנות</span>
                 </button>
 
                 {storeOpen && (
@@ -213,11 +219,11 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                           onClick={() => toggleMenuExpanded(menu.id)}
                           className={subCollapsibleClassName}
                         >
-                          <span className="text-xs text-gray-400 dark:text-gray-500">
-                            {expandedMenus[menu.id] ? "▲" : "▼"}
-                          </span>
-                          <span className="flex-1 text-right">
+                          <span className="text-right">
                             {menu.name}
+                          </span>
+                          <span className={`text-sm text-gray-400 dark:text-gray-500 transition-transform duration-300 ${expandedMenus[menu.id] ? "rotate-180" : ""}`}>
+                            ▼
                           </span>
                         </button>
 

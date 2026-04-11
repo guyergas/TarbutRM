@@ -70,16 +70,7 @@ export default function CartIcon({ initialCount, userRole, userBalance }: CartIc
       <button
         onClick={() => setIsOpen(true)}
         title="Cart"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          position: "relative",
-          color: "var(--text-secondary)",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          padding: 0,
-        }}
+        className="flex items-center text-white no-underline"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -91,6 +82,7 @@ export default function CartIcon({ initialCount, userRole, userBalance }: CartIc
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="text-white"
         >
           <circle cx="9" cy="21" r="1" />
           <circle cx="20" cy="21" r="1" />
