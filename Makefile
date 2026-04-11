@@ -15,7 +15,7 @@ else
   DB_NAME     := tarbutrm_dev
 endif
 
-.PHONY: run prod stop store load migrate seed logs shell _run-dev _run-prod
+.PHONY: run prod stop store load migrate seed logs shell _run-dev _run-prod _stop
 
 ## Internal: Run dev environment (called by systemd service)
 _run-dev:
@@ -31,8 +31,9 @@ _stop:
 
 ## Start dev environment (runs as service, accessible even if shell disconnects)
 run:
-	@echo "Stopping production environment..."
-	@sudo systemctl stop tarbutrm-prod 2>/dev/null || true
+	@echo "Stopping all services..."
+	@sudo systemctl stop tarbutrm-dev tarbutrm-prod 2>/dev/null || true
+	@sleep 1
 	@echo "Starting dev environment..."
 	sudo systemctl start tarbutrm-dev
 	@echo ""
@@ -52,16 +53,17 @@ run:
 
 ## Start production environment (runs as service, port 80)
 prod:
-	@echo "Stopping dev environment..."
-	@sudo systemctl stop tarbutrm-dev 2>/dev/null || true
+	@echo "Stopping all services..."
+	@sudo systemctl stop tarbutrm-dev tarbutrm-prod 2>/dev/null || true
+	@sleep 1
 	@echo "Starting production environment..."
 	sudo systemctl start tarbutrm-prod
 	@echo ""
 	@echo "Production environment starting → http://$(shell hostname -I | awk '{print $$1}')"
 	@echo "Waiting for deployment (this may take up to 2 minutes)..."
-	@bash -c 'for i in {1..60}; do \
-		if curl -s -m 5 http://localhost:3001/api/health 2>/dev/null | grep -q "ok" && \
-		   curl -s -m 5 http://localhost:3001/login 2>/dev/null | grep -q "form"; then \
+	@bash -c 'for i in {1..120}; do \
+		if curl -s -m 5 http://localhost:80/api/health 2>/dev/null | grep -q "ok" && \
+		   curl -s -m 5 http://localhost:80/login 2>/dev/null | grep -q "form"; then \
 			echo "✓ Production environment is ready!"; exit 0; \
 		fi; \
 		sleep 2; \
