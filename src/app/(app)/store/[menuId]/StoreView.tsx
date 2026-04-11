@@ -104,7 +104,7 @@ export default function StoreView({
       {/* Main content: sidebar + grid */}
       <div className="flex flex-1 overflow-hidden bg-black dark:bg-black">
         {/* Sections Sidebar */}
-        <aside className="w-24 flex-shrink-0 border-l-2 border-r-2 border-t border-gray-700 dark:border-gray-700 bg-black dark:bg-black py-4 flex flex-col" style={{ overflowY: "scroll", scrollbarGutter: "stable" }}>
+        <aside className="w-32 flex-shrink-0 border-l-2 border-r-2 border-t border-gray-700 dark:border-gray-700 bg-black dark:bg-black py-4 flex flex-col" style={{ overflowY: "scroll", scrollbarGutter: "stable" }}>
           {userRole === "ADMIN" && selectedSection && (
             <div className="flex gap-0.5 items-center px-1 pb-3 border-b border-gray-700 dark:border-gray-700 mb-3 justify-end overflow-hidden min-w-0">
               <SectionControls
