@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { updateItemAction, toggleStockAction } from "./actions";
+// Note: updateItemAction and toggleStockAction are not available in this context
+// This component is only used for creating new items (isNew=true)
 import { createItem } from "@/app/(app)/store/[menuId]/itemActions";
 
 interface Item {
@@ -75,6 +76,21 @@ export default function ItemEditor({
     };
   }, [showCropper]);
 
+  // Set crop size and max to match the container size when cropper is shown
+  useEffect(() => {
+    if (showCropper && cropperContainerRef.current && uploadedImage) {
+      const containerSize = cropperContainerRef.current.offsetWidth;
+      if (containerSize > 0) {
+        // Always set max to container size to limit slider to frame
+        setMaxCropSize(containerSize);
+        // Only set crop size if it's still the default 400
+        if (cropSize === 400) {
+          setCropSize(containerSize);
+        }
+      }
+    }
+  }, [showCropper, uploadedImage, cropSize]);
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -95,7 +111,19 @@ export default function ItemEditor({
     reader.onload = (event) => {
       const result = event.target?.result as string;
       setUploadedImage(result);
-      setShowCropper(true);
+
+      // Read image dimensions to set default crop size
+      const img = new Image();
+      img.onload = () => {
+        // Default crop size to min(width, height) of the uploaded image
+        const minDimension = Math.min(img.width, img.height);
+        setCropSize(minDimension);
+        setMaxCropSize(minDimension);
+
+        setShowCropper(true);
+      };
+      img.src = result;
+
       setError(null);
     };
     reader.onerror = () => {
@@ -144,8 +172,8 @@ export default function ItemEditor({
       const imageY = (cropY - offsetY) / scale;
       const imageCropSize = cropSize / scale;
 
-      // Calculate max size: don't upscale, max 400px, and limited by actual image size
-      const maxSafeSize = Math.min(imageW, imageH, 400);
+      // Calculate max size: don't upscale, limited by actual image size
+      const maxSafeSize = Math.min(imageW, imageH);
       setMaxCropSize(maxSafeSize);
 
       // Use the actual crop size in image coordinates, capped at max safe size
@@ -156,9 +184,9 @@ export default function ItemEditor({
       canvas.height = finalSize;
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        // Enable high-quality rendering
+        // Enable rendering
         ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
+        ctx.imageSmoothingQuality = "medium";
 
         // Draw the selected crop area from the actual image, scaled to finalSize
         ctx.drawImage(
@@ -172,8 +200,8 @@ export default function ItemEditor({
           finalSize,
           finalSize
         );
-        // Try WebP first (better quality), fallback to PNG
-        const croppedImage = canvas.toDataURL("image/webp") || canvas.toDataURL("image/png");
+        // Use JPEG with reduced quality (0.8) to reduce file size
+        const croppedImage = canvas.toDataURL("image/jpeg", 0.8);
         setImage(croppedImage);
         setShowCropper(false);
         setUploadedImage("");

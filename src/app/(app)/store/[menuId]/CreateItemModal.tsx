@@ -1,6 +1,6 @@
 "use client";
 
-import ItemEditor from "@/app/(app)/admin/items/[id]/ItemEditor";
+import ItemEditor from "@/components/ItemEditor";
 
 interface CreateItemModalProps {
   section: {

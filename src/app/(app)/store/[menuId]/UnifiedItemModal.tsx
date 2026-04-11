@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toggleStockFromModal, updateItemFromModal } from "./itemModalActions";
 
 interface StockHistory {
@@ -48,6 +48,7 @@ export default function UnifiedItemModal({
   const [cropX, setCropX] = useState(0);
   const [cropY, setCropY] = useState(0);
   const [cropSize, setCropSize] = useState(200);
+  const [maxCropSize, setMaxCropSize] = useState(200);
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef({ x: 0, y: 0, cropX: 0, cropY: 0 });
   const cropperContainerRef = useRef<HTMLDivElement>(null);
@@ -55,6 +56,21 @@ export default function UnifiedItemModal({
   const isReadOnly = userRole === "USER";
   const canEdit = userRole === "ADMIN";
   const canToggleStock = userRole === "ADMIN" || userRole === "STAFF";
+
+  // Set crop size and max to match the container size when cropper is shown
+  useEffect(() => {
+    if (showCropper && cropperContainerRef.current && uploadedImage) {
+      const containerSize = cropperContainerRef.current.offsetWidth;
+      if (containerSize > 0) {
+        // Always set max to container size to limit slider to frame
+        setMaxCropSize(containerSize);
+        // Only set crop size if it's still the default 200
+        if (cropSize === 200) {
+          setCropSize(containerSize);
+        }
+      }
+    }
+  }, [showCropper, uploadedImage, cropSize]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -126,7 +142,7 @@ export default function UnifiedItemModal({
       const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.drawImage(img, imageX, imageY, imageCropSize, imageCropSize, 0, 0, finalSize, finalSize);
-        const croppedImage = canvas.toDataURL("image/jpeg", 0.9);
+        const croppedImage = canvas.toDataURL("image/jpeg", 0.8);
         setImage(croppedImage);
         setImagePreview(croppedImage);
         setShowCropper(false);
@@ -265,7 +281,7 @@ export default function UnifiedItemModal({
               <input
                 type="range"
                 min="50"
-                max="400"
+                max={maxCropSize}
                 value={cropSize}
                 onChange={(e) => setCropSize(parseInt(e.target.value))}
                 className="w-full"
