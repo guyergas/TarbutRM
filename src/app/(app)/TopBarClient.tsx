@@ -60,7 +60,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
   return (
     <>
       <header className="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700 sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
+        <div className="max-w-4xl mx-auto px-4 h-[61px] flex items-center justify-between gap-4">
           {/* Left section */}
           <div className="flex items-center gap-4 justify-start">
             <button
