@@ -33,6 +33,16 @@ export async function updateProfile(
   const phone = formData.get("phone") as string;
   const city = formData.get("city") as string;
   const street = formData.get("street") as string;
+  const role = formData.get("role");
+  const active = formData.get("active");
+
+  // Reject attempts to modify admin-only fields
+  if (role !== null || active !== null) {
+    return {
+      ok: false,
+      message: "אין הרשאה לעדכן שדות אלה",
+    };
+  }
 
   if (!firstName || !lastName || !city) {
     return {

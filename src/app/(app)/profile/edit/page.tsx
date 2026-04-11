@@ -51,7 +51,7 @@ export default async function EditProfilePage() {
       {/* Edit form */}
       <div className="rounded-lg bg-white dark:bg-gray-800 px-8 py-6 shadow-sm dark:shadow-lg space-y-4">
         <h2 className="text-base font-semibold text-gray-900 dark:text-white">פרטי משתמש</h2>
-        <EditUserForm user={serialized} formAction={updateProfile} />
+        <EditUserForm user={serialized} formAction={updateProfile} isAdminEdit={false} />
       </div>
     </div>
   );

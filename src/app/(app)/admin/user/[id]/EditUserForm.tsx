@@ -30,9 +30,11 @@ const labelCls = "block text-sm font-medium text-gray-700 dark:text-gray-300";
 export default function EditUserForm({
   user,
   formAction = updateUserAction,
+  isAdminEdit = true,
 }: {
   user: User;
   formAction?: (userId: string, prevState: any, formData: FormData) => Promise<any>;
+  isAdminEdit?: boolean;
 }) {
   const bound = formAction.bind(null, user.id);
   const [result, action, pending] = useActionState(bound, null);
@@ -109,21 +111,25 @@ export default function EditUserForm({
           <label className={labelCls}>רחוב ומספר בית</label>
           <input name="street" defaultValue={user.street ?? ""} className={inputCls} />
         </div>
-        <div>
-          <label className={labelCls}>תפקיד</label>
-          <select name="role" defaultValue={user.role} className={inputCls}>
-            <option value="USER">משתמש</option>
-            <option value="STAFF">צוות</option>
-            <option value="ADMIN">מנהל</option>
-          </select>
-        </div>
-        <div>
-          <label className={labelCls}>סטטוס</label>
-          <select name="active" defaultValue={String(user.active)} className={inputCls}>
-            <option value="true">פעיל</option>
-            <option value="false">מושבת</option>
-          </select>
-        </div>
+        {isAdminEdit && (
+          <>
+            <div>
+              <label className={labelCls}>תפקיד</label>
+              <select name="role" defaultValue={user.role} className={inputCls}>
+                <option value="USER">משתמש</option>
+                <option value="STAFF">צוות</option>
+                <option value="ADMIN">מנהל</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelCls}>סטטוס</label>
+              <select name="active" defaultValue={String(user.active)} className={inputCls}>
+                <option value="true">פעיל</option>
+                <option value="false">מושבת</option>
+              </select>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="pt-2">
