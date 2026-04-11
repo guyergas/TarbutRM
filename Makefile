@@ -34,16 +34,36 @@ run:
 	sudo systemctl start tarbutrm-dev
 	@echo ""
 	@echo "Dev environment starting → http://$(shell hostname -I | awk '{print $$1}'):3001"
-	@echo "Waiting for health check (this may take up to 2 minutes)..."
-	@bash -c 'for i in {1..120}; do if curl -s -m 5 http://localhost:3001/api/health 2>/dev/null | grep -q "ok"; then echo "✓ Dev environment is ready!"; exit 0; fi; sleep 1; done; echo "✗ Dev environment failed to start"; echo "View logs: sudo systemctl status tarbutrm-dev"; exit 1'
+	@echo "Waiting for deployment (this may take up to 2 minutes)..."
+	@bash -c 'for i in {1..120}; do \
+		if curl -s -m 5 http://localhost:3001/api/health 2>/dev/null | grep -q "ok" && \
+		   curl -s -m 5 http://localhost:3001/login 2>/dev/null | grep -q "form"; then \
+			echo "✓ Dev environment is ready!"; exit 0; \
+		fi; \
+		sleep 1; \
+	done; \
+	echo "✗ Dev deployment failed - app not responding correctly"; \
+	echo "Check logs: sudo systemctl status tarbutrm-dev"; \
+	sudo systemctl stop tarbutrm-dev; \
+	exit 1'
 
 ## Start production environment (runs as service, port 80)
 prod:
 	sudo systemctl start tarbutrm-prod
 	@echo ""
 	@echo "Production environment starting → http://$(shell hostname -I | awk '{print $$1}')"
-	@echo "Waiting for health check (this may take up to 2 minutes)..."
-	@bash -c 'for i in {1..60}; do if curl -s -m 5 http://localhost:3001/api/health 2>/dev/null | grep -q "ok"; then echo "✓ Production environment is ready!"; exit 0; fi; sleep 2; done; echo "✗ Production environment failed to start"; echo "View logs: sudo systemctl status tarbutrm-prod"; exit 1'
+	@echo "Waiting for deployment (this may take up to 2 minutes)..."
+	@bash -c 'for i in {1..60}; do \
+		if curl -s -m 5 http://localhost:3001/api/health 2>/dev/null | grep -q "ok" && \
+		   curl -s -m 5 http://localhost:3001/login 2>/dev/null | grep -q "form"; then \
+			echo "✓ Production environment is ready!"; exit 0; \
+		fi; \
+		sleep 2; \
+	done; \
+	echo "✗ Production deployment failed - app not responding correctly"; \
+	echo "Check logs: sudo systemctl status tarbutrm-prod"; \
+	sudo systemctl stop tarbutrm-prod; \
+	exit 1'
 
 ## Stop all running containers
 stop:
