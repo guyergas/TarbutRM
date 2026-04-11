@@ -217,13 +217,34 @@ When P3 schema is implemented, seed the following test data structure:
 
 ---
 
-## Phase 6 — Hardening & Production Readiness
+## Phase 6 — Budget Top-up (Mock Card Transactions)
 
-- [ ] P6-01 CI pipeline: lint + type-check + unit tests + E2E on PR and merge to `main`
-- [ ] P6-02 Expand seed script: admin + 2 staff + 5 users + 10 products + sample orders
-- [ ] P6-03 DB indexes: `userId` on `BudgetTransaction`, `userId+status` on `Order`, `status` on `Product`
-- [ ] P6-04 Security audit: RBAC coverage gaps, input validation, Prisma injection safety
-- [ ] P6-05 Error boundary + user-facing error message polish across all forms
-- [ ] P6-06 Full E2E suite — all critical flows
-- [ ] P6-07 Production deploy checklist + runbook
-- [ ] P6-08 Verify `make store` / `make load` round-trip on staging
+> **Status:** Pending
+>
+> **Approach:** Create mock UI for card transactions that looks exactly like production billing. In MVP, all top-ups are mocked (no real payment processing). Post-MVP, replace mock with real credit card billing while keeping UI identical.
+
+- [ ] P6-01 Prisma: extend `BudgetTransaction` model with `type` field (enum: ADMIN_CREDIT, ADMIN_DEBIT, CARD_TOPUP) for transaction tracking
+- [ ] P6-02 Mock payment gateway: `mockPaymentService.processCard(cardData, amount, userId)` — validates card format, generates fake transaction ID, returns success
+- [ ] P6-03 User `/wallet` page: display balance + transaction history table (date, type, amount, status)
+- [ ] P6-04 `/wallet/topup` page or modal: "Charge Your Account" form with:
+  - Card number (mock validation: 16 digits, no real processing)
+  - Expiry date (MM/YY format)
+  - CVV (3-4 digits)
+  - Amount selector (predefined tiers: 10, 25, 50, 100 NIS or custom)
+  - Submit button → creates mock `BudgetTransaction` (CARD_TOPUP), updates balance atomically
+- [ ] P6-05 Success confirmation: toast/modal showing "✓ Balance updated" with new balance
+- [ ] P6-06 Transaction history: shows all transactions (admin credit/debit + card top-ups) with type badge and timestamp
+- [ ] P6-07 Collapsible "האזור האישי" (Personal Area) menu in top nav with Profile, Wallet, Orders links
+
+---
+
+## Phase 7 — Hardening & Production Readiness
+
+- [ ] P7-01 CI pipeline: lint + type-check + unit tests + E2E on PR and merge to `main`
+- [ ] P7-02 Expand seed script: admin + 2 staff + 5 users + 10 products + sample orders
+- [ ] P7-03 DB indexes: `userId` on `BudgetTransaction`, `userId+status` on `Order`, `status` on `Product`
+- [ ] P7-04 Security audit: RBAC coverage gaps, input validation, Prisma injection safety
+- [ ] P7-05 Error boundary + user-facing error message polish across all forms
+- [ ] P7-06 Full E2E suite — all critical flows
+- [ ] P7-07 Production deploy checklist + runbook
+- [ ] P7-08 Verify `make store` / `make load` round-trip on staging

@@ -83,18 +83,19 @@ export async function addTransactionAction(
     return { ok: false, message: "אין הרשאה" };
 
   const rawAmount = parseFloat(formData.get("amount") as string);
-  const type = formData.get("type") as string; // "in" | "back"
+  const typeInput = formData.get("type") as string; // "in" | "back"
   const note = (formData.get("note") as string).trim() || null;
 
   if (isNaN(rawAmount) || rawAmount <= 0)
     return { ok: false, message: "יש להזין סכום חיובי" };
 
-  const amount = type === "back" ? -rawAmount : rawAmount;
+  const amount = typeInput === "back" ? -rawAmount : rawAmount;
+  const transactionType = typeInput === "back" ? "ADMIN_DEBIT" : "ADMIN_CREDIT";
 
   try {
     await prisma.$transaction([
       prisma.budgetTransaction.create({
-        data: { userId, amount, note, createdBy: session.user.id },
+        data: { userId, amount, note, type: transactionType, createdBy: session.user.id },
       }),
       prisma.user.update({
         where: { id: userId },

@@ -19,6 +19,12 @@ enum OrderStatus {
   COMPLETED
 }
 
+enum TransactionType {
+  ADMIN_CREDIT
+  ADMIN_DEBIT
+  CARD_TOPUP
+}
+
 model User {
   id                   String                @id @default(cuid())
   firstName            String
@@ -45,12 +51,13 @@ model User {
 }
 
 model BudgetTransaction {
-  id        String   @id @default(cuid())
+  id        String            @id @default(cuid())
   userId    String
-  amount    Decimal  @db.Decimal(10, 2)
+  amount    Decimal           @db.Decimal(10, 2)
   note      String?
+  type      TransactionType   @default(ADMIN_CREDIT)
   createdBy String
-  createdAt DateTime @default(now())
+  createdAt DateTime          @default(now())
 
   @@index([userId])
 }

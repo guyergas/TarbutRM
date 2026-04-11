@@ -111,9 +111,13 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
           {/* Right section */}
           <div className="flex items-center gap-4 justify-end">
             {balance && (
-              <div className="text-xs font-medium text-white dark:text-gray-300">
+              <Link
+                href="/wallet"
+                title="הארנק שלי"
+                className="text-xs font-medium text-white dark:text-gray-300 no-underline hover:opacity-80 transition"
+              >
                 יתרה: ₪{balance}
-              </div>
+              </Link>
             )}
             {cartIcon}
             <Link
