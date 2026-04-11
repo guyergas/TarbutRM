@@ -151,7 +151,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
       {/* Slide-in panel */}
       {open && (
         <div
-          className="fixed top-0 right-0 bottom-0 w-60 bg-white dark:bg-gray-800 shadow-lg z-51 flex flex-col p-6 overflow-y-auto"
+          className="fixed top-0 right-0 bottom-0 w-64 bg-white dark:bg-gray-800 shadow-lg z-51 flex flex-col p-6 overflow-y-auto"
         >
           {/* Panel header */}
           <div className="flex justify-between items-center mb-6 px-4 pt-6">
