@@ -52,6 +52,7 @@ export default async function WalletPage() {
   const serializedTransactions = transactions.map((tx) => ({
     ...tx,
     amount: Number(tx.amount),
+    note: tx.note || undefined,
     createdAt: tx.createdAt.toISOString(),
   }));
 
