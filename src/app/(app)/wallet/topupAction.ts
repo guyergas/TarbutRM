@@ -47,6 +47,8 @@ export async function processTopupAction(
     });
 
     revalidatePath("/wallet");
+    // Revalidate the layout to refresh TopBar with updated balance
+    revalidatePath("/(app)");
     return {
       ok: true,
       message: "Balance updated successfully ✓",
