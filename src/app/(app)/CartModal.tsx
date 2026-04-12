@@ -267,10 +267,24 @@ export default function CartModal({
               <span>סה"כ:</span>
               <span>{totalCost.toFixed(2)} ₪</span>
             </div>
+
+            {userBalance && Number(userBalance) < totalCost && (
+              <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 p-3 rounded-md mb-3 text-sm">
+                יתרה לא מספיקה לביצוע הזמנה זו
+              </div>
+            )}
+
+            {userBalance &&
+              Number(userBalance) >= totalCost &&
+              Number(userBalance) - totalCost < 20 && (
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-3 rounded-md mb-3 text-sm">
+                  התראה: היתרה שלך לאחר הרכישה תהיה נמוכה (₪{(Number(userBalance) - totalCost).toFixed(2)})
+                </div>
+              )}
+
             <button
               onClick={() => setShowCheckoutConfirm(true)}
               disabled={isLoading || (userBalance && Number(userBalance) < totalCost)}
-              title={userBalance && Number(userBalance) < totalCost ? "יתרה לא מספיקה" : ""}
               className="block w-full py-2.5 bg-green-600 dark:bg-green-700 text-white border-none rounded-md text-center font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               {isLoading ? "מעבד..." : "לתשלום"}
