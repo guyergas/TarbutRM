@@ -147,6 +147,9 @@ export default function CartModal({
       // Clear cart
       await clearCartAction();
 
+      // Notify cart icon to reload
+      window.dispatchEvent(new CustomEvent("cartCleared"));
+
       // Redirect to order detail page (shows orders list with modal open)
       router.push(`/orders/${order.id}`);
 
@@ -266,7 +269,8 @@ export default function CartModal({
             </div>
             <button
               onClick={() => setShowCheckoutConfirm(true)}
-              disabled={isLoading}
+              disabled={isLoading || (userBalance && Number(userBalance) < totalCost)}
+              title={userBalance && Number(userBalance) < totalCost ? "יתרה לא מספיקה" : ""}
               className="block w-full py-2.5 bg-green-600 dark:bg-green-700 text-white border-none rounded-md text-center font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               {isLoading ? "מעבד..." : "לתשלום"}
@@ -306,6 +310,12 @@ export default function CartModal({
               </div>
             )}
 
+            {userBalance && Number(userBalance) < totalCost && (
+              <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 p-3 rounded-md mb-4 text-sm">
+                אין לך יתרה מספיקה לביצוע הזמנה זו
+              </div>
+            )}
+
             <div className="mb-4 text-sm text-gray-700 dark:text-gray-300 space-y-2">
               <div className="flex justify-between">
                 <span>יתרה נוכחית:</span>
@@ -339,7 +349,7 @@ export default function CartModal({
               </button>
               <button
                 onClick={handleCheckout}
-                disabled={isLoading}
+                disabled={isLoading || (userBalance && Number(userBalance) < totalCost)}
                 className="flex-1 py-2.5 bg-green-600 dark:bg-green-700 text-white border-none rounded-md font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 {isLoading ? "מעבד..." : "אישור"}
