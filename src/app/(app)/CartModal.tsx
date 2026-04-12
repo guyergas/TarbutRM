@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import UnifiedItemModal from "./store/[menuId]/UnifiedItemModal";
 import { cartService } from "@/modules/cart";
 import {
@@ -270,7 +271,10 @@ export default function CartModal({
 
             {userBalance && Number(userBalance) < totalCost && (
               <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 p-3 rounded-md mb-3 text-sm">
-                יתרה לא מספיקה לביצוע הזמנה זו
+                <div>יתרה לא מספיקה לביצוע הזמנה זו</div>
+                <Link href="/wallet" className="text-red-600 dark:text-red-400 underline hover:text-red-700 dark:hover:text-red-300">
+                  טען יתרה
+                </Link>
               </div>
             )}
 
