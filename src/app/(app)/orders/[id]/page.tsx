@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { orderService } from "@/modules/order";
 import Link from "next/link";
-import OrdersTableClient from "../OrdersTableClient";
+import StaffOrdersClient from "../staff/orders/StaffOrdersClient";
 
 export default async function OrderDetailPage({
   params,
@@ -77,7 +77,7 @@ export default async function OrderDetailPage({
           </Link>
         </div>
       ) : (
-        <OrdersTableClient orders={serializedOrders} initialOpenOrderId={id} allowStatusAdvance={true} isUserView={true} />
+        <StaffOrdersClient orders={serializedOrders} initialOpenOrderId={id} showCustomerName={false} allowStatusAdvance={true} isUserView={true} />
       )}
     </div>
   );
