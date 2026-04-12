@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { orderService } from "@/modules/order";
 import Link from "next/link";
-import StaffOrdersClient from "../staff/orders/StaffOrdersClient";
+import StaffOrdersClient from "../../staff/orders/StaffOrdersClient";
 
 export default async function OrderDetailPage({
   params,
