@@ -37,7 +37,7 @@ run:
 	@echo "Starting dev environment..."
 	sudo systemctl start tarbutrm-dev
 	@echo ""
-	@echo "Dev environment starting → http://$(shell hostname -I | awk '{print $$1}'):3001"
+	@echo "Dev environment starting → http://$(shell hostname -I | awk '{print $$1}'):3001 (direct, HTTP) or https://$(shell hostname -I | awk '{print $$1}') (HTTPS via nginx)"
 	@echo "Waiting for deployment (this may take up to 2 minutes)..."
 	@bash -c 'for i in {1..120}; do \
 		if curl -s -m 5 http://localhost:3001/api/health 2>/dev/null | grep -q "ok" && \
@@ -59,11 +59,11 @@ prod:
 	@echo "Starting production environment..."
 	sudo systemctl start tarbutrm-prod
 	@echo ""
-	@echo "Production environment starting → http://$(shell hostname -I | awk '{print $$1}')"
+	@echo "Production environment starting → https://$(shell hostname -I | awk '{print $$1}') (HTTPS)"
 	@echo "Waiting for deployment (this may take up to 2 minutes)..."
 	@bash -c 'for i in {1..120}; do \
-		if curl -s -m 5 http://localhost:80/api/health 2>/dev/null | grep -q "ok" && \
-		   curl -s -m 5 http://localhost:80/login 2>/dev/null | grep -q "form"; then \
+		if curl -s -k -m 5 https://localhost/api/health 2>/dev/null | grep -q "ok" && \
+		   curl -s -k -m 5 https://localhost/login 2>/dev/null | grep -q "form"; then \
 			echo "✓ Production environment is ready!"; exit 0; \
 		fi; \
 		sleep 2; \

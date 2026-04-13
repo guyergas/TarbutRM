@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import UnifiedItemModal from "./store/[menuId]/UnifiedItemModal";
+import TopupModal from "./wallet/TopupModal";
 import { cartService } from "@/modules/cart";
 import {
   removeFromCartAction,
@@ -69,6 +70,7 @@ export default function CartModal({
   const [stockHistory, setStockHistory] = useState<StockHistory[]>([]);
   const [showCheckoutConfirm, setShowCheckoutConfirm] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [showTopupModal, setShowTopupModal] = useState(false);
 
   const handleRemoveItem = async (itemId: string) => {
     setIsLoading(true);
@@ -272,9 +274,12 @@ export default function CartModal({
             {userBalance && Number(userBalance) < totalCost && (
               <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 p-3 rounded-md mb-3 text-sm">
                 <div>יתרה לא מספיקה לביצוע הזמנה זו</div>
-                <Link href="/wallet" className="text-red-600 dark:text-red-400 underline hover:text-red-700 dark:hover:text-red-300">
+                <button
+                  onClick={() => setShowTopupModal(true)}
+                  className="bg-none border-none text-red-600 dark:text-red-400 underline hover:text-red-700 dark:hover:text-red-300 cursor-pointer p-0 font-medium"
+                >
                   טען יתרה
-                </Link>
+                </button>
               </div>
             )}
 
@@ -288,7 +293,7 @@ export default function CartModal({
 
             <button
               onClick={() => setShowCheckoutConfirm(true)}
-              disabled={isLoading || (userBalance && Number(userBalance) < totalCost)}
+              disabled={isLoading || !!(userBalance && Number(userBalance) < totalCost)}
               className="block w-full py-2.5 bg-green-600 dark:bg-green-700 text-white border-none rounded-md text-center font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               {isLoading ? "מעבד..." : "לתשלום"}
@@ -367,7 +372,7 @@ export default function CartModal({
               </button>
               <button
                 onClick={handleCheckout}
-                disabled={isLoading || (userBalance && Number(userBalance) < totalCost)}
+                disabled={isLoading || !!(userBalance && Number(userBalance) < totalCost)}
                 className="flex-1 py-2.5 bg-green-600 dark:bg-green-700 text-white border-none rounded-md font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 {isLoading ? "מעבד..." : "אישור"}
@@ -376,6 +381,12 @@ export default function CartModal({
           </div>
         </>
       )}
+
+      {/* Topup Modal */}
+      <TopupModal
+        open={showTopupModal}
+        onClose={() => setShowTopupModal(false)}
+      />
     </>
   );
 }
