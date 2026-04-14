@@ -19,7 +19,7 @@ export default async function StaffOrderDetailPage({
   const order = await orderService.getOrder(id);
 
   if (!order) {
-    redirect("/staff/queue");
+    redirect("/staff/orders");
   }
 
   // Serialize order to plain objects (Decimal → string, Date → ISO string)

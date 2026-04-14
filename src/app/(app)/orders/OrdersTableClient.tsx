@@ -44,6 +44,7 @@ export default function OrdersTableClient({
   allowStatusAdvance = false,
   isUserView = false,
   isStaffQueue = false,
+  onStatusUpdated,
 }: {
   orders: SerializedOrder[];
   initialOpenOrderId?: string;
@@ -51,6 +52,7 @@ export default function OrdersTableClient({
   allowStatusAdvance?: boolean;
   isUserView?: boolean;
   isStaffQueue?: boolean;
+  onStatusUpdated?: (updatedOrder: SerializedOrder) => void;
 }) {
   const [orders, setOrders] = useState(initialOrders);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialOpenOrderId || null);
@@ -59,7 +61,7 @@ export default function OrdersTableClient({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const selectedOrder = orders.find((o) => o.id === selectedOrderId);
 
-  const handleAdvanceStatus = async (orderId: string) => {
+  const handleAdvanceStatus = async (orderId: string, targetStatus?: string) => {
     if (!allowStatusAdvance) return;
 
     setAdvancingOrderId(orderId);
@@ -67,13 +69,15 @@ export default function OrdersTableClient({
     setSuccessMessage(null);
 
     try {
+      console.log("DEBUG OrdersTableClient: handleAdvanceStatus called with targetStatus=", targetStatus);
       // Dynamic import to avoid circular dependencies
       const { advanceStatusAction } = await import("../staff/orders/actions");
-      const result = await advanceStatusAction(orderId);
+      const result = await advanceStatusAction(orderId, targetStatus);
+      console.log("DEBUG OrdersTableClient: result=", result);
 
       if (result.success && result.order) {
         // Serialize the updated order
-        const items = result.order.items.map((item: any) => ({
+        const items = result.order!.items.map((item: any) => ({
           id: item.id,
           quantity: item.quantity,
           unitPrice: Number(item.unitPrice).toFixed(2),
@@ -82,19 +86,19 @@ export default function OrdersTableClient({
         }));
 
         const updatedOrder: SerializedOrder = {
-          id: result.order.id,
-          orderNumber: result.order.orderNumber,
-          status: result.order.status,
-          total: Number(result.order.total).toFixed(2),
+          id: result.order!.id,
+          orderNumber: result.order!.orderNumber,
+          status: result.order!.status,
+          total: Number(result.order!.total).toFixed(2),
           itemCount: items.reduce((sum: number, item: any) => sum + item.quantity, 0),
-          createdAt: new Date(result.order.createdAt).toLocaleDateString("he-IL"),
-          createdAtFull: new Date(result.order.createdAt).toLocaleTimeString("he-IL", {
+          createdAt: new Date(result.order!.createdAt).toLocaleDateString("he-IL"),
+          createdAtFull: new Date(result.order!.createdAt).toLocaleTimeString("he-IL", {
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit",
           }),
           items,
-          statusHistory: result.order.statusHistory.map((history: any) => {
+          statusHistory: result.order!.statusHistory.map((history: any) => {
             const changerName = history.changer
               ? `${history.changer.firstName} ${history.changer.lastName}`
               : "Unknown";
@@ -110,13 +114,18 @@ export default function OrdersTableClient({
               changerName,
             };
           }),
-          customerName: (result.order as any).customerName,
+          customerName: (result.order! as any).customerName,
         };
 
         // Update the orders list
         setOrders((prev) =>
           prev.map((o) => (o.id === orderId ? updatedOrder : o))
         );
+
+        // Call the callback to notify parent of the status update
+        if (onStatusUpdated) {
+          onStatusUpdated(updatedOrder);
+        }
 
         setSuccessMessage(`Status advanced to ${statusBadgeConfig[updatedOrder.status]?.label}`);
       } else {
@@ -354,14 +363,14 @@ export default function OrdersTableClient({
                       {selectedOrder.status === "NEW" && (
                         <>
                           <button
-                            onClick={() => handleAdvanceStatus(selectedOrder.id)}
+                            onClick={() => handleAdvanceStatus(selectedOrder.id, "IN_PROGRESS")}
                             disabled={advancingOrderId !== null}
                             className="bg-indigo-600 dark:bg-indigo-700 text-white border-none px-4 py-2 rounded font-semibold cursor-pointer hover:bg-indigo-700 dark:hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition"
                           >
                             {advancingOrderId !== null ? "מעדכן..." : "העבר לעיבוד"}
                           </button>
                           <button
-                            onClick={() => handleAdvanceStatus(selectedOrder.id)}
+                            onClick={() => handleAdvanceStatus(selectedOrder.id, "COMPLETED")}
                             disabled={advancingOrderId !== null}
                             className="bg-green-600 dark:bg-green-700 text-white border-none px-4 py-2 rounded font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition"
                           >
@@ -391,7 +400,7 @@ export default function OrdersTableClient({
                     <>
                       {(selectedOrder.status === "NEW" || selectedOrder.status === "IN_PROGRESS") && (
                         <button
-                          onClick={() => handleAdvanceStatus(selectedOrder.id)}
+                          onClick={() => handleAdvanceStatus(selectedOrder.id, "COMPLETED")}
                           disabled={advancingOrderId !== null}
                           className="bg-green-600 dark:bg-green-700 text-white border-none px-4 py-2 rounded font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition"
                         >

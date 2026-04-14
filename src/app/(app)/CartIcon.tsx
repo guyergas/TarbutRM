@@ -48,14 +48,22 @@ export default function CartIcon({ initialCount, userRole, userBalance }: CartIc
     loadCart();
   }, []);
 
-  // Refetch cart when items are added to keep data in sync
+  // Refetch cart when items are added or cleared to keep data in sync
   useEffect(() => {
     const handleCartItemAdded = () => {
       loadCart();
     };
 
+    const handleCartCleared = () => {
+      loadCart();
+    };
+
     window.addEventListener("cartItemAdded", handleCartItemAdded);
-    return () => window.removeEventListener("cartItemAdded", handleCartItemAdded);
+    window.addEventListener("cartCleared", handleCartCleared);
+    return () => {
+      window.removeEventListener("cartItemAdded", handleCartItemAdded);
+      window.removeEventListener("cartCleared", handleCartCleared);
+    };
   }, []);
 
   const handleCartUpdate = (items: CartItem[], total: number) => {
@@ -70,7 +78,7 @@ export default function CartIcon({ initialCount, userRole, userBalance }: CartIc
       <button
         onClick={() => setIsOpen(true)}
         title="Cart"
-        className="flex items-center text-white no-underline"
+        className="flex items-center text-gray-900 dark:text-white no-underline relative"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +90,7 @@ export default function CartIcon({ initialCount, userRole, userBalance }: CartIc
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-white"
+          className="text-gray-900 dark:text-white"
         >
           <circle cx="9" cy="21" r="1" />
           <circle cx="20" cy="21" r="1" />

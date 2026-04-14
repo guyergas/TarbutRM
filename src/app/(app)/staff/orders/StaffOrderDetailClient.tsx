@@ -48,7 +48,9 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
     setError(null);
     setSuccessMessage(null);
 
-    const result = await advanceStatusAction(order.id);
+    console.log("DEBUG: handleAdvanceStatus called with targetStatus=", targetStatus);
+    const result = await advanceStatusAction(order.id, targetStatus);
+    console.log("DEBUG: advanceStatusAction returned:", result);
 
     if (result.success && result.order) {
       // Serialize the updated order
@@ -221,18 +223,18 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
           )}
 
           {/* Status Advancement Buttons */}
-          <div className="flex gap-3 justify-end">
+          <div className="flex gap-3 justify-end flex-row-reverse">
             {order.status === "NEW" && (
               <>
                 <button
-                  onClick={() => handleAdvanceStatus()}
+                  onClick={() => handleAdvanceStatus("IN_PROGRESS")}
                   disabled={advancingToStatus !== null}
                   className="bg-indigo-500 dark:bg-indigo-600 text-white border-none px-4 py-2 rounded font-semibold cursor-pointer hover:bg-indigo-600 dark:hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition text-sm"
                 >
                   {advancingToStatus !== null ? "מעדכן..." : "העבר לעיבוד"}
                 </button>
                 <button
-                  onClick={() => handleAdvanceStatus()}
+                  onClick={() => handleAdvanceStatus("COMPLETED")}
                   disabled={advancingToStatus !== null}
                   className="bg-green-600 dark:bg-green-700 text-white border-none px-4 py-2 rounded font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed transition text-sm"
                 >
@@ -243,7 +245,7 @@ export default function StaffOrderDetailClient({ order: initialOrder }: { order:
 
             {order.status === "IN_PROGRESS" && (
               <button
-                onClick={() => handleAdvanceStatus()}
+                onClick={() => handleAdvanceStatus("COMPLETED")}
                 disabled={advancingToStatus !== null}
                 className="bg-green-600 dark:bg-green-700 text-white border-none px-4 py-2 rounded font-semibold cursor-pointer hover:bg-green-700 dark:hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed transition text-sm"
               >

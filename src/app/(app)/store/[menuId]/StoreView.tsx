@@ -101,44 +101,41 @@ export default function StoreView({
         </div>
       </div>
 
-      {/* Main content: sidebar + grid */}
-      <div className="flex flex-1 overflow-hidden bg-black dark:bg-black">
-        {/* Sections Sidebar */}
-        <aside className="w-32 flex-shrink-0 border-l-2 border-r-2 border-t border-gray-700 dark:border-gray-700 bg-black dark:bg-black py-4 flex flex-col" style={{ overflowY: "scroll", scrollbarGutter: "stable" }}>
-          {userRole === "ADMIN" && selectedSection && (
-            <div className="flex gap-0.5 items-center px-1 pb-3 border-b border-gray-700 dark:border-gray-700 mb-3 justify-end overflow-hidden min-w-0">
-              <SectionControls
-                section={selectedSection}
-                sections={currentMenu.sections}
-                menuId={currentMenu.id}
-              />
-              <CreateSectionButton menuId={currentMenu.id} />
-            </div>
-          )}
-
-          {currentMenu.sections.length === 0 ? (
-            <div className="px-4 text-gray-400 dark:text-gray-500 text-sm">
-              אין קטגוריות
-            </div>
-          ) : (
-            <nav className="flex flex-col">
+      {/* Sections Navigation Bar */}
+      {currentMenu.sections.length > 0 && (
+        <div className="bg-black dark:bg-black border-b-2 border-gray-700 dark:border-gray-700 p-0 overflow-x-auto" style={{ scrollbarGutter: "stable", height: "48px" }}>
+          <div className="h-full mx-auto px-4 flex gap-0 items-stretch" style={{ scrollbarGutter: "stable", maxWidth: "1024px" }}>
+            <div className="flex gap-0 items-stretch flex-1" style={{ overflowX: "scroll", scrollbarGutter: "stable", maxHeight: "48px" }}>
               {currentMenu.sections.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => setSelectedSectionId(section.id)}
-                  className={`py-3 px-2 border-none text-right cursor-pointer text-xs transition-all overflow-hidden text-ellipsis whitespace-nowrap min-w-0 ${
+                  className={`py-2 px-4 no-underline text-xs flex items-center whitespace-nowrap border-none h-full cursor-pointer transition-all ${
                     section.id === selectedSectionId
-                      ? "font-semibold text-white bg-black dark:bg-black border-l-[3px] border-white dark:border-white pl-1"
+                      ? "font-semibold text-white bg-black dark:bg-black border-b-[3px] border-white dark:border-white"
                       : "font-medium text-gray-400 dark:text-gray-500 bg-transparent"
                   }`}
                 >
                   {section.name}
                 </button>
               ))}
-            </nav>
-          )}
-        </aside>
+            </div>
+            {userRole === "ADMIN" && selectedSection && (
+              <div className="flex gap-0.5 items-center px-2 border-l-2 border-gray-700 dark:border-gray-700 h-full" style={{ maxHeight: "48px", overflow: "hidden" }}>
+                <SectionControls
+                  section={selectedSection}
+                  sections={currentMenu.sections}
+                  menuId={currentMenu.id}
+                />
+                <CreateSectionButton menuId={currentMenu.id} />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
+      {/* Main content: full width grid */}
+      <div className="flex flex-1 overflow-hidden bg-black dark:bg-black">
         {/* Items Grid */}
         <main className="flex-1 p-3 bg-black dark:bg-black" style={{ overflowY: "scroll", scrollbarGutter: "stable" }}>
           {!selectedSection ? (
@@ -156,7 +153,7 @@ export default function StoreView({
                   אין מוצרים בקטגוריה זו
                 </div>
               ) : (
-                <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
+                <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))" }}>
                   {selectedSection.items.map((item) => (
                     <ItemCard
                       key={item.id}

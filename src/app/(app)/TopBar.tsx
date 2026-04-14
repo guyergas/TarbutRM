@@ -15,6 +15,8 @@ export default async function TopBar({ role }: { role?: Role }) {
   let balance: string | null = null;
   let cartItemCount = 0;
   let openOrdersCount = 0;
+  let allOpenOrdersCount = 0;
+  let openMessagesCount = 0;
 
   if (session?.user?.id) {
     const user = await prisma.user.findUnique({
@@ -36,6 +38,22 @@ export default async function TopBar({ role }: { role?: Role }) {
     openOrdersCount = openOrders;
   }
 
+  // Count all open orders in the system (for staff queue badge)
+  const allOpenOrders = await prisma.order.count({
+    where: {
+      status: { in: ["NEW", "IN_PROGRESS"] },
+    },
+  });
+  allOpenOrdersCount = allOpenOrders;
+
+  // Count open messages (for admin badge)
+  if (session?.user?.role === "ADMIN") {
+    const openMessages = await prisma.contactMessage.count({
+      where: { status: "OPEN" },
+    });
+    openMessagesCount = openMessages;
+  }
+
   const userRole = role || (session?.user?.role as Role) || "USER";
 
   return (
@@ -46,6 +64,8 @@ export default async function TopBar({ role }: { role?: Role }) {
       userId={session?.user?.id}
       cartIcon={<CartIcon initialCount={cartItemCount} userRole={userRole} userBalance={balance} />}
       openOrdersCount={openOrdersCount}
+      allOpenOrdersCount={allOpenOrdersCount}
+      openMessagesCount={openMessagesCount}
     />
   );
 }

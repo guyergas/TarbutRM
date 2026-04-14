@@ -175,17 +175,12 @@ export async function listUserOrders(userId: string) {
 }
 
 /**
- * List NEW and IN_PROGRESS orders for staff queue
+ * List all orders (NEW, IN_PROGRESS, COMPLETED) for staff queue
  */
 export async function listStaffQueue() {
   const prisma = getPrismaInstance();
 
   return prisma.order.findMany({
-    where: {
-      status: {
-        in: ["NEW", "IN_PROGRESS"],
-      },
-    },
     include: {
       user: {
         select: {
@@ -214,7 +209,7 @@ export async function listStaffQueue() {
  * NEW → IN_PROGRESS → COMPLETED
  * Requires STAFF or ADMIN role (validation done at action layer)
  */
-export async function advanceStatus(orderId: string, actorId: string) {
+export async function advanceStatus(orderId: string, actorId: string, targetStatus?: string) {
   const prisma = getPrismaInstance();
 
   // Fetch current order
@@ -238,7 +233,7 @@ export async function advanceStatus(orderId: string, actorId: string) {
     throw new Error("Cannot advance from COMPLETED status");
   }
 
-  const nextStatus = order.status === "NEW" ? "IN_PROGRESS" : "COMPLETED";
+  const nextStatus = (targetStatus || (order.status === "NEW" ? "IN_PROGRESS" : "COMPLETED")) as "NEW" | "IN_PROGRESS" | "COMPLETED";
 
   // Atomic transaction: update status + create history
   const updatedOrder = await prisma.$transaction(async (tx) => {

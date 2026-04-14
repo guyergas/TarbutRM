@@ -1,5 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import TutorialCheck from "./TutorialCheck";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -8,9 +10,22 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect("/login");
   }
 
+  // Fetch user's tutorial status and role
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { tutorialViewed: true, role: true },
+  });
+
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px", width: "100%", background: "#000000" }}>
-      {children}
-    </main>
+    <>
+      <TutorialCheck
+        userId={session.user.id}
+        tutorialViewed={user?.tutorialViewed ?? false}
+        role={user?.role}
+      />
+      <main className="max-w-[900px] mx-auto px-4 pb-8 w-full bg-white dark:bg-black">
+        {children}
+      </main>
+    </>
   );
 }

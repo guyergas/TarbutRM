@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { toggleStockFromModal, updateItemFromModal } from "./itemModalActions";
+import { QuantitySelector } from "./QuantitySelector";
+import { AddToCartButton } from "./AddToCartButton";
 
 interface StockHistory {
   id: string;
@@ -44,6 +46,7 @@ export default function UnifiedItemModal({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string>("");
   const [cropX, setCropX] = useState(0);
   const [cropY, setCropY] = useState(0);
@@ -323,9 +326,9 @@ export default function UnifiedItemModal({
         </button>
 
         {/* Image */}
-        {item.image ? (
+        {imagePreview || item.image ? (
           <img
-            src={item.image}
+            src={imagePreview || item.image}
             alt={item.name}
             className="w-full h-80 object-contain bg-gray-100 dark:bg-gray-700"
           />
@@ -393,6 +396,17 @@ export default function UnifiedItemModal({
             />
           </div>
 
+          {/* Add to Cart Controls */}
+          {inStock && (
+            <div className="mb-3 flex items-center justify-center gap-2">
+              <QuantitySelector
+                initialQuantity={1}
+                onQuantityChange={setQuantity}
+              />
+              <AddToCartButton itemId={item.id} quantity={quantity} />
+            </div>
+          )}
+
           {/* Image Upload - Admin Only */}
           {canEdit && (
             <div className="mb-3">
@@ -408,22 +422,6 @@ export default function UnifiedItemModal({
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 JPG, PNG עד 5MB
               </p>
-
-              {/* Image Preview */}
-              {imagePreview && (
-                <div className="mt-2">
-                  <div className="w-32 h-32 rounded overflow-hidden bg-gray-100 dark:bg-gray-700">
-                    <img
-                      src={imagePreview}
-                      alt={name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
             </div>
           )}
 

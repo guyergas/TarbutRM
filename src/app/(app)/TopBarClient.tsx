@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LogoutMenuButton from "./LogoutMenuButton";
+import OnboardingTutorial from "@/components/OnboardingTutorial";
+import { markTutorialAsViewed } from "./actions";
+import { useOrderCounts } from "@/hooks/useOrderCounts";
 
 type Role = "USER" | "STAFF" | "ADMIN";
 
@@ -29,22 +32,42 @@ interface TopBarClientProps {
   balance?: string | null;
   cartIcon?: React.ReactNode;
   openOrdersCount?: number;
+  allOpenOrdersCount?: number;
   userId?: string;
+  openMessagesCount?: number;
 }
 
-const linkClassName = "px-1 py-2 rounded text-white dark:text-gray-300 no-underline text-sm font-medium block text-right pr-4";
-const collapsibleClassName = "flex items-center justify-start gap-4 w-full bg-transparent border-none cursor-pointer px-1 py-2 pr-4 text-white dark:text-gray-300 text-sm font-medium";
-const subCollapsibleClassName = "flex items-center justify-start gap-4 w-full bg-transparent border-none cursor-pointer px-1 py-2 pr-4 mr-8 text-white dark:text-gray-300 text-xs font-medium";
-const subCollapsibleClassName1 = "flex items-center justify-start gap-4 w-full bg-transparent border-none cursor-pointer px-1 py-2 pr-4 pl-8 text-white dark:text-gray-300 text-xs font-medium";
-const subLinkClassName = "px-1 py-2 rounded text-white dark:text-gray-300 no-underline text-xs font-medium block text-right pr-4 mr-8";
-const subSubLinkClassName = "px-1 py-2 rounded text-white dark:text-gray-300 no-underline text-xs font-medium block text-right pr-4 mr-16";
+const linkClassName = "px-1 py-2 rounded text-gray-900 dark:text-gray-300 no-underline text-sm font-medium block text-right pr-4";
+const collapsibleClassName = "flex items-center justify-start gap-4 w-full bg-transparent border-none cursor-pointer px-1 py-2 pr-4 text-gray-900 dark:text-gray-300 text-sm font-medium";
+const subCollapsibleClassName = "flex items-center justify-start gap-4 w-full bg-transparent border-none cursor-pointer px-1 py-2 pr-4 mr-8 text-gray-900 dark:text-gray-300 text-xs font-medium";
+const subCollapsibleClassName1 = "flex items-center justify-start gap-4 w-full bg-transparent border-none cursor-pointer px-1 py-2 pr-4 pl-8 text-gray-900 dark:text-gray-300 text-xs font-medium";
+const subLinkClassName = "px-1 py-2 rounded text-gray-900 dark:text-gray-300 no-underline text-xs font-medium block text-right pr-4 mr-8";
+const subSubLinkClassName = "px-1 py-2 rounded text-gray-900 dark:text-gray-300 no-underline text-xs font-medium block text-right pr-4 mr-16";
 
 
-export default function TopBarClient({ role, menus, balance, cartIcon, openOrdersCount = 0, userId }: TopBarClientProps) {
+export default function TopBarClient({ role, menus, balance, cartIcon, openOrdersCount = 0, allOpenOrdersCount = 0, userId, openMessagesCount = 0 }: TopBarClientProps) {
   const [open, setOpen] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false);
-  const [storeOpen, setStoreOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(true);
+  const [storeOpen, setStoreOpen] = useState(true);
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  // Use the order counts hook to get dynamic badge counts
+  const counts = useOrderCounts({
+    userOrders: openOrdersCount,
+    allOrders: allOpenOrdersCount,
+  });
+
+  // Initialize all menus as expanded when component mounts or menus change
+  useEffect(() => {
+    if (menus.length > 0) {
+      const allExpanded = menus.reduce((acc, menu) => ({
+        ...acc,
+        [menu.id]: true,
+      }), {});
+      setExpandedMenus(allExpanded);
+    }
+  }, [menus]);
 
   function close() {
     setOpen(false);
@@ -57,8 +80,32 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
     }));
   }
 
+  async function handleTutorialComplete() {
+    try {
+      if (userId) {
+        await markTutorialAsViewed(userId);
+      }
+      setShowTutorial(false);
+    } catch (error) {
+      console.error("Failed to mark tutorial as viewed:", error);
+      setShowTutorial(false);
+    }
+  }
+
+  function handleTutorialSkip() {
+    setShowTutorial(false);
+  }
+
+  function handleTutorialClick() {
+    setShowTutorial(true);
+    setOpen(false);
+  }
+
   return (
     <>
+      {showTutorial && (
+        <OnboardingTutorial role={role} onComplete={handleTutorialComplete} onSkip={handleTutorialSkip} />
+      )}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 h-[61px] flex items-center justify-between gap-4">
           {/* Left section */}
@@ -78,7 +125,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
-                className="text-white"
+                className="text-gray-900 dark:text-white"
               >
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <line x1="3" y1="12" x2="21" y2="12" />
@@ -97,7 +144,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                 height="24"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="text-white"
+                className="text-gray-900 dark:text-white"
               >
                 <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
                 <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
@@ -106,7 +153,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
           </div>
 
           {/* Title - centered */}
-          <h1 className="text-sm font-semibold text-white text-center m-0 flex-1">תרבות רמות מנשה</h1>
+          <h1 className="text-sm font-semibold text-gray-900 dark:text-white text-center m-0 flex-1">תרבות רמות מנשה</h1>
 
           {/* Right section */}
           <div className="flex items-center gap-4 justify-end">
@@ -114,7 +161,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
               <Link
                 href="/wallet"
                 title="הארנק שלי"
-                className="text-xs font-medium text-white dark:text-gray-300 no-underline hover:opacity-80 transition"
+                className="text-xs font-medium text-gray-900 dark:text-gray-300 no-underline hover:opacity-80 transition"
               >
                 יתרה: ₪{balance}
               </Link>
@@ -131,7 +178,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                 height="24"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="text-white"
+                className="text-gray-900 dark:text-white"
               >
                 <path
                   fillRule="evenodd"
@@ -171,36 +218,7 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
 
           {/* Nav items */}
           <nav className="flex flex-col gap-0">
-            {/* 1. Admin (admin/staff) */}
-            {(role === "ADMIN" || role === "STAFF") && (
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setAdminOpen((v) => !v)}
-                  className={collapsibleClassName}
-                >
-                  <span className="text-right">ניהול</span>
-                  <span className={`text-sm text-gray-400 dark:text-gray-500 transition-transform duration-300 ${adminOpen ? "rotate-180" : ""}`}>
-                    ▼
-                  </span>
-                </button>
-
-                {adminOpen && (
-                  <div className="flex flex-col gap-0.5">
-                    {role === "ADMIN" && (
-                      <Link href="/admin/users" onClick={close} className={subLinkClassName}>
-                        משתמשים
-                      </Link>
-                    )}
-                    <Link href="/staff/queue" onClick={close} className={subLinkClassName}>
-                      תור ההזמנות
-                    </Link>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 2. Store (collapsible with menus) */}
+            {/* 1. Store (collapsible with menus) */}
             {menus.length > 0 && (
               <div>
                 <button
@@ -252,32 +270,101 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
               </div>
             )}
 
-            {/* 3. Wallet */}
+            {/* Border after Store */}
+            <div className="border-t border-gray-300 dark:border-gray-700 my-2"></div>
+
+            {/* 2. Wallet */}
             <Link href="/wallet" onClick={close} className={linkClassName}>
               הארנק שלי
             </Link>
 
-            {/* 4. Orders */}
+            {/* 3. Orders */}
             <Link href="/orders" onClick={close} className={linkClassName}>
               <div className="flex justify-between items-center gap-2">
                 <span>ההזמנות שלי</span>
-                {openOrdersCount > 0 && (
+                {counts.userOrders > 0 && (
                   <span className="bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                    {openOrdersCount}
+                    {counts.userOrders}
                   </span>
                 )}
               </div>
             </Link>
 
-            {/* 5. Contact us */}
+            {/* Border after Orders (only if Admin section exists) */}
+            {(role === "ADMIN" || role === "STAFF") && (
+              <div className="border-t border-gray-300 dark:border-gray-700 my-2"></div>
+            )}
+
+            {/* 4. Admin (admin/staff) */}
+            {(role === "ADMIN" || role === "STAFF") && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setAdminOpen((v) => !v)}
+                  className={collapsibleClassName}
+                >
+                  <span className="text-right">ניהול</span>
+                  <span className={`text-sm text-gray-400 dark:text-gray-500 transition-transform duration-300 ${adminOpen ? "rotate-180" : ""}`}>
+                    ▼
+                  </span>
+                </button>
+
+                {adminOpen && (
+                  <div className="flex flex-col gap-0.5">
+                    {role === "ADMIN" && (
+                      <>
+                        <Link href="/admin/users" onClick={close} className={subLinkClassName}>
+                          משתמשים
+                        </Link>
+                        <Link href="/admin/messages" onClick={close} className={subLinkClassName}>
+                          <div className="flex justify-between items-center gap-2">
+                            <span>הודעות</span>
+                            {openMessagesCount > 0 && (
+                              <span className="bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                                {openMessagesCount}
+                              </span>
+                            )}
+                          </div>
+                        </Link>
+                      </>
+                    )}
+                    <Link href="/staff/orders" onClick={close} className={subLinkClassName}>
+                      <div className="flex justify-between items-center gap-2">
+                        <span>תור ההזמנות</span>
+                        {counts.allOrders > 0 && (
+                          <span className="bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                            {counts.allOrders}
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Border after Admin (or after Orders for regular users) */}
+            <div className="border-t border-gray-300 dark:border-gray-700 my-2"></div>
+
+            {/* 5. Tutorial */}
+            <button
+              type="button"
+              onClick={handleTutorialClick}
+              className={linkClassName}
+            >
+              הדרכה
+            </button>
+
+            {/* 6. Contact us */}
             <Link href="/contactus" onClick={close} className={linkClassName}>
               צור קשר
             </Link>
 
-            {/* 6. Logout */}
-            <div className="border-t border-gray-300 dark:border-gray-700 mt-4 pt-4">
-              <LogoutMenuButton />
-            </div>
+            {/* Border before Logout */}
+            <div className="border-t border-gray-300 dark:border-gray-700 my-2"></div>
+
+            {/* 7. Logout */}
+            <LogoutMenuButton />
           </nav>
         </div>
       )}

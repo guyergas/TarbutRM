@@ -25,6 +25,11 @@ enum TransactionType {
   CARD_TOPUP
 }
 
+enum MessageStatus {
+  OPEN
+  CLOSED
+}
+
 model User {
   id                   String                @id @default(cuid())
   firstName            String
@@ -34,6 +39,7 @@ model User {
   role                 Role                  @default(USER)
   balance              Decimal               @default(0) @db.Decimal(10, 2)
   active               Boolean               @default(true)
+  tutorialViewed       Boolean               @default(false)
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   phone                String?
@@ -196,4 +202,18 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model ContactMessage {
+  id          String         @id @default(cuid())
+  email       String
+  name        String?
+  title       String
+  description String
+  status      MessageStatus  @default(OPEN)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  closedAt    DateTime?
+
+  @@index([status])
 }

@@ -1,9 +1,9 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { orderService } from "@/modules/order";
-import StaffQueueClient from "./StaffQueueClient";
+import StaffOrdersClient from "./StaffOrdersClient";
 
-export default async function StaffQueuePage() {
+export default async function StaffOrdersPage() {
   const session = await auth();
 
   // Verify user is authenticated and has STAFF or ADMIN role
@@ -62,7 +62,8 @@ export default async function StaffQueuePage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <StaffQueueClient orders={serializedOrders} />
+      <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">תור הזמנות</h1>
+      <StaffOrdersClient orders={serializedOrders} />
     </div>
   );
 }

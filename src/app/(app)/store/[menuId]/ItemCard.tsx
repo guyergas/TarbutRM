@@ -73,7 +73,7 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
             }
           }
         }}
-        className="w-52 h-52 bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden mx-auto relative z-0 cursor-pointer"
+        className="w-32 h-32 bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden mx-auto relative z-0 cursor-pointer"
       >
         {item.image ? (
           <img

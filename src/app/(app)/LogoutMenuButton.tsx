@@ -7,20 +7,7 @@ export default function LogoutMenuButton() {
     <button
       type="button"
       onClick={() => signOutAction()}
-      style={{
-        padding: "10px 8px",
-        borderRadius: 8,
-        color: "var(--text-secondary)",
-        textDecoration: "none",
-        fontSize: 15,
-        fontWeight: 500,
-        display: "block",
-        textAlign: "right",
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        width: "100%",
-      }}
+      className="px-1 py-2 rounded text-gray-900 dark:text-gray-300 no-underline text-sm font-medium block text-right pr-4 bg-transparent border-none cursor-pointer w-full"
     >
       התנתקות
     </button>
