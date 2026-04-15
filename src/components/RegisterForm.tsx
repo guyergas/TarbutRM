@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import TermsModal from "./TermsModal";
 
 const inputCls =
   "mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-right";
@@ -48,6 +49,9 @@ export default function RegisterForm({
   const [pending, setPending] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [termsRead, setTermsRead] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   useEffect(() => {
     if (!showPw) return;
@@ -68,6 +72,7 @@ export default function RegisterForm({
     e.preventDefault();
     if (!str.ok) { setError("הסיסמא חלשה מדי."); return; }
     if (!matches) { setError("הסיסמאות אינן תואמות."); return; }
+    if (!termsChecked) { setError("יש לאשר את תקנון השימוש."); return; }
     if (phone && !/^\d{3}-\d{7}$/.test(phone)) { setError("מספר הטלפון אינו תקין — פורמט נדרש: 050-0000000"); return; }
     if (cityChoice === "other" && !cityText.trim()) { setError("יש להזין עיר."); return; }
     setError(null);
@@ -82,62 +87,65 @@ export default function RegisterForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 text-right">
-      <div>
-        <label htmlFor="firstName" className={labelCls}>שם פרטי</label>
-        <input id="firstName" name="firstName" type="text" required autoComplete="given-name" className={inputCls} />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label htmlFor="firstName" className={labelCls}>שם פרטי</label>
+          <input id="firstName" name="firstName" type="text" required autoComplete="given-name" className={inputCls} />
+        </div>
+        <div>
+          <label htmlFor="lastName" className={labelCls}>שם משפחה</label>
+          <input id="lastName" name="lastName" type="text" required autoComplete="family-name" className={inputCls} />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="lastName" className={labelCls}>שם משפחה</label>
-        <input id="lastName" name="lastName" type="text" required autoComplete="family-name" className={inputCls} />
-      </div>
-
-      <div>
-        <label htmlFor="email" className={labelCls}>אימייל</label>
-        <input id="email" name="email" type="email" required autoComplete="email" className={inputCls} />
-      </div>
-
-      <div>
-        <label htmlFor="phone" className={labelCls}>טלפון</label>
-        <input
-          id="phone" name="phone" type="tel" autoComplete="tel"
-          value={phone} onChange={(e) => setPhone(fmtPhone(e.target.value))}
-          placeholder="050-0000000"
-          className={inputCls}
-        />
-        {phone.length > 0 && (
-          <p className={`mt-1 text-sm font-medium ${/^\d{3}-\d{7}$/.test(phone) ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
-            {/^\d{3}-\d{7}$/.test(phone) ? "✓ מספר תקין" : "✗ יש להזין 10 ספרות בפורמט 050-0000000"}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <label className={labelCls}>עיר</label>
-        <input type="hidden" name="city" value={cityChoice === "known" ? KNOWN_CITY : cityText} />
-        <select
-          value={cityChoice}
-          onChange={(e) => setCityChoice(e.target.value as "known" | "other")}
-          className={inputCls}
-        >
-          <option value="known">{KNOWN_CITY}</option>
-          <option value="other">אחר</option>
-        </select>
-        {cityChoice === "other" && (
+      <div className="grid gap-3" style={{gridTemplateColumns: "2fr 3fr"}}>
+        <div>
+          <label htmlFor="phone" className={labelCls}>טלפון</label>
           <input
-            type="text"
-            value={cityText}
-            onChange={(e) => setCityText(e.target.value)}
-            placeholder="הזן עיר..."
-            autoComplete="address-level2"
-            className={`${inputCls} mt-2`}
+            id="phone" name="phone" type="tel" autoComplete="tel"
+            value={phone} onChange={(e) => setPhone(fmtPhone(e.target.value))}
+            placeholder="050-0000000"
+            className={inputCls}
           />
-        )}
+          {phone.length > 0 && (
+            <p className={`mt-1 text-sm font-medium ${/^\d{3}-\d{7}$/.test(phone) ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+              {/^\d{3}-\d{7}$/.test(phone) ? "✓ מספר תקין" : "✗ יש להזין 10 ספרות בפורמט 050-0000000"}
+            </p>
+          )}
+        </div>
+        <div>
+          <label htmlFor="email" className={labelCls}>אימייל</label>
+          <input id="email" name="email" type="email" required autoComplete="email" className={`${inputCls} !text-left`} />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="street" className={labelCls}>רחוב ומספר בית</label>
-        <input id="street" name="street" type="text" autoComplete="street-address" className={inputCls} />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className={labelCls}>עיר</label>
+          <input type="hidden" name="city" value={cityChoice === "known" ? KNOWN_CITY : cityText} />
+          <select
+            value={cityChoice}
+            onChange={(e) => setCityChoice(e.target.value as "known" | "other")}
+            className={inputCls}
+          >
+            <option value="known">{KNOWN_CITY}</option>
+            <option value="other">אחר</option>
+          </select>
+          {cityChoice === "other" && (
+            <input
+              type="text"
+              value={cityText}
+              onChange={(e) => setCityText(e.target.value)}
+              placeholder="הזן עיר..."
+              autoComplete="address-level2"
+              className={`${inputCls} mt-2`}
+            />
+          )}
+        </div>
+        <div>
+          <label htmlFor="street" className={labelCls}>רחוב ומספר בית</label>
+          <input id="street" name="street" type="text" autoComplete="street-address" className={inputCls} />
+        </div>
       </div>
 
       <div>
@@ -203,6 +211,40 @@ export default function RegisterForm({
           </p>
         )}
       </div>
+
+      <div className="flex items-center gap-2 justify-start" dir="rtl">
+        <input
+          id="terms-checkbox"
+          type="checkbox"
+          checked={termsChecked}
+          disabled={!termsRead}
+          onChange={(e) => setTermsChecked(e.target.checked)}
+          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+        />
+        <label
+          className={`text-sm select-none ${termsRead ? "text-gray-700 dark:text-gray-300 cursor-pointer" : "text-gray-400 dark:text-gray-500 cursor-not-allowed"}`}
+          htmlFor="terms-checkbox"
+        >
+          קראתי את{" "}
+          <button
+            type="button"
+            onClick={() => setShowTerms(true)}
+            className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+          >
+            תקנון השימוש
+          </button>
+          {" "}ואני מסכים/ה
+        </label>
+      </div>
+
+      {showTerms && (
+        <TermsModal
+          onClose={() => {
+            setShowTerms(false);
+            setTermsRead(true);
+          }}
+        />
+      )}
 
       {error && (
         <p className="rounded-md bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">{error}</p>

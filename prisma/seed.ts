@@ -45,7 +45,7 @@ async function main() {
   let goldstarItem: any, coronaItem: any, whiskeyItem: any;
 
   if (shouldSeedStore) {
-    // Menu 1: פאב (Pub)
+    // Menu: פאב (Pub)
     const pubMenu = await prisma.menu.create({
       data: {
         name: "פאב",
@@ -56,119 +56,136 @@ async function main() {
     });
     console.log(`Created menu: ${pubMenu.name}`);
 
-    // Sections for Pub
+    // Section 1: קוקטיילים
+    const cocktailsSection = await prisma.section.create({
+      data: {
+        menuId: pubMenu.id,
+        name: "קוקטיילים",
+        position: 1,
+        archived: false,
+        createdBy: user.id,
+      },
+    });
+
+    const cocktails = [
+      { name: "Gin & Tonic – קלאסי ורענן", description: "מרכיבים:\n40 מ״ל ג'ין\n120 מ״ל טוניק\nפלח ליים\nכוס: היי בול\nהכנה: מזיגה על קרח והשלמה בטוניק", price: 20 },
+      { name: "Whiskey Sour – חמצמץ ומאוזן", description: "מרכיבים:\n45 מ״ל וויסקי\n25 מ״ל מיץ לימון\n15 מ״ל סוכר\nכוס: לואו בול\nהכנה: ניעור עם קרח ומזיגה על קרח", price: 20 },
+      { name: "Cosmopolitan – פירותי ואלגנטי", description: "מרכיבים:\n40 מ״ל וודקה\n20 מ״ל ליקר תפוזים\n20 מ״ל מיץ חמוציות\n10 מ״ל מיץ ליים\nכוס: לואו בול\nהכנה: ניעור עם קרח ומזיגה על קרח", price: 20 },
+      { name: "Gin Lychee – פרחוני ורענן", description: "מרכיבים:\n40 מ״ל ג'ין\n20 מ״ל מיץ לימון\n15 מ״ל סירופ מונין ליצ׳י\nנגיעה של מי ורדים\n60 מ״ל סודה\nכוס: לואו בול\nהכנה: ערבוב קל עם קרח והשלמה בסודה", price: 20 },
+      { name: "Mojito – רענן וקיצי", description: "מרכיבים:\n40 מ״ל רום\n20 מ״ל מיץ ליים\n10 מ״ל סוכר\nנענע טרייה\nסגירה: סודה\nכוס: היי בול\nהכנה: מעיכה עדינה של נענע וסגירה", price: 20 },
+      { name: "Cucumber Gin – פרש וירוק", description: "מרכיבים:\n40 מ״ל ג'ין\n20 מ״ל מיץ לימון\n10 מ״ל סירופ סוכר\nפרוסות מלפפון\nסגירה: סודה\nכוס: היי בול\nהכנה: ערבוב קל וסגירה", price: 20 },
+      { name: "Mule – רענן וחריף", description: "מרכיבים:\n40 מ״ל וודקה\n100 מ״ל ג'ינג'ר ביר\n10 מ״ל מיץ לימון\nכוס: לואו בול\nהכנה: מזיגה על הרבה קרח והשלמה בג'ינג'ר ביר", price: 20 },
+      { name: "Negroni – מריר וקלאסי", description: "מרכיבים:\n30 מ״ל ג'ין\n30 מ״ל קמפרי\n30 מ״ל ורמוט אדום\nכוס: לואו בול\nהכנה: ערבוב עם קרח והגשה עם קליפת תפוז", price: 20 },
+      { name: "Arak Rosetta – ישראלי עוקצני", description: "מרכיבים:\n40 מ״ל ערק\n20 מ״ל רוזטה\n10 מ״ל מיץ לימון\nנענע טרייה\nסגירה: מים קרים או סודה\nכוס: היי בול\nהכנה: ערבוב קל עם קרח וסגירה", price: 20 },
+      { name: "Margarita – טרופי ובועט", description: "מרכיבים:\n40 מ״ל טקילה\n20 מ״ל ליקר תפוזים\n15 מ״ל מיץ ליים\n15 מ״ל סירופ מונין טרופי\nכוס: לואו בול\nהכנה: ניעור עם קרח, שוליים של מלח + סוכר + צ׳ילי", price: 20 },
+      { name: "Aperol Spritz – מריר וקליל", description: "מרכיבים:\n60 מ״ל אפרול\n90 מ״ל פרוסקו\n30 מ״ל סודה\nכוס: כוס יין\nהכנה: מזיגה על קרח והשלמה בסודה", price: 20 },
+      { name: "Vermouth Spritz – ארומטי ועדין", description: "מרכיבים:\n60 מ״ל ורמוט לבן\n90 מ״ל פרוסקו\n30 מ״ל סודה\nכוס: כוס יין\nהכנה: מזיגה על קרח והשלמה בסודה", price: 20 },
+      { name: "Vermouth Barcelona – מריר ואותנטי", description: "מרכיבים:\n60 מ״ל ורמוט אדום\nפרוסת תפוז\nזית\nסגירה: סודה (אופציונלי)\nכוס: כוס זכוכית פשוטה (כמו כוס קפה טורקי)\nהכנה: מזיגה על קרח והוספת קישוטים, סגירה לפי בחירה", price: 20 },
+      { name: "Elderflower Spritz – פרחוני ורענן", description: "מרכיבים:\n40 מ״ל סנט גרמין\n90 מ״ל פרוסקו\n30 מ״ל סודה\nכוס: כוס יין\nהכנה: מזיגה על קרח והשלמה בסודה", price: 20 },
+    ];
+
+    for (let i = 0; i < cocktails.length; i++) {
+      const item = await prisma.item.create({
+        data: {
+          sectionId: cocktailsSection.id,
+          name: cocktails[i].name,
+          description: cocktails[i].description,
+          price: cocktails[i].price,
+          inStock: true,
+          position: i + 1,
+          archived: false,
+          createdBy: user.id,
+        },
+      });
+      await prisma.itemStockHistory.create({
+        data: { itemId: item.id, inStock: true, changedBy: user.id, changedAt: new Date() },
+      });
+      if (i === 1) whiskeyItem = item; // Whiskey Sour for test order
+    }
+    console.log(`Created section: ${cocktailsSection.name} (${cocktails.length} items)`);
+
+    // Section 2: בירות
     const beersSection = await prisma.section.create({
       data: {
         menuId: pubMenu.id,
         name: "בירות",
-        position: 1,
+        position: 2,
         archived: false,
         createdBy: user.id,
       },
     });
 
-    const cocktailsSection = await prisma.section.create({
+    const beers = [
+      { name: "גולדסטאר", description: "בירה לאגר ישראלית", price: 10 },
+      { name: "הייניקן", description: "בירה לאגר הולנדית", price: 10 },
+    ];
+
+    for (let i = 0; i < beers.length; i++) {
+      const item = await prisma.item.create({
+        data: {
+          sectionId: beersSection.id,
+          name: beers[i].name,
+          description: beers[i].description,
+          price: beers[i].price,
+          inStock: true,
+          position: i + 1,
+          archived: false,
+          createdBy: user.id,
+        },
+      });
+      await prisma.itemStockHistory.create({
+        data: { itemId: item.id, inStock: true, changedBy: user.id, changedAt: new Date() },
+      });
+      if (i === 0) goldstarItem = item;
+      if (i === 1) coronaItem = item; // הייניקן used as second item for test order
+    }
+    console.log(`Created section: ${beersSection.name} (${beers.length} items)`);
+
+    // Section 3: שתיה קלה
+    const softDrinksSection = await prisma.section.create({
       data: {
         menuId: pubMenu.id,
-        name: "קוקטליים",
-        position: 2,
-        archived: false,
-        createdBy: user.id,
-      },
-    });
-    console.log(`Created sections: ${beersSection.name}, ${cocktailsSection.name}`);
-
-    // Items in Beers section
-    goldstarItem = await prisma.item.create({
-      data: {
-        sectionId: beersSection.id,
-        name: "גולדסטאר",
-        description: "בירה ישראלית קלאסית",
-        price: 5,
-        inStock: true,
-        position: 1,
-        archived: false,
-        image: "https://upload.wikimedia.org/wikipedia/he/thumb/a/a8/Goldstar_beer_bottle.jpg/220px-Goldstar_beer_bottle.jpg",
-        createdBy: user.id,
-      },
-    });
-
-    await prisma.itemStockHistory.create({
-      data: {
-        itemId: goldstarItem.id,
-        inStock: true,
-        changedBy: user.id,
-        changedAt: new Date(),
-      },
-    });
-
-    const coronaItemTemp = await prisma.item.create({
-      data: {
-        sectionId: beersSection.id,
-        name: "קורונה",
-        price: 10,
-        inStock: true,
-        position: 2,
-        archived: false,
-        createdBy: user.id,
-      },
-    });
-    coronaItem = coronaItemTemp;
-
-    await prisma.itemStockHistory.create({
-      data: {
-        itemId: coronaItem.id,
-        inStock: true,
-        changedBy: user.id,
-        changedAt: new Date(),
-      },
-    });
-
-    // Items in Cocktails section
-    whiskeyItem = await prisma.item.create({
-      data: {
-        sectionId: cocktailsSection.id,
-        name: "וויסקי סאוור",
-        price: 20,
-        inStock: true,
-        position: 1,
+        name: "שתיה קלה",
+        position: 3,
         archived: false,
         createdBy: user.id,
       },
     });
 
-    await prisma.itemStockHistory.create({
-      data: {
-        itemId: whiskeyItem.id,
-        inStock: true,
-        changedBy: user.id,
-        changedAt: new Date(),
-      },
-    });
+    const softDrinks = [
+      { name: "ספרייט", description: "משקה לימוני מוגז", price: 10 },
+      { name: "קוקה קולה", description: "משקה קלאסי מוגז", price: 5 },
+    ];
 
-    console.log(`Created items: ${goldstarItem.name}, ${coronaItem.name}, ${whiskeyItem.name}`);
-
-    // Menu 2: פורים (Purim) - empty
-    const purimMenu = await prisma.menu.create({
-      data: {
-        name: "פורים",
-        position: 2,
-        archived: false,
-        createdBy: user.id,
-      },
-    });
-    console.log(`Created menu: ${purimMenu.name}`);
+    for (let i = 0; i < softDrinks.length; i++) {
+      const item = await prisma.item.create({
+        data: {
+          sectionId: softDrinksSection.id,
+          name: softDrinks[i].name,
+          description: softDrinks[i].description,
+          price: softDrinks[i].price,
+          inStock: true,
+          position: i + 1,
+          archived: false,
+          createdBy: user.id,
+        },
+      });
+      await prisma.itemStockHistory.create({
+        data: { itemId: item.id, inStock: true, changedBy: user.id, changedAt: new Date() },
+      });
+    }
+    console.log(`Created section: ${softDrinksSection.name} (${softDrinks.length} items)`);
 
     console.log("✓ Phase 3 seed data created successfully");
   } else {
     console.log("Store data already seeded, skipping...");
     // Still need to fetch items for order creation
     const items = await prisma.item.findMany({
-      where: { name: { in: ["גולדסטאר", "קורונה", "וויסקי סאוור"] } },
+      where: { name: { in: ["גולדסטאר", "הייניקן", "Whiskey Sour – חמצמץ ומאוזן"] } },
     });
     goldstarItem = items.find((i) => i.name === "גולדסטאר");
-    coronaItem = items.find((i) => i.name === "קורונה");
-    whiskeyItem = items.find((i) => i.name === "וויסקי סאוור");
+    coronaItem = items.find((i) => i.name === "הייניקן");
+    whiskeyItem = items.find((i) => i.name === "Whiskey Sour – חמצמץ ומאוזן");
   }
 
   // Create test users and orders for staff queue testing
@@ -227,20 +244,20 @@ async function main() {
   });
 
   if (!existingOrder && goldstarItem && coronaItem) {
-    // Create order with goldstar + corona
+    // Create order with goldstar + heineken
     const testOrder = await prisma.order.create({
       data: {
         userId: regularUser.id,
         status: "NEW",
-        total: 15, // 5 + 10
+        total: 20, // 10 + 10
         items: {
           createMany: {
             data: [
               {
                 itemId: goldstarItem.id,
                 quantity: 1,
-                unitPrice: 5,
-                subtotal: 5,
+                unitPrice: 10,
+                subtotal: 10,
               },
               {
                 itemId: coronaItem.id,

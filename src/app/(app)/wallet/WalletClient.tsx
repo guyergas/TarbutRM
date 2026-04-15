@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import TopupModal from "./TopupModal";
 
 interface User {
@@ -34,7 +35,15 @@ export default function WalletClient({
   transactions: Transaction[];
   creatorMap: Record<string, Creator>;
 }) {
-  const [modalOpen, setModalOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [modalOpen, setModalOpen] = useState(() => searchParams.get("topup") === "1");
+
+  useEffect(() => {
+    if (searchParams.get("topup") === "1") {
+      router.replace("/wallet");
+    }
+  }, []);
 
   const getTransactionBadge = (type: string, isIn: boolean) => {
     if (type === "CARD_TOPUP") {

@@ -2,6 +2,9 @@ import { auth } from "@/lib/auth";
 import StoreView from "./StoreView";
 import { redirect } from "next/navigation";
 import { menuService } from "@/modules/store";
+import { prisma } from "@/lib/prisma";
+
+const LOCAL_CITY = "רמות מנשה";
 
 export default async function StorePage({ params }: { params: Promise<{ menuId: string }> }) {
   const session = await auth();
@@ -17,6 +20,13 @@ export default async function StorePage({ params }: { params: Promise<{ menuId: 
   if (!menu) {
     redirect("/");
   }
+
+  // Determine if user is local (Ramot Menashe resident)
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { city: true },
+  });
+  const isLocalUser = dbUser?.city === LOCAL_CITY;
 
   // Fetch menus for nav (all for admin, visible only for users)
   const allMenus =
@@ -38,6 +48,7 @@ export default async function StorePage({ params }: { params: Promise<{ menuId: 
     })),
   };
 
+
   const serializedMenus = allMenus.map((m: any) => ({
     ...m,
     sections: m.sections?.map((s: any) => ({
@@ -57,6 +68,7 @@ export default async function StorePage({ params }: { params: Promise<{ menuId: 
       allMenus={serializedMenus}
       userRole={session.user.role as "USER" | "STAFF" | "ADMIN"}
       userId={session.user.id}
+      isLocalUser={isLocalUser}
     />
   );
 }

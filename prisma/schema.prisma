@@ -54,6 +54,8 @@ model User {
   cartItems            CartItem[]            @relation("CartItems")
   orders               Order[]               @relation("OrderUser")
   orderStatusHistory   OrderStatusHistory[]  @relation("OrderStatusChangedBy")
+  operationSlots       OperationStaff[]      @relation("OperationStaff")
+  operationHelps       OperationHelper[]     @relation("OperationHelper")
 }
 
 model BudgetTransaction {
@@ -103,7 +105,8 @@ model Item {
   name        String
   description String?
   price       Decimal         @db.Decimal(10, 2)
-  inStock     Boolean         @default(true)
+  inStock              Boolean         @default(true)
+  availableForGuests   Boolean         @default(true)
   position    Int
   archived    Boolean         @default(false)
   image       String?
@@ -202,6 +205,46 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Operation {
+  id             String           @id @default(cuid())
+  date           DateTime         @db.Date
+  note           String?
+  requiredCount  Int              @default(2)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  staff          OperationStaff[]
+  helpers        OperationHelper[]
+
+  @@unique([date])
+  @@index([date])
+}
+
+model OperationStaff {
+  id          String    @id @default(cuid())
+  operationId String
+  operation   Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation("OperationStaff", fields: [userId], references: [id], onDelete: Cascade)
+  addedAt     DateTime  @default(now())
+
+  @@unique([operationId, userId])
+  @@index([operationId])
+  @@index([userId])
+}
+
+model OperationHelper {
+  id          String    @id @default(cuid())
+  operationId String
+  operation   Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation("OperationHelper", fields: [userId], references: [id], onDelete: Cascade)
+  addedAt     DateTime  @default(now())
+
+  @@unique([operationId, userId])
+  @@index([operationId])
+  @@index([userId])
 }
 
 model ContactMessage {

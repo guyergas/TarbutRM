@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { Suspense } from "react";
 import WalletClient from "./WalletClient";
 
 export const metadata = { title: "הארנק שלי — TarbutRM" };
@@ -57,10 +58,12 @@ export default async function WalletPage() {
   }));
 
   return (
-    <WalletClient
-      user={serializedUser}
-      transactions={serializedTransactions}
-      creatorMap={creatorMap}
-    />
+    <Suspense>
+      <WalletClient
+        user={serializedUser}
+        transactions={serializedTransactions}
+        creatorMap={creatorMap}
+      />
+    </Suspense>
   );
 }

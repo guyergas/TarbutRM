@@ -54,7 +54,6 @@ export default function TopupModal({
         <>
           <div
             className="fixed inset-0 bg-black/40 z-50"
-            onClick={onClose}
           />
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-51 bg-white dark:bg-gray-800 rounded-lg p-8 w-full max-w-sm shadow-2xl dark:shadow-2xl max-h-[90vh] overflow-y-auto">
             {step === "amount" ? (

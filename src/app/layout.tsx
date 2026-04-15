@@ -48,6 +48,7 @@ export default async function RootLayout({
           {children}
         </div>
         <DevTools />
+        <div id="portal-root" />
       </body>
     </html>
   );

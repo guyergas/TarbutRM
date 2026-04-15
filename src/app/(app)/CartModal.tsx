@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import UnifiedItemModal from "./store/[menuId]/UnifiedItemModal";
-import TopupModal from "./wallet/TopupModal";
 import { cartService } from "@/modules/cart";
 import {
   removeFromCartAction,
@@ -70,7 +69,6 @@ export default function CartModal({
   const [stockHistory, setStockHistory] = useState<StockHistory[]>([]);
   const [showCheckoutConfirm, setShowCheckoutConfirm] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const [showTopupModal, setShowTopupModal] = useState(false);
 
   const handleRemoveItem = async (itemId: string) => {
     setIsLoading(true);
@@ -274,12 +272,12 @@ export default function CartModal({
             {userBalance && Number(userBalance) < totalCost && (
               <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 p-3 rounded-md mb-3 text-sm">
                 <div>יתרה לא מספיקה לביצוע הזמנה זו</div>
-                <button
-                  onClick={() => setShowTopupModal(true)}
-                  className="bg-none border-none text-red-600 dark:text-red-400 underline hover:text-red-700 dark:hover:text-red-300 cursor-pointer p-0 font-medium"
+                <Link
+                  href="/wallet?topup=1"
+                  className="text-red-600 dark:text-red-400 underline hover:text-red-700 dark:hover:text-red-300 font-medium"
                 >
                   טען יתרה
-                </button>
+                </Link>
               </div>
             )}
 
@@ -382,11 +380,6 @@ export default function CartModal({
         </>
       )}
 
-      {/* Topup Modal */}
-      <TopupModal
-        open={showTopupModal}
-        onClose={() => setShowTopupModal(false)}
-      />
     </>
   );
 }

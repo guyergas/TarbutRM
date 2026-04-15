@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import OrdersTableClient from "../../orders/OrdersTableClient";
 import { notifyOrderCountsUpdated } from "@/hooks/useOrderCounts";
+import { useOrderCompletedSound, useNewOrderSound } from "@/hooks/useOrderCompletedSound";
 
 interface OrderItem {
   id: string;
@@ -47,6 +48,30 @@ export default function StaffOrdersClient({
   initialOpenOrderId?: string;
 }) {
   const [orders, setOrders] = useState(initialOrders);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialOpenOrderId || null);
+  const apiEndpoint = isUserView ? "/api/orders/user-queue" : "/api/orders/staff-queue";
+
+  // Auto-refresh orders every 5 seconds by polling API directly
+  useEffect(() => {
+    async function fetchOrders() {
+      try {
+        const res = await fetch(apiEndpoint, { cache: "no-store" });
+        if (!res.ok) return;
+        const fresh = await res.json();
+        setOrders(fresh);
+      } catch {
+        // Ignore network errors
+      }
+    }
+
+    const interval = setInterval(fetchOrders, 5000);
+    return () => clearInterval(interval);
+  }, [apiEndpoint]);
+
+  // Customer: beep when their order is completed
+  useOrderCompletedSound(isUserView);
+  // Staff/admin: double-beep when a new order arrives
+  useNewOrderSound(!isUserView);
 
   // Split orders into active (NEW, IN_PROGRESS) and completed (COMPLETED)
   const activeOrders = orders.filter((order) => order.status === "NEW" || order.status === "IN_PROGRESS");
@@ -73,9 +98,11 @@ export default function StaffOrdersClient({
     <div className="space-y-8">
       {/* Active Orders Section */}
       <div>
-        <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-          הזמנות פעילות
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            הזמנות פעילות
+          </h2>
+        </div>
         {activeOrders.length === 0 ? (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             <p>אין הזמנות פעילות כרגע</p>
@@ -88,6 +115,9 @@ export default function StaffOrdersClient({
             allowStatusAdvance={allowStatusAdvance}
             isStaffQueue={true}
             onStatusUpdated={handleStatusUpdated}
+            selectedOrderId={selectedOrderId}
+            onSelectedOrderIdChange={setSelectedOrderId}
+            allOrders={orders}
           />
         )}
       </div>
@@ -109,6 +139,9 @@ export default function StaffOrdersClient({
             allowStatusAdvance={allowStatusAdvance}
             isStaffQueue={true}
             onStatusUpdated={handleStatusUpdated}
+            selectedOrderId={selectedOrderId}
+            onSelectedOrderIdChange={setSelectedOrderId}
+            allOrders={orders}
           />
         )}
       </div>

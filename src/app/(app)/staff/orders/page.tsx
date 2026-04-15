@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { orderService } from "@/modules/order";
 import StaffOrdersClient from "./StaffOrdersClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function StaffOrdersPage() {
   const session = await auth();
 

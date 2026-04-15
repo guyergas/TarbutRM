@@ -4,6 +4,8 @@ import { orderService } from "@/modules/order";
 import Link from "next/link";
 import StaffOrdersClient from "../staff/orders/StaffOrdersClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function OrdersPage() {
   const session = await auth();
   if (!session?.user?.id) {

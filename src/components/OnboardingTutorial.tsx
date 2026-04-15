@@ -36,10 +36,8 @@ export default function OnboardingTutorial({
         "בארנק תוכלו להגדיל את ההשקעה שלכם בקליק",
       ],
       content: (
-        <div className="h-48 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900 dark:to-emerald-900 rounded-lg flex items-center justify-center">
-          <svg className="w-24 h-24 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 1C6.48 1 2 5.48 2 11s4.48 10 10 10 10-4.48 10-10S17.52 1 12 1zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 6 15.5 6 14 6.67 14 7.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 6 8.5 6 7 6.67 7 7.5 7.67 9 8.5 9zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-          </svg>
+        <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+          <img src="/tutorial/slide2_wallet_page.png" alt="ארנק ותקציב" className="w-full h-auto object-cover" />
         </div>
       ),
     },
@@ -49,13 +47,11 @@ export default function OnboardingTutorial({
         "לחצו על הבית כדי לחזור לחנות",
         "דפדפו בין התפריטים השונים כדי למצוא את המוצר שאתה מחפשים",
         "בחרו את הכמות המבוקשת",
-        "לחצו על 'הוסף לסל' כדי להוסיף את המוצר",
+        "לחצו על + כדי להוסיף לסל",
       ],
       content: (
-        <div className="h-48 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900 dark:to-red-900 rounded-lg flex items-center justify-center">
-          <svg className="w-24 h-24 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-          </svg>
+        <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+          <img src="/tutorial/slide3_store_nav.png" alt="חנות ותפריטים" className="w-full h-auto object-cover" />
         </div>
       ),
     },
@@ -68,10 +64,8 @@ export default function OnboardingTutorial({
         "או להסיר פריטים שלא רוצים",
       ],
       content: (
-        <div className="h-48 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-lg flex items-center justify-center">
-          <svg className="w-24 h-24 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-          </svg>
+        <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+          <img src="/tutorial/slide_cart_icon.png" alt="סל קניות" className="w-full h-auto object-cover" />
         </div>
       ),
     },
@@ -84,10 +78,8 @@ export default function OnboardingTutorial({
         "ההזמנה תרשם בחשבון שלכם",
       ],
       content: (
-        <div className="h-48 bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900 dark:to-blue-900 rounded-lg flex items-center justify-center">
-          <svg className="w-24 h-24 text-cyan-600 dark:text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-          </svg>
+        <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+          <img src="/tutorial/slide5_cart_payment.png" alt="תשלום מהסל" className="w-full h-auto object-cover" />
         </div>
       ),
     },
@@ -95,15 +87,13 @@ export default function OnboardingTutorial({
       title: "מעקב הזמנה",
       description: [
         "לאחר ביצוע הזמנה, תועברו אוטומטית לדף ההזמנה. אתם יכולים לחזור לראות את כל ההזמנות בכל רגע על ידי לחיצה על 'ההזמנות שלי' בתפריט",
-        "כל הזמנה מציגה את הסטטוס שלה (בהכנה, מוכנה, בעיצומה וכו')",
+        "כל הזמנה מציגה את הסטטוס שלה (חדש, בעיבוד, הושלם)",
         "לאחר קבלת ההזמנה, תוכלו ללחוץ על 'העבר להושלם' כדי לסגור את ההזמנה",
         "הזמנות סגורות יוצגו בטבלה נפרדת",
       ],
       content: (
-        <div className="h-48 bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900 dark:to-cyan-900 rounded-lg flex items-center justify-center">
-          <svg className="w-24 h-24 text-teal-600 dark:text-teal-400" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
+        <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+          <img src="/tutorial/slide_orders_full.png" alt="מעקב הזמנות" className="w-full h-auto object-cover" />
         </div>
       ),
     },
@@ -128,10 +118,10 @@ export default function OnboardingTutorial({
     {
       title: "סטטוסי הזמנה",
       description: [
-        "חדש: ההזמנה נקלטה וממתינה לעיבוד",
-        "בעיבוד: ההזמנה מעובדת ובהכנה",
-        "הושלם: ההזמנה הושלמה ומוכנה למסירה",
-        "הסטטוס משתנה אוטומטית כשעדכונים מתקבלים",
+        "חדש: ההזמנה נקלטה וממתינה לטיפול",
+        "בעיבוד: הצוות מטפל בהזמנה",
+        "הושלם: ההזמנה הושלמה",
+        "הסטטוס מתעדכן על ידי הצוות בזמן אמת",
       ],
       content: (
         <div className="h-48 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-900 rounded-lg flex items-center justify-center">
@@ -150,10 +140,8 @@ export default function OnboardingTutorial({
         "כל הנתונים שלכם מוגנים ובטוחים",
       ],
       content: (
-        <div className="h-48 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 rounded-lg flex items-center justify-center">
-          <svg className="w-24 h-24 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-          </svg>
+        <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+          <img src="/tutorial/slide_profile.png" alt="פרופיל ועדכון פרטים" className="w-full h-auto object-cover" />
         </div>
       ),
     },
@@ -213,7 +201,7 @@ export default function OnboardingTutorial({
       description: [
         "לחצו על 'תור ההזמנות' בתפריט העליון",
         "ראו את כל ההזמנות הפתוחות בסדר קבלה",
-        "עדכנו את סטטוס ההזמנה: בהכנה → בעיצומה → מוכנה",
+        "עדכנו את סטטוס ההזמנה: חדש → בעיבוד → הושלם",
         "משתמשים יראו את העדכונים בזמן אמת",
       ],
       content: (

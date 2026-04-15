@@ -20,14 +20,17 @@ interface ItemCardProps {
     price: string | number;
     inStock: boolean;
     image?: string;
+    availableForGuests?: boolean;
   };
   userRole: "USER" | "STAFF" | "ADMIN";
   userId: string;
+  isLocalUser: boolean;
 }
 
-export default function ItemCard({ item: initialItem, userRole, userId }: ItemCardProps) {
+export default function ItemCard({ item: initialItem, userRole, userId, isLocalUser }: ItemCardProps) {
   const [item, setItem] = useState(initialItem);
   const [isHovered, setIsHovered] = useState(false);
+  const isRestrictedForUser = !item.availableForGuests && !isLocalUser;
   const [quantity, setQuantity] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [stockHistory, setStockHistory] = useState<StockHistory[]>([]);
@@ -95,6 +98,13 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
         </div>
       )}
 
+      {/* Residents only badge */}
+      {isRestrictedForUser && (
+        <div className="absolute top-2 left-2 bg-amber-700 dark:bg-amber-800 text-amber-100 dark:text-amber-200 px-2 py-1 rounded text-xs font-medium z-10">
+          לתושבים בלבד
+        </div>
+      )}
+
       {/* Content */}
       <div className="p-3">
         <h3 className="text-sm font-semibold m-0 mb-1 text-gray-700 dark:text-gray-300 break-words">
@@ -111,8 +121,8 @@ export default function ItemCard({ item: initialItem, userRole, userId }: ItemCa
           {item.price} ₪
         </div>
 
-        {/* Quantity selector and add to cart button - only show if in stock */}
-        {item.inStock && (
+        {/* Quantity selector and add to cart button - only show if in stock and user can purchase */}
+        {item.inStock && !isRestrictedForUser && (
           <div className="flex items-center gap-2">
             <QuantitySelector
               initialQuantity={1}

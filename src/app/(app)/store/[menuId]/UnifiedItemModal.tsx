@@ -21,6 +21,7 @@ interface UnifiedItemModalProps {
     inStock: boolean;
     image?: string;
     archived?: boolean;
+    availableForGuests?: boolean;
   };
   userRole: "USER" | "STAFF" | "ADMIN";
   onClose: () => void;
@@ -41,6 +42,7 @@ export default function UnifiedItemModal({
   const [image, setImage] = useState(item.image || "");
   const [imagePreview, setImagePreview] = useState<string>(item.image || "");
   const [inStock, setInStock] = useState(item.inStock);
+  const [availableForGuests, setAvailableForGuests] = useState(item.availableForGuests ?? true);
   const [loading, setLoading] = useState(false);
   const [stockLoading, setStockLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -191,6 +193,7 @@ export default function UnifiedItemModal({
         description,
         price: parseFloat(price),
         image,
+        availableForGuests,
       });
       setSuccess("המוצר עודכן בהצלחה");
       setTimeout(() => {
@@ -422,6 +425,22 @@ export default function UnifiedItemModal({
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 JPG, PNG עד 5MB
               </p>
+            </div>
+          )}
+
+          {/* Available For Guests - Admin Only */}
+          {canEdit && (
+            <div className="mb-3 flex items-center gap-2">
+              <label className="flex items-center gap-2 cursor-pointer select-none text-xs font-semibold text-gray-600 dark:text-gray-400">
+                <button
+                  type="button"
+                  onClick={() => setAvailableForGuests(!availableForGuests)}
+                  style={{ width: 36, height: 20, borderRadius: 10, padding: 2, border: "none", cursor: "pointer", background: availableForGuests ? "#2563eb" : "#9ca3af", position: "relative", flexShrink: 0, transition: "background 0.2s" }}
+                >
+                  <div style={{ width: 16, height: 16, borderRadius: "50%", background: "white", position: "absolute", top: 2, left: availableForGuests ? 18 : 2, transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }} />
+                </button>
+                זמין לתושבים מחוץ לרמות מנשה
+              </label>
             </div>
           )}
 

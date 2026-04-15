@@ -19,6 +19,7 @@ export async function updateItemFromModal(
     description?: string;
     price?: number;
     image?: string;
+    availableForGuests?: boolean;
   }
 ) {
   const session = await auth();

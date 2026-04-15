@@ -74,6 +74,7 @@ export async function update(
     description?: string;
     price?: number;
     image?: string;
+    availableForGuests?: boolean;
   },
   actorId: string
 ) {
@@ -93,6 +94,7 @@ export async function update(
       description: data.description ?? item.description,
       price: data.price ?? item.price,
       image: data.image ?? item.image,
+      availableForGuests: data.availableForGuests ?? item.availableForGuests,
       updatedAt: new Date(),
     },
   });

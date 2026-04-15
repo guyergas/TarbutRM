@@ -19,11 +19,11 @@ endif
 
 ## Internal: Run dev environment (called by systemd service)
 _run-dev:
-	$(COMPOSE_DEV) up --build --renew-anon-volumes -d
+	$(COMPOSE_DEV) up --build -d
 
 ## Internal: Run prod environment (called by systemd service)
 _run-prod:
-	$(COMPOSE_PROD) up --build --renew-anon-volumes -d
+	$(COMPOSE_PROD) up --build -d
 
 ## Internal: Stop all containers (called by systemd service)
 _stop:

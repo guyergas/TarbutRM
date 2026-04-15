@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface OrderItem {
   id: string;
@@ -45,6 +45,9 @@ export default function OrdersTableClient({
   isUserView = false,
   isStaffQueue = false,
   onStatusUpdated,
+  selectedOrderId: externalSelectedOrderId,
+  onSelectedOrderIdChange,
+  allOrders,
 }: {
   orders: SerializedOrder[];
   initialOpenOrderId?: string;
@@ -53,13 +56,30 @@ export default function OrdersTableClient({
   isUserView?: boolean;
   isStaffQueue?: boolean;
   onStatusUpdated?: (updatedOrder: SerializedOrder) => void;
+  selectedOrderId?: string | null;
+  onSelectedOrderIdChange?: (id: string | null) => void;
+  allOrders?: SerializedOrder[];
 }) {
   const [orders, setOrders] = useState(initialOrders);
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialOpenOrderId || null);
+  const [internalSelectedOrderId, setInternalSelectedOrderId] = useState<string | null>(initialOpenOrderId || null);
+  const isControlled = externalSelectedOrderId !== undefined;
+  const selectedOrderId = isControlled ? externalSelectedOrderId : internalSelectedOrderId;
+  const setSelectedOrderId = (id: string | null) => {
+    if (!isControlled) setInternalSelectedOrderId(id);
+    onSelectedOrderIdChange?.(id);
+  };
+
+  // Sync orders from parent without closing the popup
+  useEffect(() => {
+    setOrders(initialOrders);
+  }, [initialOrders]);
+
   const [advancingOrderId, setAdvancingOrderId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const selectedOrder = orders.find((o) => o.id === selectedOrderId);
+  // Look up selected order from allOrders (full list) so popup stays open when order moves between sections
+  const lookupOrders = allOrders ?? orders;
+  const selectedOrder = lookupOrders.find((o) => o.id === selectedOrderId);
 
   const handleAdvanceStatus = async (orderId: string, targetStatus?: string) => {
     if (!allowStatusAdvance) return;
@@ -114,7 +134,7 @@ export default function OrdersTableClient({
               changerName,
             };
           }),
-          customerName: (result.order! as any).customerName,
+          customerName: (result.order! as any).customerName ?? orders.find((o) => o.id === orderId)?.customerName,
         };
 
         // Update the orders list

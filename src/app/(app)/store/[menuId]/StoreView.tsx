@@ -19,6 +19,7 @@ interface Item {
   position: number;
   archived: boolean;
   image?: string;
+  availableForGuests?: boolean;
 }
 
 interface Section {
@@ -43,6 +44,7 @@ interface StoreViewProps {
   allMenus: Menu[];
   userRole: "USER" | "STAFF" | "ADMIN";
   userId: string;
+  isLocalUser: boolean;
 }
 
 export default function StoreView({
@@ -50,6 +52,7 @@ export default function StoreView({
   allMenus,
   userRole,
   userId,
+  isLocalUser,
 }: StoreViewProps) {
   const searchParams = useSearchParams();
   const sectionParam = searchParams.get("section");
@@ -160,6 +163,7 @@ export default function StoreView({
                       item={item}
                       userRole={userRole}
                       userId={userId}
+                      isLocalUser={isLocalUser}
                     />
                   ))}
                   {userRole === "ADMIN" && (
