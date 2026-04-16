@@ -66,8 +66,11 @@ model BudgetTransaction {
   type      TransactionType   @default(ADMIN_CREDIT)
   createdBy String
   createdAt DateTime          @default(now())
+  orderId   String?
+  order     Order?            @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+  @@index([orderId])
 }
 
 model Menu {
@@ -158,6 +161,7 @@ model Order {
   updatedAt     DateTime        @updatedAt
   items         OrderItem[]
   statusHistory OrderStatusHistory[]
+  transactions  BudgetTransaction[]
 
   @@index([userId])
   @@index([status])

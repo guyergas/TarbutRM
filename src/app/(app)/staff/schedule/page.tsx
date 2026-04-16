@@ -20,11 +20,31 @@ export default async function SchedulePage() {
 
   const ops = await operationService.list();
 
+  // For each operation date, sum all completed orders placed that day
+  const opDates = ops.map((op) => op.date);
+  const orderTotals: Record<string, number> = {};
+  if (opDates.length > 0) {
+    for (const date of opDates) {
+      const dayStart = new Date(date);
+      dayStart.setUTCHours(0, 0, 0, 0);
+      const dayEnd = new Date(date);
+      dayEnd.setUTCHours(23, 59, 59, 999);
+      const result = await prisma.order.aggregate({
+        _sum: { total: true },
+        where: {
+          createdAt: { gte: dayStart, lte: dayEnd },
+        },
+      });
+      orderTotals[date.toISOString()] = Number(result._sum.total ?? 0);
+    }
+  }
+
   const serialized = ops.map((op) => ({
     id: op.id,
     date: op.date.toISOString(),
     note: op.note,
     requiredCount: op.requiredCount,
+    orderTotal: orderTotals[op.date.toISOString()] ?? 0,
     staff: op.staff.map((s) => ({
       id: s.id,
       userId: s.userId,

@@ -13,6 +13,7 @@ export default async function TopBar({ role }: { role?: Role }) {
   const menus = await menuService.listVisible();
 
   let balance: string | null = null;
+  let tutorialViewed = true;
   let cartItemCount = 0;
   let openOrdersCount = 0;
   let allOpenOrdersCount = 0;
@@ -21,9 +22,10 @@ export default async function TopBar({ role }: { role?: Role }) {
   if (session?.user?.id) {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { balance: true },
+      select: { balance: true, tutorialViewed: true },
     });
     balance = user?.balance.toString() ?? null;
+    tutorialViewed = user?.tutorialViewed ?? true;
 
     const cart = await cartService.getCartSummary(session.user.id);
     cartItemCount = cart.itemCount;
@@ -62,6 +64,7 @@ export default async function TopBar({ role }: { role?: Role }) {
       menus={menus}
       balance={balance}
       userId={session?.user?.id}
+      tutorialViewed={tutorialViewed}
       cartIcon={<CartIcon initialCount={cartItemCount} userRole={userRole} userBalance={balance} />}
       openOrdersCount={openOrdersCount}
       allOpenOrdersCount={allOpenOrdersCount}

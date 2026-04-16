@@ -44,23 +44,7 @@ export async function createOrder(
 
   // Atomic transaction: debit balance + create order + items + history
   const order = await prisma.$transaction(async (tx) => {
-    // Debit wallet
-    await tx.budgetTransaction.create({
-      data: {
-        userId,
-        amount: -total,
-        note: "Order created",
-        createdBy: userId,
-      },
-    });
-
-    // Update user balance
-    await tx.user.update({
-      where: { id: userId },
-      data: { balance: { decrement: total } },
-    });
-
-    // Create order
+    // Create order first so we have its ID
     const newOrder = await tx.order.create({
       data: {
         userId,
@@ -93,6 +77,24 @@ export async function createOrder(
           },
         },
       },
+    });
+
+    // Debit wallet, linked to the order
+    await tx.budgetTransaction.create({
+      data: {
+        userId,
+        amount: -total,
+        note: "Order created",
+        type: "ADMIN_DEBIT",
+        createdBy: userId,
+        orderId: newOrder.id,
+      },
+    });
+
+    // Update user balance
+    await tx.user.update({
+      where: { id: userId },
+      data: { balance: { decrement: total } },
     });
 
     // Create initial status history entry
@@ -329,7 +331,9 @@ export async function cancelOrder(orderId: string, actorId: string) {
         userId: order.userId,
         amount: Number(order.total),
         note: `Order ${order.orderNumber} cancelled`,
+        type: "ADMIN_CREDIT",
         createdBy: actorId,
+        orderId: order.id,
       },
     });
 

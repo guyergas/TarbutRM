@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  allowedDevOrigins: ['64.226.119.165', 'tarbutrm.duckdns.org'],
+  allowedDevOrigins: ['64.226.119.165', '167.99.140.244', 'tarbutrm.duckdns.org', 'tarbutrm.servehalflife.com'],
   devIndicators: false,
 
   // Performance optimizations

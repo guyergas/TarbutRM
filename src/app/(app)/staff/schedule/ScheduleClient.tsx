@@ -29,6 +29,7 @@ interface OperationRow {
   date: string;
   note: string | null;
   requiredCount: number;
+  orderTotal: number;
   staff: OperationEntry[];
   helpers: OperationEntry[];
 }
@@ -455,6 +456,7 @@ function OperationsTable({
               <th className="py-2 px-3 text-xs font-semibold text-gray-600 dark:text-gray-300 text-right">מפעילים</th>
               <th className="py-2 px-3 text-xs font-semibold text-gray-600 dark:text-gray-300 text-right">עוזרים</th>
               <th className="py-2 px-3 text-xs font-semibold text-gray-600 dark:text-gray-300 text-right">הערה</th>
+              <th className="py-2 px-3 text-xs font-semibold text-gray-600 dark:text-gray-300 text-right">סה״כ מכירות</th>
               <th className="py-2 px-3 text-xs font-semibold text-gray-600 dark:text-gray-300 text-right">סטטוס</th>
             </tr>
           </thead>
@@ -486,6 +488,13 @@ function OperationsTable({
                   </td>
                   <td className="py-3 px-3 text-sm text-gray-600 dark:text-gray-400 max-w-[180px]">
                     {op.note || "—"}
+                  </td>
+                  <td className="py-3 px-3 text-sm whitespace-nowrap font-semibold">
+                    {op.orderTotal > 0 ? (
+                      <span className="text-green-600 dark:text-green-400">₪{op.orderTotal.toFixed(2)}</span>
+                    ) : (
+                      <span className="text-gray-400 dark:text-gray-500">—</span>
+                    )}
                   </td>
                   <td className="py-3 px-3 text-sm whitespace-nowrap">
                     {missing > 0 ? (

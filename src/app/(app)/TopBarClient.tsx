@@ -36,6 +36,7 @@ interface TopBarClientProps {
   allOpenOrdersCount?: number;
   userId?: string;
   openMessagesCount?: number;
+  tutorialViewed?: boolean;
 }
 
 const linkClassName = "px-1 py-2 rounded text-gray-900 dark:text-gray-300 no-underline text-sm font-medium block text-right pr-4";
@@ -46,9 +47,10 @@ const subLinkClassName = "px-1 py-2 rounded text-gray-900 dark:text-gray-300 no-
 const subSubLinkClassName = "px-1 py-2 rounded text-gray-900 dark:text-gray-300 no-underline text-xs font-medium block text-right pr-4 mr-16";
 
 
-export default function TopBarClient({ role, menus, balance, cartIcon, openOrdersCount = 0, allOpenOrdersCount = 0, userId, openMessagesCount = 0 }: TopBarClientProps) {
+export default function TopBarClient({ role, menus, balance, cartIcon, openOrdersCount = 0, allOpenOrdersCount = 0, userId, openMessagesCount = 0, tutorialViewed = true }: TopBarClientProps) {
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(true);
+  const [reportsOpen, setReportsOpen] = useState(true);
   const [staffOpen, setStaffOpen] = useState(true);
   const [storeOpen, setStoreOpen] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -75,6 +77,13 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
     userOrders: openOrdersCount,
     allOrders: allOpenOrdersCount,
   });
+
+  // Auto-show tutorial if user hasn't viewed it yet (DB is source of truth)
+  useEffect(() => {
+    if (!tutorialViewed && userId) {
+      setShowTutorial(true);
+    }
+  }, [tutorialViewed, userId]);
 
   // Initialize all menus as expanded when component mounts or menus change
   useEffect(() => {
@@ -110,8 +119,15 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
     }
   }
 
-  function handleTutorialSkip() {
+  async function handleTutorialSkip() {
     setShowTutorial(false);
+    try {
+      if (userId) {
+        await markTutorialAsViewed(userId);
+      }
+    } catch (error) {
+      console.error("Failed to mark tutorial as viewed:", error);
+    }
   }
 
   function handleTutorialClick() {
@@ -403,6 +419,28 @@ export default function TopBarClient({ role, menus, balance, cartIcon, openOrder
                         )}
                       </div>
                     </Link>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setReportsOpen((v) => !v)}
+                        className={subCollapsibleClassName}
+                      >
+                        <span className="text-right">דוחות</span>
+                        <span className={`text-sm text-gray-400 dark:text-gray-500 transition-transform duration-300 ${reportsOpen ? "rotate-180" : ""}`}>
+                          ▼
+                        </span>
+                      </button>
+                      {reportsOpen && (
+                        <>
+                          <Link href="/admin/reports/transactions" onClick={close} className={subSubLinkClassName}>
+                            תנועות
+                          </Link>
+                          <Link href="/admin/reports/items" onClick={close} className={subSubLinkClassName}>
+                            פריטים
+                          </Link>
+                        </>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
